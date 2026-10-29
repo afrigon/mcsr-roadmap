@@ -1,11 +1,21 @@
 # mcsr-roadmap
 
-A learning roadmap for MCSR Ranked, the Minecraft 1.16.1 ranked speedrun mod. Skills are placed in the
-Break the Barrier time goal they unlock and linked by their prerequisites, shown as an advancement-style
-timeline per topic. Each skill opens a page explaining how to learn it, and its status (not learned,
+A learning roadmap for MCSR Ranked, the Minecraft 1.16.1 ranked speedrun mod. Every skill is an
+advancement on one canvas, placed under the Break the Barrier time goal it unlocks and linked to the
+skill it builds on. Each one opens a page explaining how to learn it, and its status (not learned,
 practicing, mastered) is saved in the browser.
 
 ## Development
+
+The icons are the game's own textures, extracted at build time from a Minecraft 1.16.1 client jar.
+Point `MINECRAFT_CLIENT_JAR` at yours in a git-ignored `mise.local.toml`:
+
+```toml
+[env]
+MINECRAFT_CLIENT_JAR = "/home/you/.local/share/PrismLauncher/libraries/com/mojang/minecraft/1.16.1/minecraft-1.16.1-client.jar"
+```
+
+Then:
 
 ```sh
 mise install
@@ -21,27 +31,26 @@ aubr dev
 
 ## Content
 
-`roadmap.kdl` defines the goals, categories, rows and items:
+`roadmap.kdl` defines the goals and a flat list of categories, each a tinted band of items:
 
 ```kdl
-category end title="End" {
-    row zeroCycle title="Zero cycle" {
-        item bowPlusOne title="Bow +1 on F m88 y95" goal=sub10 {
-            requires bedTiming
-        }
-        item doubleShot title="Double shot, 2+2 at y95 and y99" goal=sub8 {
-            upgrades threePlusTwo
-        }
+category zeroCycle title="Zero Cycle" theme=end {
+    item bowPlusOne title="Bow +1" goal=sub10 parent=bedTiming icon="item/bow" label="M-88 y95" {
+        description "An arrow before the first bed lets two beds land on one rotation."
     }
 }
 ```
 
-- `goal` is one of the ids in the `goals` node.
+- `goal` is one of the ids in the `goals` node; goals carry the `rank` that colours their bracket.
+- `theme` is one of fundamentals, overworld, desert, ocean, nether, fortress, bastion, stronghold,
+  end or fun.
+- `parent` is the item this one builds on, in the same category.
+- `icon` is `item/<texture>` or `block/<texture>` from the game, or `composite/bed`.
+- `label` is optional, shown under the icon when the icon alone is ambiguous.
 - `scope=ranked` marks a skill that only applies to Ranked.
-- `requires` lists prerequisites; `upgrades` names the easier version this item replaces.
 
-The build fails on unknown nodes or properties, unknown ids, a prerequisite in a later goal, and
-dependency cycles.
+The build fails on unknown nodes or properties, unknown ids, a parent in another category or a later
+goal, parent cycles, and icons missing from the jar.
 
 An item's page is `content/items/<id>.mdx`, with the sections *How it works*, *How to practice* and
 *Resources*. Embed videos with `<YouTube id="…" start={seconds} title="…" />`. Pages are optional: the
