@@ -1,0 +1,30 @@
+---
+import type { CanvasNode } from "../canvas/CanvasNode";
+import { Scope } from "../roadmap/Scope";
+
+interface Props {
+  node: CanvasNode;
+}
+
+const { node } = Astro.props;
+const { item } = node;
+---
+
+<button
+  type="button"
+  class="frame"
+  popovertarget={item.id}
+  aria-label={item.label === null ? item.title : `${item.title}, ${item.label}`}
+  data-frame
+  data-status-of={item.id}
+  data-parent={item.parent ?? undefined}
+  data-title={item.title}
+  data-description={item.description}
+  data-goal={item.goal.title}
+  data-ranked={item.scope === Scope.Ranked ? "" : undefined}
+  style={`left: ${node.x}px; top: ${node.y}px;`}
+>
+  <img src={item.icon.path} alt="" width="32" height="32" />
+  {item.label !== null && <span class="frame-label">{item.label}</span>}
+  <span class="frame-warning" title="The previous step is still not learned">!</span>
+</button>

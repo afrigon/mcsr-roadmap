@@ -1,9 +1,9 @@
 import type { Goal } from "../roadmap/Goal";
 
-export class TimelineColumn {
+export class GoalBracket {
   constructor(
     readonly goal: Goal,
-    readonly x: number,
-    readonly width: number,
+    readonly start: number,
+    readonly end: number,
   ) {}
 }

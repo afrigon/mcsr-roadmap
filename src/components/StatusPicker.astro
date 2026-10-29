@@ -9,7 +9,7 @@ interface Props {
 const { item } = Astro.props;
 ---
 
-<div class="flex gap-2" role="group" aria-label="Status">
+<div class="status-picker" role="group" aria-label="Status">
   {
     Object.values(Status).map((status) => (
       <button
@@ -17,8 +17,8 @@ const { item } = Astro.props;
         data-status-option={status}
         data-item-id={item.id}
         data-item-title={item.title}
+        data-item-icon={item.icon.path}
         aria-pressed="false"
-        class="bevel bg-panel-raised px-3 py-1 text-sm text-muted hover:text-text aria-pressed:bevel-pressed aria-pressed:text-text"
       >
         {statusLabels[status]}
       </button>

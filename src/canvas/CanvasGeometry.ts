@@ -1,0 +1,9 @@
+export const frameSize = 60;
+export const columnGap = 46;
+export const rowGap = 34;
+export const bandPadding = 36;
+export const labelStrip = 40;
+export const gutter = 40;
+export const endPadding = 120;
+export const columnWidth = frameSize + columnGap;
+export const elbowRadius = 10;

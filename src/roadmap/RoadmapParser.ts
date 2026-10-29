@@ -2,11 +2,13 @@ import { readFileSync } from "node:fs";
 import { getLocation, parse, type Node } from "@bgotink/kdl";
 import { Category } from "./Category";
 import { Goal } from "./Goal";
+import { IconReference } from "./IconReference";
 import { Item } from "./Item";
+import { Rank } from "./Rank";
 import { Roadmap } from "./Roadmap";
 import { RoadmapError } from "./RoadmapError";
-import { Row } from "./Row";
 import { Scope } from "./Scope";
+import { Theme } from "./Theme";
 
 export class RoadmapParser {
   private readonly problems: string[] = [];
@@ -28,9 +30,15 @@ export class RoadmapParser {
       switch (node.getName()) {
         case "goals":
           break;
-        case "category":
-          categories.push(this.parseCategory(node));
+        case "category": {
+          const category = this.parseCategory(node);
+
+          if (category !== null) {
+            categories.push(category);
+          }
+
           break;
+        }
         default:
           this.report(node, `unexpected top-level node "${node.getName()}"`);
       }
@@ -47,7 +55,7 @@ export class RoadmapParser {
     this.expectShape(node, 0, []);
 
     for (const child of this.children(node, ["goal"])) {
-      this.expectShape(child, 1, ["title", "equivalent"]);
+      this.expectShape(child, 1, ["title", "short", "rank"]);
       const id = this.argument(child);
 
       if (this.goals.has(id)) {
@@ -57,73 +65,84 @@ export class RoadmapParser {
       const goal = new Goal(
         id,
         this.requiredProperty(child, "title"),
-        this.optionalProperty(child, "equivalent"),
+        this.requiredProperty(child, "short"),
+        this.enumProperty(child, "rank", Object.values(Rank)),
         this.goals.size,
       );
       this.goals.set(id, goal);
     }
   }
 
-  private parseCategory(node: Node): Category {
-    this.expectShape(node, 1, ["title"]);
-    const rows = this.children(node, ["row"]).map((child) => this.parseRow(child));
-
-    return new Category(this.argument(node), this.requiredProperty(node, "title"), rows);
-  }
-
-  private parseRow(node: Node): Row {
-    this.expectShape(node, 1, ["title"]);
+  private parseCategory(node: Node): Category | null {
+    this.expectShape(node, 1, ["title", "theme"]);
+    const id = this.argument(node);
+    const themeValue = this.requiredProperty(node, "theme");
+    const theme = this.enumProperty(node, "theme", Object.values(Theme));
     const items = this.children(node, ["item"]).flatMap((child) => this.parseItem(child) ?? []);
 
-    return new Row(this.argument(node), this.requiredProperty(node, "title"), items);
+    if (themeValue === "" || theme === null) {
+      return null;
+    }
+
+    return new Category(id, this.requiredProperty(node, "title"), theme, items);
   }
 
   private parseItem(node: Node): Item | null {
-    this.expectShape(node, 1, ["title", "goal", "scope"]);
+    this.expectShape(node, 1, ["title", "goal", "parent", "icon", "label", "scope"]);
     const id = this.argument(node);
     const goalId = this.requiredProperty(node, "goal");
     const goal = this.goals.get(goalId);
-    const scope = this.parseScope(node);
-    const requires: string[] = [];
-    let upgrades: string | null = null;
+    const iconValue = this.requiredProperty(node, "icon");
+    const icon = IconReference.parse(iconValue);
+    const descriptions = this.children(node, ["description"]);
 
     if (goal === undefined) {
       this.report(node, `item "${id}" has unknown goal "${goalId}"`);
     }
 
-    for (const child of this.children(node, ["requires", "upgrades"])) {
-      switch (child.getName()) {
-        case "requires":
-          requires.push(...this.arguments(child));
-          break;
-        case "upgrades":
-          if (upgrades !== null) {
-            this.report(child, `item "${id}" upgrades more than one item`);
-          }
-
-          this.expectShape(child, 1, []);
-          upgrades = this.argument(child);
-          break;
-      }
+    if (icon === null) {
+      this.report(node, `item "${id}" has invalid icon "${iconValue}", expected item/<name>, block/<name> or composite/<name>`);
     }
 
-    if (goal === undefined || scope === null) {
+    if (descriptions.length !== 1) {
+      this.report(node, `item "${id}" needs exactly one "description" child`);
+    }
+
+    for (const description of descriptions) {
+      this.expectShape(description, 1, []);
+    }
+
+    if (goal === undefined || icon === null || descriptions.length !== 1) {
       return null;
     }
 
-    return new Item(id, this.requiredProperty(node, "title"), goal, scope, requires, upgrades);
+    return new Item(
+      id,
+      this.requiredProperty(node, "title"),
+      goal,
+      this.enumProperty(node, "scope", Object.values(Scope)) ?? Scope.Any,
+      this.optionalProperty(node, "parent"),
+      icon,
+      this.optionalProperty(node, "label"),
+      this.argument(descriptions[0]!),
+    );
   }
 
-  private parseScope(node: Node): Scope | null {
-    const value = this.optionalProperty(node, "scope") ?? Scope.Any;
-    const scope = Object.values(Scope).find((candidate) => candidate === value);
+  private enumProperty<Value extends string>(node: Node, name: string, values: Value[]): Value | null {
+    const value = this.optionalProperty(node, name);
 
-    if (scope === undefined) {
-      this.report(node, `unknown scope "${value}", expected one of ${Object.values(Scope).join(", ")}`);
+    if (value === null) {
       return null;
     }
 
-    return scope;
+    const match = values.find((candidate) => candidate === value);
+
+    if (match === undefined) {
+      this.report(node, `unknown ${name} "${value}", expected one of ${values.join(", ")}`);
+      return null;
+    }
+
+    return match;
   }
 
   private children(node: Node, allowedNames: string[]): Node[] {
@@ -161,23 +180,6 @@ export class RoadmapParser {
     }
 
     return value ?? "";
-  }
-
-  private arguments(node: Node): string[] {
-    const values = node.getArguments();
-
-    if (values.length === 0) {
-      this.report(node, `"${node.getName()}" needs at least one argument`);
-    }
-
-    return values.flatMap((value) => {
-      if (typeof value !== "string") {
-        this.report(node, `"${node.getName()}" arguments must be strings, found ${String(value)}`);
-        return [];
-      }
-
-      return [value];
-    });
   }
 
   private requiredProperty(node: Node, name: string): string {

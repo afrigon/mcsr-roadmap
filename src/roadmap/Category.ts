@@ -1,13 +1,11 @@
-import type { Row } from "./Row";
+import type { Item } from "./Item";
+import type { Theme } from "./Theme";
 
 export class Category {
   constructor(
     readonly id: string,
     readonly title: string,
-    readonly rows: readonly Row[],
+    readonly theme: Theme,
+    readonly items: readonly Item[],
   ) {}
-
-  get items() {
-    return this.rows.flatMap((row) => row.items);
-  }
 }

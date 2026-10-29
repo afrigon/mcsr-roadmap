@@ -3,3 +3,6 @@ lockfile = true
 
 [tools]
 aube = "2.8"
+
+[env]
+MINECRAFT_CLIENT_JAR = { required = true }

@@ -1,0 +1,24 @@
+---
+import type { GoalBracket } from "../canvas/GoalBracket";
+import { goalIcon } from "../canvas/goalIcons";
+
+interface Props {
+  brackets: readonly GoalBracket[];
+}
+
+const { brackets } = Astro.props;
+---
+
+<div class="goals" aria-hidden="true">
+  {
+    brackets.map((bracket) => (
+      <div class="bracket" data-bracket data-start={bracket.start} data-end={bracket.end} data-rank={bracket.goal.rank ?? "none"}>
+        <span>
+          <img src={goalIcon(bracket.goal).path} alt="" width="14" height="14" />
+          <b class="full">{bracket.goal.title}</b>
+          <b class="short">{bracket.goal.shortTitle}</b>
+        </span>
+      </div>
+    ))
+  }
+</div>

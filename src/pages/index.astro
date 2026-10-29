@@ -1,20 +1,24 @@
 ---
-import CategoryTabs from "../components/CategoryTabs.astro";
+import { getCollection } from "astro:content";
+import Canvas from "../components/Canvas.astro";
+import GoalBrackets from "../components/GoalBrackets.astro";
+import Header from "../components/Header.astro";
+import ItemPopover from "../components/ItemPopover.astro";
+import Tooltip from "../components/Tooltip.astro";
+import { CanvasLayout } from "../canvas/CanvasLayout";
 import Layout from "../layouts/Layout.astro";
 import { roadmapFile } from "../roadmap/RoadmapFiles";
 import { RoadmapParser } from "../roadmap/RoadmapParser";
 
 const roadmap = RoadmapParser.readFile(roadmapFile);
+const layout = new CanvasLayout(roadmap);
+const pages = new Map((await getCollection("items")).map((page) => [page.id, page]));
 ---
 
-<Layout title="Home">
-  <main class="mx-auto max-w-3xl px-6 py-12">
-    <h1 class="mb-4 text-3xl font-semibold text-title">MCSR Ranked roadmap</h1>
-    <p class="mb-6 text-muted">
-      Skills for Minecraft 1.16.1 ranked speedrunning, placed in the Break the Barrier time goal they unlock. Open an
-      advancement to read how to learn it and track whether you have learned it, are practicing it, or have mastered
-      it. Progress is saved in this browser.
-    </p>
-    <CategoryTabs categories={roadmap.categories} current={null} />
-  </main>
+<Layout title="MCSR Ranked roadmap">
+  <Header />
+  <GoalBrackets brackets={layout.brackets} />
+  <Canvas layout={layout} />
+  <Tooltip />
+  {roadmap.items.map((item) => <ItemPopover roadmap={roadmap} item={item} page={pages.get(item.id)} />)}
 </Layout>

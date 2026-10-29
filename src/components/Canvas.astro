@@ -1,0 +1,42 @@
+---
+import type { CanvasLayout } from "../canvas/CanvasLayout";
+import Frame from "./Frame.astro";
+
+interface Props {
+  layout: CanvasLayout;
+}
+
+const { layout } = Astro.props;
+---
+
+<div id="viewport" class="viewport">
+  <div
+    id="world"
+    class="world"
+    data-width={layout.width}
+    data-height={layout.height}
+    style={`width: ${layout.width}px; height: ${layout.height}px;`}
+  >
+    {
+      layout.bands.map((band) => (
+        <div class="band" data-band data-theme={band.category.theme} style={`top: ${band.top}px; height: ${band.height}px;`} />
+      ))
+    }
+    {
+      layout.brackets.map((bracket) => (
+        <div class="guide" style={`left: ${bracket.start}px; height: ${layout.height}px;`} />
+      ))
+    }
+    {
+      layout.bands.map((band) => (
+        <div class="band-label" data-band-label data-theme={band.category.theme} style={`top: ${band.top + 14}px;`}>
+          {band.category.title}
+        </div>
+      ))
+    }
+    <svg class="links" width={layout.width} height={layout.height} aria-hidden="true">
+      {layout.links.map((link) => <path d={link.path} data-status-of={link.from.item.id} />)}
+    </svg>
+    {layout.bands.flatMap((band) => band.nodes).map((node) => <Frame node={node} />)}
+  </div>
+</div>

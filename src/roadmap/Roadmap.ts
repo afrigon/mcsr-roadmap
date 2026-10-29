@@ -2,10 +2,10 @@ import type { Category } from "./Category";
 import type { Goal } from "./Goal";
 import type { Item } from "./Item";
 import { RoadmapError } from "./RoadmapError";
-import type { Row } from "./Row";
 
 export class Roadmap {
   private readonly itemsById = new Map<string, Item>();
+  private readonly categoriesByItem = new Map<Item, Category>();
 
   constructor(
     readonly goals: readonly Goal[],
@@ -13,19 +13,20 @@ export class Roadmap {
   ) {
     const problems: string[] = [];
 
-    for (const item of this.items) {
-      if (this.itemsById.has(item.id)) {
-        problems.push(`item id "${item.id}" is used more than once`);
+    for (const category of categories) {
+      for (const item of category.items) {
+        if (this.itemsById.has(item.id)) {
+          problems.push(`item id "${item.id}" is used more than once`);
+        }
+
+        this.itemsById.set(item.id, item);
+        this.categoriesByItem.set(item, category);
       }
-
-      this.itemsById.set(item.id, item);
     }
 
     for (const item of this.items) {
-      problems.push(...this.prerequisiteProblems(item));
+      problems.push(...this.parentProblems(item));
     }
-
-    problems.push(...this.cycleProblems());
 
     if (problems.length > 0) {
       throw new RoadmapError(problems);
@@ -46,90 +47,59 @@ export class Roadmap {
     return item;
   }
 
-  prerequisitesOf(item: Item): Item[] {
-    return item.prerequisiteIds.map((id) => this.item(id));
+  parentOf(item: Item): Item | null {
+    return item.parent === null ? null : this.item(item.parent);
   }
 
-  dependentsOf(item: Item): Item[] {
-    return this.items.filter((candidate) => candidate.prerequisiteIds.includes(item.id));
+  childrenOf(item: Item): Item[] {
+    return this.categoryOf(item).items.filter((candidate) => candidate.parent === item.id);
   }
 
   categoryOf(item: Item): Category {
-    return this.categories.find((category) => category.items.includes(item))!;
+    return this.categoriesByItem.get(item)!;
   }
 
-  timelineItemsFor(row: Row): Item[] {
-    const included = new Set<Item>();
-    const pending = [...row.items];
+  pathTo(item: Item): Item[] {
+    const path = [item];
 
-    while (pending.length > 0) {
-      const item = pending.pop()!;
-
-      if (included.has(item)) {
-        continue;
-      }
-
-      included.add(item);
-      pending.push(...this.prerequisitesOf(item));
+    for (let parent = this.parentOf(item); parent !== null; parent = this.parentOf(parent)) {
+      path.unshift(parent);
     }
 
-    return this.items.filter((item) => included.has(item));
+    return path;
   }
 
-  private prerequisiteProblems(item: Item): string[] {
-    const problems: string[] = [];
-
-    for (const id of item.prerequisiteIds) {
-      const prerequisite = this.itemsById.get(id);
-
-      if (prerequisite === undefined) {
-        problems.push(`"${item.id}" depends on unknown item "${id}"`);
-        continue;
-      }
-
-      if (prerequisite.goal.isAfter(item.goal)) {
-        problems.push(
-          `"${item.id}" (${item.goal.title}) depends on "${id}", which is in the later column ${prerequisite.goal.title}`,
-        );
-      }
+  private parentProblems(item: Item): string[] {
+    if (item.parent === null) {
+      return [];
     }
 
-    return problems;
-  }
+    const parent = this.itemsById.get(item.parent);
 
-  private cycleProblems(): string[] {
-    const finished = new Set<string>();
-    const visiting = new Set<string>();
-    const problems: string[] = [];
-
-    const visit = (item: Item, path: string[]) => {
-      if (finished.has(item.id)) {
-        return;
-      }
-
-      if (visiting.has(item.id)) {
-        problems.push(`dependency cycle: ${[...path, item.id].join(" → ")}`);
-        return;
-      }
-
-      visiting.add(item.id);
-
-      for (const id of item.prerequisiteIds) {
-        const prerequisite = this.itemsById.get(id);
-
-        if (prerequisite !== undefined) {
-          visit(prerequisite, [...path, item.id]);
-        }
-      }
-
-      visiting.delete(item.id);
-      finished.add(item.id);
-    };
-
-    for (const item of this.items) {
-      visit(item, []);
+    if (parent === undefined) {
+      return [`"${item.id}" has unknown parent "${item.parent}"`];
     }
 
-    return problems;
+    if (this.categoriesByItem.get(parent) !== this.categoriesByItem.get(item)) {
+      return [`"${item.id}" has parent "${parent.id}" from another category`];
+    }
+
+    if (parent.goal.isAfter(item.goal)) {
+      return [`"${item.id}" (${item.goal.title}) has parent "${parent.id}" in the later goal ${parent.goal.title}`];
+    }
+
+    const visited = new Set([item.id]);
+    let ancestor: Item | undefined = parent;
+
+    while (ancestor !== undefined) {
+      if (visited.has(ancestor.id)) {
+        return [`"${item.id}" is part of a parent cycle`];
+      }
+
+      visited.add(ancestor.id);
+      ancestor = ancestor.parent === null ? undefined : this.itemsById.get(ancestor.parent);
+    }
+
+    return [];
   }
 }

@@ -33,7 +33,7 @@ export class StatusController {
     this.applyAll();
 
     if (status === Status.Mastered && previous !== Status.Mastered) {
-      this.showToast(button.dataset.itemTitle ?? id);
+      this.showToast(button.dataset.itemTitle ?? id, button.dataset.itemIcon ?? "");
     }
   }
 
@@ -47,22 +47,19 @@ export class StatusController {
       button.setAttribute("aria-pressed", String(selected));
     }
 
-    for (const element of this.document.querySelectorAll<HTMLElement>("[data-prerequisites]")) {
-      element.toggleAttribute("data-prerequisite-warning", this.hasMissingPrerequisite(element));
+    for (const element of this.document.querySelectorAll<HTMLElement>("[data-parent]")) {
+      element.toggleAttribute("data-warning", this.hasUnlearnedParent(element));
     }
   }
 
-  private hasMissingPrerequisite(element: HTMLElement): boolean {
-    if (this.store.get(element.dataset.statusOf!) === Status.NotLearned) {
-      return false;
-    }
-
-    const prerequisites = element.dataset.prerequisites!.split(" ").filter((id) => id !== "");
-
-    return prerequisites.some((id) => this.store.get(id) === Status.NotLearned);
+  private hasUnlearnedParent(element: HTMLElement): boolean {
+    return (
+      this.store.get(element.dataset.statusOf!) !== Status.NotLearned &&
+      this.store.get(element.dataset.parent!) === Status.NotLearned
+    );
   }
 
-  private showToast(title: string) {
+  private showToast(title: string, icon: string) {
     const toast = this.document.getElementById("advancement-toast");
 
     if (toast === null) {
@@ -70,6 +67,7 @@ export class StatusController {
     }
 
     toast.querySelector("[data-toast-title]")!.textContent = title;
+    toast.querySelector<HTMLImageElement>("[data-toast-icon]")!.src = icon;
     toast.showPopover();
     window.clearTimeout(this.toastTimer);
     this.toastTimer = window.setTimeout(() => toast.hidePopover(), toastDuration);

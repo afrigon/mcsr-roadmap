@@ -10,3 +10,5 @@ dist
 .astro
 
 mise.local.toml
+
+public/textures

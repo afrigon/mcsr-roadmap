@@ -1,173 +1,1052 @@
 goals {
-    goal firstCompletion title="First completion"
-    goal sub30 title="Sub 30" equivalent="Coal (29:35)"
-    goal sub20 title="Sub 20" equivalent="Iron → Gold (24:27 → 17:23)"
-    goal sub15 title="Sub 15" equivalent="Emerald (14:00)"
-    goal sub13 title="Sub 13" equivalent="High Emerald"
-    goal sub12 title="Sub 12" equivalent="Diamond (11:21)"
-    goal sub11 title="Sub 11" equivalent="Mid Diamond"
-    goal sub10 title="Sub 10" equivalent="Netherite (9:27)"
-    goal sub9 title="Sub 9" equivalent="Mid Netherite"
-    goal sub8 title="Sub 8" equivalent="Top Netherite"
-    goal sub7 title="Sub 7" equivalent="Top ~10 players"
-    goal sub6 title="Sub 6" equivalent="Record pace"
+    goal firstCompletion title="First Completion" short="1st"
+    goal sub30 title="Sub 30" short="30" rank=coal
+    goal sub20 title="Sub 20" short="20" rank=gold
+    goal sub15 title="Sub 15" short="15" rank=emerald
+    goal sub13 title="Sub 13" short="13" rank=emerald
+    goal sub12 title="Sub 12" short="12" rank=diamond
+    goal sub11 title="Sub 11" short="11" rank=diamond
+    goal sub10 title="Sub 10" short="10" rank=netherite
+    goal sub9 title="Sub 9" short="9" rank=netherite
+    goal sub8 title="Sub 8" short="8" rank=netherite
+    goal sub7 title="Sub 7" short="7" rank=netherite
+    goal sub6 title="Sub 6" short="6" rank=netherite
 }
 
-category end title="End" {
-    row zeroCycle title="Zero cycle" {
-        item practiceMap title="Practice map setup" goal=sub15
-        item nodeReading title="Node reading: front vs back, diagonal vs 1/8" goal=sub15
-        item towerIdentification title="Tower identification (s76 → t103)" goal=sub15
-        item standingHeights title="Block coordinates and standing heights" goal=sub15 {
-            requires towerIdentification
-        }
-        item towerPearl title="Jump pearl onto the tower" goal=sub15
-        item standardSetup title="Standard setup build" goal=sub15 {
-            requires towerPearl standingHeights
-        }
-        item bedTiming title="Bed timing on F m88 y95" goal=sub15 {
-            requires standardSetup nodeReading
-        }
-        item bedCorrection title="Correcting a late bed, skipping a rotation" goal=sub15 {
-            requires bedTiming
-        }
-        item frontLowTowers title="Front low towers at y90/95" goal=sub15 {
-            requires bedTiming
-        }
-        item backLowTowers title="Back low towers at y90" goal=sub15 {
-            requires bedTiming
-        }
-        item presortedHotbar title="Pre-crafted explosives, pre-sorted hotbar" goal=sub15
-        item portalRoomDeathReset title="Death reset in the portal room" goal=sub15
-        item goNoGo title="Go/no-go: fall back to one cycle" goal=sub15 {
-            requires frontLowTowers backLowTowers
-        }
+category setup title="Setup" theme=fundamentals {
+    item installRanked title="Install Ranked" goal=firstCompletion icon="item/knowledge_book" {
+        description "Prism Launcher with the MCSR Ranked mod."
+    }
+    item coreSettings title="Core Settings" goal=firstCompletion parent=installRanked icon="item/comparator" {
+        description "Brightness, GUI scale, FOV, subtitles on."
+    }
+    item standardSettings title="StandardSettings" goal=sub30 parent=coreSettings icon="item/repeater" {
+        description "Restores your settings on every world."
+    }
+    item pieChartPreset title="Pie Chart Preset" goal=sub30 parent=standardSettings icon="item/clock_00" {
+        description "Preset the pie chart directory in StandardSettings."
+    }
+    item basicKeybinds title="Basic Keybinds" goal=firstCompletion parent=installRanked icon="block/lever" {
+        description "Reachable hotbar slots and an offhand swap key."
+    }
+    item advancedKeybinds title="Advanced Keybinds" goal=sub30 parent=basicKeybinds icon="block/tripwire_hook" {
+        description "Side-button F3 and perspective, a render-distance key that doesn't crouch, toggle sprint."
+    }
+    item wideMacro title="Wide Macro" goal=sub20 parent=advancedKeybinds icon="item/painting" label="Wide" {
+        description "Wide resolution with planar fog for nether terrain, through Waywall, Toolscreen or Jingle."
+    }
+    item thinMacro title="Thin Macro" goal=sub15 parent=wideMacro icon="item/painting" label="Thin" {
+        description "Thin resolution for pinpointing pie-chart spikes."
+    }
+    item tallMacro title="Tall Macro" goal=sub15 parent=thinMacro icon="item/painting" label="Tall" {
+        description "Tall resolution with eye zoom for measuring eyes."
+    }
+    item macroRebinds title="Macro Rebinds" goal=sub13 parent=advancedKeybinds icon="item/redstone" {
+        description "Strafe while holding F3 and tune key repeat through the macro tool."
+    }
+    item ghostBucket title="Ghost Bucket Avoidance" goal=sub20 parent=basicKeybinds icon="item/water_bucket" {
+        description "Keep the mouse still while using a bucket so it doesn't desync."
+    }
+    item readF3 title="Read F3" goal=firstCompletion icon="item/compass_00" {
+        description "Coordinates, facing direction and block coordinates."
+    }
+    item debugKeys title="Debug Keys" goal=firstCompletion parent=readF3 icon="block/glass" {
+        description "F3+G chunk borders, F3+B hitboxes, F5 third person."
+    }
+    item runOverview title="The Run at a Glance" goal=firstCompletion icon="item/ender_eye" {
+        description "Overworld, nether, bastion, fortress, blind, stronghold, End."
+    }
+    item seedFilter title="Seed Filter Guarantees" goal=firstCompletion parent=runOverview icon="item/wheat_seeds" scope=ranked {
+        description "What every Ranked seed guarantees."
+    }
+    item miniPracticeKit title="MiniPracticeKit" goal=sub20 icon="item/book" {
+        description "Drill hotbar and inventory habits on MiniPracticeKit."
+    }
+    item practiceMap title="MCSR Practice Map" goal=sub20 parent=miniPracticeKit icon="item/map" {
+        description "Dibedy's all-in-one practice map."
+    }
+}
 
-        item allStandardY95 title="All non-offset front and back at y95, y99 on F m85/m88" goal=sub13 {
-            upgrades frontLowTowers
-            requires backLowTowers
-        }
-        item m91Standard title="m91: F y95/99, B y99" goal=sub13 {
-            requires allStandardY95
-        }
-        item anchors title="Respawn anchors as explosives" goal=sub13 {
-            requires bedTiming
-        }
-        item rotationDirection title="Clockwise vs counter-clockwise rotations" goal=sub13 {
-            requires nodeReading
-        }
-        item overhangSpawns title="Overhang spawns" goal=sub13 {
-            requires standardSetup
-        }
+category crafting title="Crafting" theme=fundamentals {
+    item recipeBook title="Recipe Book" goal=firstCompletion icon="block/crafting_table_front" {
+        description "Craft from the recipe book."
+    }
+    item toolProgression title="Tool Progression" goal=firstCompletion parent=recipeBook icon="item/stone_pickaxe" {
+        description "Wood, then stone, then iron tools."
+    }
+    item ironCountEasy title="Crafting by Iron Count" goal=firstCompletion parent=toolProgression icon="item/iron_ingot" label="7 iron" {
+        description "Seven iron: pickaxe, bucket, flint and steel."
+    }
+    item ironCountOptimal title="Crafting by Iron Count" goal=sub20 parent=ironCountEasy icon="item/iron_ingot" label="Every count" {
+        description "What to craft with 6, 8, 9, 10–12 and 13+ iron, and when diamonds or shears are worth it."
+    }
+    item eyesAndBeds title="Eyes and Beds" goal=firstCompletion parent=recipeBook icon="item/blaze_powder" {
+        description "Blaze powder and pearls into eyes, wool into beds."
+    }
+    item hotkeyCrafting title="Hotkey Crafting" goal=sub30 parent=recipeBook icon="item/stick" {
+        description "Drag-crafting, shift-clicking outputs, avoiding the button trap."
+    }
+    item tabCrafting title="Tab Crafting" goal=sub15 parent=hotkeyCrafting icon="item/paper" {
+        description "Jump between recipe-book sections with Tab."
+    }
+    item recipeBookSlot title="Extra Recipe Slot" goal=sub15 parent=tabCrafting icon="item/item_frame" {
+        description "The top-left recipe slot is one keypress away."
+    }
+    item searchCraftingEasy title="Search Crafting" goal=sub12 parent=tabCrafting icon="item/name_tag" label="English" {
+        description "Short English queries with Tab and Space."
+    }
+    item searchCraftingOptimal title="Search Crafting" goal=sub9 parent=searchCraftingEasy icon="item/name_tag" label="Short language" {
+        description "A game language with shorter prefixes, such as Danish or Norwegian."
+    }
+}
 
-        item m91BackOffset title="m91 B y95 offset" goal=sub12 {
-            requires m91Standard
-        }
-        item t94Y99 title="t94 F/B y99" goal=sub12 {
-            requires allStandardY95 anchors
-        }
-        item pearlClipNormal title="Pearl clip O56/O57" goal=sub12
-        item buriedLowHeights title="Low heights for buried spawns" goal=sub12 {
-            requires pearlClipNormal allStandardY95
-        }
+category inventory title="Inventory" theme=fundamentals {
+    item chestLooting title="Chest Looting" goal=firstCompletion icon="block/barrel_side" label="Basics" {
+        description "Shift-click items out of a chest."
+    }
+    item fastLootingEasy title="Fast Looting" goal=sub30 parent=chestLooting icon="block/barrel_side" label="Spam" {
+        description "Shift-click spam."
+    }
+    item fastLootingStandard title="Fast Looting" goal=sub20 parent=fastLootingEasy icon="block/barrel_side" label="Hotkey" {
+        description "Shift plus hotkey or offhand clicks."
+    }
+    item fastLootingOptimal title="Fast Looting" goal=sub11 parent=fastLootingStandard icon="block/barrel_side" label="3-input" {
+        description "Three-input, hotkeyless looting."
+    }
+    item consistentHotbarEasy title="Consistent Hotbar" goal=sub30 icon="item/chest_minecart" label="Fixed slots" {
+        description "The same slots for tools, blocks and food every run."
+    }
+    item consistentHotbarOptimal title="Consistent Hotbar" goal=sub12 parent=consistentHotbarEasy icon="item/chest_minecart" label="Whole run" {
+        description "One layout for the whole run, with End slots fixed for muscle memory."
+    }
+    item inventoryOnTheMove title="Inventory on the Move" goal=sub20 parent=consistentHotbarEasy icon="item/rotten_flesh" {
+        description "Throw junk and use the offhand as a buffer."
+    }
+    item miningSwap title="Mining Swap Gotcha" goal=sub30 icon="item/iron_pickaxe" {
+        description "Swapping items resets mining progress."
+    }
+}
 
-        item tripleStack title="Triple-stack build with misplace backups" goal=sub11 {
-            upgrades standardSetup
-        }
-        item tallBoySide title="Tall Boy side y90/94" goal=sub11 {
-            requires tripleStack rotationDirection
-        }
-        item t100Side title="t100 y90 side" goal=sub11 {
-            requires tallBoySide
-        }
-        item universalSide title="Universal side" goal=sub11 {
-            requires tallBoySide
-        }
-        item lowHealthZero title="Low-health zero: eating mid-zero" goal=sub11 {
-            requires bedTiming
-        }
-        item pearlClipShift title="Pearl clip, shift-clip version" goal=sub11 {
-            upgrades pearlClipNormal
-        }
+category movement title="Movement" theme=fundamentals {
+    item basicMovement title="Sprint, Pillar, Bridge" goal=firstCompletion icon="block/cobblestone" label="Basics" {
+        description "Sprint jumping, pillaring and basic bridging."
+    }
+    item speedBridging title="Speed Bridging" goal=sub30 parent=basicMovement icon="block/cobblestone" label="Sneak" {
+        description "Sneak bridging."
+    }
+    item sprintBridging title="Sprint-Bridging" goal=sub10 parent=speedBridging icon="block/cobblestone" label="Sprint" {
+        description "Bridge while sprinting."
+    }
+    item pillarDropping title="Pillar While Dropping" goal=sub20 parent=basicMovement icon="block/dirt" {
+        description "Pillar up while dropping items."
+    }
+    item speedStaircasing title="Speed Staircasing" goal=sub15 parent=basicMovement icon="block/obsidian" {
+        description "Build a staircase upward without stopping; the first step of every zero-cycle setup."
+    }
+    item swimming title="Swimming and Air Pockets" goal=firstCompletion icon="item/kelp" {
+        description "Breathe from door and bed air pockets."
+    }
+    item boatTravel title="Boat Travel" goal=sub30 parent=swimming icon="item/oak_boat" label="Travel" {
+        description "Cross water by boat."
+    }
+    item boatCrawl title="Boat Crawl" goal=sub13 parent=boatTravel icon="item/oak_boat" label="Crawl" {
+        description "Crawl through tight spaces in a boat."
+    }
+    item sprintCrawlBoat title="Sprint-Crawl Boat" goal=sub10 parent=boatCrawl icon="item/oak_boat" label="Sprint-crawl" {
+        description "Sprint into the crawl for a faster boat crawl."
+    }
+    item pearlBasics title="Ender Pearl Basics" goal=firstCompletion icon="item/ender_pearl" label="Basics" {
+        description "Throwing ender pearls."
+    }
+    item pearlTravel title="Pearl Travel Angles" goal=sub20 parent=pearlBasics icon="item/ender_pearl" label="Angles" {
+        description "Sprint-jump throws for distance."
+    }
+    item pearlHang title="Pearl Hang" goal=sub12 parent=pearlBasics icon="item/ender_pearl" label="Hang" {
+        description "Render distance 2 freezes a pearl in the air."
+    }
+    item pearlCrawl title="Pearl Crawl" goal=sub11 parent=pearlHang icon="item/ender_pearl" label="Crawl" {
+        description "Pearl into a crawl space."
+    }
+    item waterMlg title="Water Bucket MLG" goal=firstCompletion icon="item/water_bucket" {
+        description "Place water just before landing."
+    }
+    item pearlClutch title="Pearl Clutch" goal=sub30 parent=waterMlg icon="item/ender_pearl" label="Clutch" {
+        description "Pearl down instead of taking the fall."
+    }
+    item blockClutch title="Block Clutch" goal=sub20 parent=pearlClutch icon="block/stone" {
+        description "Pearl onto a wall and place a block on landing."
+    }
+    item boatClutchEasy title="Boat Clutch" goal=sub15 parent=waterMlg icon="item/oak_boat" label="Butterfly" {
+        description "Place a boat under you with butterfly clicking."
+    }
+    item boatClutchOptimal title="Boat Clutch" goal=sub12 parent=boatClutchEasy icon="item/oak_boat" label="Drag click" {
+        description "Place the boat with drag clicking."
+    }
+    item knockbackCancel title="Knockback Cancel" goal=sub13 icon="item/flint_and_steel" {
+        description "Set yourself on fire just before a hit."
+    }
+}
 
-        item bowPlusOne title="Bow +1 on F m88 y95" goal=sub10 {
-            requires bedTiming
-        }
-        item threePlusTwo title="3+2 on standard y90/95/99" goal=sub10 {
-            requires bowPlusOne allStandardY95
-        }
-        item bedAnchorDoubles title="Bed + anchor doubles" goal=sub10 {
-            requires anchors
-        }
-        item t97Setups title="t97 B y100, t97 F offset y99" goal=sub10 {
-            requires t94Y99 m91BackOffset
-        }
-        item eighthLow title="1/8 front and back at y88/92" goal=sub10 {
-            requires allStandardY95
-        }
-        item buriedHighClips title="Buried O58+ clips" goal=sub10 {
-            upgrades pearlClipShift
-        }
-        item lenience title="Lenience per spawn" goal=sub10 {
-            requires goNoGo
-        }
+category overworld title="Overworld" theme=overworld {
+    item punchTrees title="Punch Trees" goal=firstCompletion icon="block/oak_log" {
+        description "Gather 10+ logs."
+    }
+    item tntTrees title="TNT for Trees" goal=sub20 parent=punchTrees icon="block/tnt_side" label="Trees" {
+        description "Blow up trees with TNT for fast logs."
+    }
+    item lightPortal title="Light a Portal" goal=firstCompletion icon="item/flint_and_steel" {
+        description "Light the frame with flint and steel."
+    }
+    item lavaPool2Deep title="Lava Pool Portal" goal=firstCompletion parent=lightPortal icon="item/lava_bucket" label="2-deep" {
+        description "Finish the frame, then remove the water."
+    }
+    item lavaPool1Deep title="Lava Pool Portal" goal=sub30 parent=lavaPool2Deep icon="item/lava_bucket" label="1-deep" {
+        description "Build the portal on a pool only one block deep."
+    }
+    item lavaPoolDrain title="Drain While Building" goal=sub20 parent=lavaPool2Deep icon="item/lava_bucket" label="Drain" {
+        description "Remove the water while placing the frame instead of after."
+    }
+    item magmaSmallL title="Magma Portal" goal=sub30 parent=lavaPool2Deep icon="block/magma" label="Small L" {
+        description "A 2-deep small-L portal on a magma ravine."
+    }
+    item magma2x1 title="Magma Portal" goal=sub20 parent=magmaSmallL icon="block/magma" label="2×1" {
+        description "The 2-deep 2×1 shape: fewer buckets, faster frame."
+    }
+    item magmaL1Deep title="Magma Portal" goal=sub20 parent=magmaSmallL icon="block/magma" label="L 1-deep" {
+        description "The L shape on a 1-deep ravine."
+    }
+    item magma2x1OneDeep title="Magma Portal" goal=sub12 parent=magma2x1 icon="block/magma" label="2×1 1-deep" {
+        description "The 2×1 shape on a 1-deep ravine."
+    }
+    item lebronPortal title="LeBron Portal" goal=sub10 parent=magma2x1OneDeep icon="block/magma" label="LeBron" {
+        description "A 2×1 with lava placed before the block and no door."
+    }
+    item obsidianOnly title="Obsidian-Only Portal" goal=sub30 parent=lightPortal icon="block/obsidian" label="10 obsidian" {
+        description "Build the portal from 10 obsidian, no lava needed."
+    }
+    item obsidianOnlyOptimal title="Obsidian-Only Portal" goal=sub13 parent=obsidianOnly icon="block/obsidian" label="Speed pillar" {
+        description "A 4-tall speed pillar for the obsidian portal."
+    }
+    item caveLava title="Cave Lava" goal=sub30 parent=lightPortal icon="item/lava_bucket" label="Cave" {
+        description "Find lava underground by sound and dig down to it."
+    }
+    item enterWithLava title="Enter with a Lava Bucket" goal=sub30 parent=lightPortal icon="item/lava_bucket" label="Enter" {
+        description "Carry lava into the nether and eat during the portal animation."
+    }
+    item woodlightEasy title="Woodlight Portal" goal=sub15 parent=lightPortal icon="item/bowl" label="Bowl" {
+        description "Light the portal with burning wood, bowl setup."
+    }
+    item woodlightOptimal title="Woodlight Portal" goal=sub11 parent=woodlightEasy icon="item/bowl" label="Modern" {
+        description "Modern woodlight designs."
+    }
+    item flintKills title="Flint Kills" goal=firstCompletion icon="item/beef" {
+        description "Kill animals with flint and steel and an axe."
+    }
+    item oneHitKills title="One-Hit Kills" goal=sub20 parent=flintKills icon="item/golden_axe" {
+        description "One axe hit and one fire tick; cow-in-hole."
+    }
+    item lavaBucketKill title="Lava Bucket Kill" goal=sub20 parent=flintKills icon="item/lava_bucket" label="Kill" {
+        description "Kill animals with the lava bucket without milking it."
+    }
+    item foodBasics title="Food Basics" goal=firstCompletion icon="item/rotten_flesh" {
+        description "Rotten flesh in the overworld, good food for the nether."
+    }
+    item spawnScouting title="F5 Scouting" goal=firstCompletion icon="item/map" {
+        description "Look around in third person at spawn for lava, trees, animals and gravel."
+    }
+    item magmaRavinesEasy title="Magma Ravines" goal=sub30 parent=spawnScouting icon="item/kelp" label="Kelp" scope=ranked {
+        description "Spot magma ravines by floating kelp."
+    }
+    item magmaRavinesOptimal title="Magma Ravines" goal=sub15 parent=magmaRavinesEasy icon="item/kelp" label="Hitboxes" {
+        description "Hitboxes and F5 under the water surface."
+    }
+    item oceanGravel title="Ocean Gravel" goal=sub30 parent=spawnScouting icon="block/gravel" {
+        description "Gravel from the ocean floor for flint."
+    }
+    item underwaterTnt title="Underwater TNT" goal=sub15 parent=oceanGravel icon="block/tnt_side" label="Underwater" {
+        description "TNT underwater for gravel and sand."
+    }
+}
 
-        item eighthHigh title="1/8 at y97, 1/8 3+2" goal=sub9 {
-            upgrades eighthLow
-            requires threePlusTwo
-        }
-        item bowOffsetSide title="Bow on offset and side setups" goal=sub9 {
-            requires bowPlusOne universalSide m91BackOffset
-        }
-        item t97BackY99 title="t97 B y99, t100 F y104" goal=sub9 {
-            requires t97Setups
-        }
-        item zeroWithoutSetup title="Zero without setup: sorting between pearls" goal=sub9 {
-            upgrades presortedHotbar
-        }
+category village title="Village" theme=overworld {
+    item blacksmith title="Blacksmith Loot" goal=firstCompletion icon="item/iron_ingot" scope=ranked {
+        description "Recognize and loot the blacksmith."
+    }
+    item villageChecklist title="Village Checklist" goal=sub30 parent=blacksmith icon="block/hay_block_side" {
+        description "10+ logs, 2 beds and about 7 hay bales."
+    }
+    item blacksmithObsidian title="Blacksmith Obsidian" goal=sub30 parent=blacksmith icon="block/obsidian" scope=ranked {
+        description "Enter with the blacksmith's obsidian or go to the guaranteed lava pools."
+    }
+    item lootWithoutEntering title="Loot Without Entering" goal=sub15 parent=blacksmith icon="block/glass" {
+        description "Mine logs or a window next to the chest."
+    }
+    item houseLayouts title="House Layouts" goal=sub12 parent=lootWithoutEntering icon="item/filled_map" {
+        description "Memorize every house layout."
+    }
+    item golemEasy title="Iron Golem" goal=firstCompletion icon="block/carved_pumpkin" label="Tower" scope=ranked {
+        description "Tower 3 blocks and crit; always 4 iron."
+    }
+    item golemOptimal title="Iron Golem" goal=sub20 parent=golemEasy icon="block/carved_pumpkin" label="Crits" {
+        description "Axe crit every other jump, sword crit every jump."
+    }
+    item hayAndBeds title="Hay and Beds" goal=firstCompletion icon="item/bread" {
+        description "Hay bales into bread, beds from houses."
+    }
+    item desertVillages title="Desert Villages" goal=sub30 parent=hayAndBeds icon="block/dead_bush" {
+        description "Sticks from dead bushes, wood from the nether."
+    }
+    item snowyTaigaVillages title="Snowy and Taiga Villages" goal=sub20 parent=hayAndBeds icon="block/spruce_log" scope=ranked {
+        description "Unlocked at 900 Elo; taiga villages always have 10+ obsidian."
+    }
+}
 
-        item doubleShot title="Double shot, 2+2 at y95 and y99" goal=sub8 {
-            upgrades threePlusTwo
-        }
-        item t100Y100 title="t100 y100 F/B" goal=sub8 {
-            requires t100Side bowPlusOne
-        }
-        item savingFailingZero title="Saving a failing zero" goal=sub8 {
-            requires bedCorrection
-        }
-        item crossbowPreload title="Crossbow pre-loaded +1" goal=sub8 {
-            requires bowPlusOne
-        }
+category desertTemple title="Desert Temple" theme=desert {
+    item templeBasement title="Temple Basement" goal=firstCompletion icon="block/chiseled_sandstone" {
+        description "Enter the basement without triggering the trap."
+    }
+    item templeTnt title="TNT Detonation" goal=sub30 parent=templeBasement icon="block/tnt_side" label="Overhead" {
+        description "TNT above your head, hide, collect cobble and the leftover TNT."
+    }
+    item templePlate title="Pressure Plate Blast" goal=sub20 parent=templeTnt icon="block/tnt_side" label="Plate" {
+        description "A pressure plate on the floor gives a lower blast."
+    }
+    item templeLavaRoute title="Lava Pool Route" goal=sub30 parent=templeBasement icon="item/lava_bucket" scope=ranked {
+        description "Head to the guaranteed lava pools and river."
+    }
+    item sandFall title="Sand Fall Break" goal=sub20 parent=templeBasement icon="block/sand" {
+        description "Place sand on the wall mid-fall to split the fall damage."
+    }
+    item templeSneak title="Sneak Alignment" goal=sub12 parent=templeBasement icon="item/golden_pickaxe" {
+        description "Sneak-align to dig the center block first try."
+    }
+}
 
-        item multiblockAdjusted title="Multiblock-adjusted variants" goal=sub7 {
-            requires lenience rotationDirection
-        }
-        item nodeAlignedMultiblock title="Node-aligned multiblock set" goal=sub7 {
-            requires multiblockAdjusted
-        }
-        item tallBoyFrontY104 title="Tall Boy F y104, t100 B y104" goal=sub7 {
-            requires tallBoySide t97BackY99
-        }
-        item arrowRotationFlip title="Arrow-induced rotation flip" goal=sub7 {
-            requires bowPlusOne rotationDirection
-        }
-        item eighthTwoPlusTwo title="1/8 2+2" goal=sub7 {
-            upgrades eighthHigh
-            requires doubleShot
-        }
+category shipwreck title="Shipwreck" theme=ocean {
+    item wreckLoot title="Shipwreck Loot" goal=firstCompletion icon="item/iron_ingot" {
+        description "Iron from the stern, food from the bow, wood from shore."
+    }
+    item wreckEntry title="Entry Holes" goal=sub30 parent=wreckLoot icon="item/wooden_axe" {
+        description "Where to break in on sideways and upside-down wrecks."
+    }
+    item wreckBubble title="Air Bubble" goal=sub20 parent=wreckEntry icon="block/oak_planks" {
+        description "Wood from the ship and a pressure-plate air bubble."
+    }
+    item oceanTravel title="Ocean Travel" goal=sub30 parent=wreckLoot icon="item/oak_boat" {
+        description "Boat and doors for crossing the ocean."
+    }
+    item magmaRoute title="Magma Ravine Route" goal=sub20 parent=wreckLoot icon="block/magma" scope=ranked {
+        description "Head to the guaranteed magma ravines."
+    }
+    item islandShears title="Island Shears" goal=sub15 parent=wreckLoot icon="item/shears" {
+        description "Shear leaves and take logs on the island for a boat, doors and beds."
+    }
+    item spawnPieScan title="Pie-Chart Scan at Spawn" goal=sub15 icon="item/compass_00" {
+        description "Find the wreck's direction from spawn; runners report Ranked wrecks are always toward +X/+Z."
+    }
+}
 
-        item twoPlusTwoY104 title="2+2 at y104" goal=sub6 {
-            upgrades doubleShot
-            requires tallBoyFrontY104
-        }
-        item exoticExplosives title="More than two explosives per rotation" goal=sub6 {
-            requires doubleShot
-        }
-        item buriedHighSetups title="Buried O59+ with high setups" goal=sub6 {
-            requires buriedHighClips tallBoyFrontY104
-        }
-        item perSeedChoice title="Per-seed choice of End strategy" goal=sub6 {
-            requires lenience
-        }
+category ruinedPortal title="Ruined Portal" theme=overworld {
+    item ruinedPortalLoot title="Ruined Portal Loot" goal=sub30 icon="item/golden_helmet" {
+        description "Loot the chest, take the gold armor and axe, break the chest."
+    }
+    item ruinedPortalEnter title="Obsidian or Bucket" goal=sub30 parent=ruinedPortalLoot icon="block/crying_obsidian" scope=ranked {
+        description "Enter with the portal's obsidian or with a bucket, about 80/20."
+    }
+    item basicCompletions title="Basic Completions" goal=sub30 parent=ruinedPortalEnter icon="block/obsidian" label="Basic" {
+        description "C-Dot and Half Portal."
+    }
+    item allCompletions title="All Completions" goal=sub20 parent=basicCompletions icon="block/obsidian" label="All" {
+        description "Hanging, Small U, Big U, Big Portal 1/2 and Big Bertha."
+    }
+    item fireAspectKills title="Fire Aspect Kills" goal=sub20 parent=ruinedPortalLoot icon="item/golden_sword" scope=ranked {
+        description "Kill animals with flint and steel or a Fire Aspect sword."
+    }
+    item lootValueCalls title="Loot Value Calls" goal=sub20 parent=ruinedPortalLoot icon="item/golden_apple" {
+        description "Enchanted golden apple, golden carrots, gold blocks with an iron pickaxe."
+    }
+    item lowIron title="Low Iron" goal=sub15 parent=ruinedPortalLoot icon="item/gold_nugget" scope=ranked {
+        description "Not enough iron for a pickaxe: nuggets and gold tools."
+    }
+}
+
+category buriedTreasure title="Buried Treasure" theme=ocean {
+    item maplessEasy title="Mapless Buried Treasure" goal=sub15 icon="item/heart_of_the_sea" label="4 directions" {
+        description "Scan four directions on the pie chart, dig at chunk 9,9."
+    }
+    item spikeValue title="Spike Value" goal=sub15 parent=maplessEasy icon="item/compass_00" {
+        description "Learn your machine's pie-chart spike value."
+    }
+    item treasureLooting title="Treasure Looting" goal=sub15 parent=maplessEasy icon="item/diamond" {
+        description "Loot fast with a pressure-plate air pocket."
+    }
+    item maplessOptimal title="Mapless Buried Treasure" goal=sub12 parent=maplessEasy icon="item/heart_of_the_sea" label="Thin" {
+        description "Thin resolution, reading the spike across a chunk border."
+    }
+    item treasureTnt title="TNT for Trees" goal=sub12 parent=treasureLooting icon="block/tnt_side" {
+        description "Use the treasure's TNT for wood instead of shears."
+    }
+}
+
+category nether title="Nether" theme=nether {
+    item piglinRules title="Piglin Rules" goal=firstCompletion icon="item/golden_helmet" {
+        description "Gold armor and what makes piglins aggro."
+    }
+    item lavaSafety title="Lava Safety" goal=firstCompletion icon="item/magma_cream" {
+        description "Avoid lava and use fire resistance."
+    }
+    item findBastion title="Find a Bastion" goal=firstCompletion icon="block/polished_blackstone_bricks" {
+        description "Spot a bastion by sight."
+    }
+    item eRay title="E-Ray" goal=sub30 parent=findBastion icon="block/gilded_blackstone" {
+        description "Spin watching the E entity counter, run to the largest spike."
+    }
+    item eRayCorrection title="E-Ray Correction" goal=sub20 parent=eRay icon="block/gilded_blackstone" label="Rescan" {
+        description "Rescan on the way and correct from the screen edge."
+    }
+    item bastionCheck title="Bastion Check" goal=sub30 parent=eRay icon="block/blackstone" {
+        description "M plus C versus E confirms whether a bastion exists."
+    }
+    item findFortress title="Find a Fortress" goal=firstCompletion icon="block/nether_bricks" {
+        description "Spot a fortress by sight."
+    }
+    item preNetherSettings title="Pre-Nether Settings" goal=sub30 icon="item/comparator" {
+        description "Render distance 16–20, entity distance 500%, entity culling off."
+    }
+    item terrainReading title="Terrain Reading" goal=sub30 icon="block/netherrack" {
+        description "Read nether biomes and terrain."
+    }
+    item wideScouting title="Wide Macro Scouting" goal=sub20 parent=terrainReading icon="item/painting" {
+        description "Scout with the wide macro and planar fog."
+    }
+    item netherBoat title="Nether Boat" goal=sub20 parent=terrainReading icon="item/oak_boat" {
+        description "Boat across lava lakes and down big drops."
+    }
+    item netherHungerReset title="Hunger Reset" goal=sub13 icon="block/respawn_anchor_side0" {
+        description "Reset hunger with a respawn anchor."
+    }
+    item respawnInvulnerability title="Respawn Invulnerability" goal=sub10 parent=netherHungerReset icon="item/ender_pearl" {
+        description "Overlap the ~3 s respawn immunity with pearl travel."
+    }
+}
+
+category bastion title="Bastion" theme=bastion {
+    item bastionTypes title="Bastion Types" goal=firstCompletion icon="block/polished_blackstone_bricks" {
+        description "Tell housing, bridge, treasure and stables apart."
+    }
+    item goldTrading title="Gold Trading" goal=firstCompletion icon="item/gold_ingot" {
+        description "Throw gold, collect the trades."
+    }
+    item exitLoot title="Exit Loot" goal=firstCompletion parent=goldTrading icon="item/string" {
+        description "Leave with pearls, obsidian, string and fire resistance."
+    }
+    item targetInventory title="Target Inventory" goal=sub20 parent=exitLoot icon="item/ender_pearl" {
+        description "12–16+ pearls, 20 obsidian, 48–60 string, soul sand and gravel."
+    }
+    item gravelTrades title="Gravel Trades" goal=sub20 parent=targetInventory icon="block/gravel" {
+        description "Collect the gravel trades."
+    }
+    item tradingHole title="Trading Hole" goal=sub30 parent=goldTrading icon="item/golden_shovel" {
+        description "Trade from a hole so piglins can't wander off."
+    }
+    item autoFunnel title="Auto-Funnel Hole" goal=sub15 parent=tradingHole icon="item/hopper" {
+        description "A hole that funnels the trades to you."
+    }
+    item pigPunch title="Pig-Punch Rule" goal=sub30 parent=goldTrading icon="item/porkchop" {
+        description "Always punch a piglin so it fully aggros instead of stalling at partial aggro."
+    }
+    item hardToggle title="Hard Toggle" goal=sub20 parent=pigPunch icon="item/golden_helmet" {
+        description "Switch to Hard so piglins drop from greater heights to chase you."
+    }
+    item buttonTnt title="Button-Lit TNT" goal=sub30 icon="block/tnt_side" {
+        description "Light TNT with a button; flint and steel aggros piglins."
+    }
+    item bastionPracticeMap title="Bastion Practice Map" goal=sub30 icon="item/map" {
+        description "LlamaPag's bastion practice map."
+    }
+    item blockElevator title="Block Elevator" goal=sub20 icon="block/gold_block" {
+        description "Mine gold with a block in the offhand and place beneath you; drops ride up."
+    }
+    item hoglinFood title="Hoglin Food" goal=sub20 icon="item/cooked_porkchop" {
+        description "Cook hoglins with lava for food."
+    }
+    item goldPickaxe title="Gold Pickaxe" goal=sub15 icon="item/golden_pickaxe" {
+        description "Mine netherrack and blackstone faster with gold."
+    }
+    item noIronEntry title="No-Iron Entry" goal=sub15 parent=goldPickaxe icon="block/blackstone" {
+        description "Get into the bastion without an iron pickaxe."
+    }
+}
+
+category housing title="Housing" theme=bastion {
+    item topDownEasy title="Top-Down" goal=firstCompletion icon="block/gold_block" label="Easy" {
+        description "Loot the triple from the top, then the double, then the single, and trade in the gold room."
+    }
+    item halfDown title="Half-Down" goal=sub30 parent=topDownEasy icon="block/basalt_side" {
+        description "The half-down housing route."
+    }
+    item topDownOptimal title="Top-Down" goal=sub20 parent=topDownEasy icon="block/gold_block" label="Optimal" {
+        description "Adds the three backup gold blocks with a block elevator."
+    }
+    item crossbowTopDown title="Crossbow Top-Down" goal=sub8 parent=topDownOptimal icon="item/crossbow_standby" {
+        description "Top-down with a crossbow for 24 piglins."
+    }
+    item tntHousing title="TNT Housing" goal=sub10 parent=topDownOptimal icon="block/tnt_side" {
+        description "Housing with TNT."
+    }
+    item manhuntEasy title="Manhunt" goal=sub20 parent=topDownEasy icon="item/lead" label="RSG" {
+        description "Enter from the bottom, break the center chest, block pathing, dig an instant trading hole."
+    }
+    item manhuntOptimal title="Manhunt" goal=sub15 parent=manhuntEasy icon="item/lead" label="Ranked" scope=ranked {
+        description "The Ranked variation: upper backups and a hard toggle for 20–23 piglins."
+    }
+    item wetManhunt title="Wet Manhunt" goal=sub13 parent=manhuntOptimal icon="item/water_bucket" {
+        description "Manhunt across a lava floor with a gold-item distraction."
+    }
+    item lavaManhunt title="Lava Manhunt" goal=sub12 parent=wetManhunt icon="item/lava_bucket" {
+        description "Manhunt and top-down variants for lava-flooded housing."
+    }
+    item manhuntHoles title="Manhunt Hole Variants" goal=sub12 parent=manhuntOptimal icon="item/golden_shovel" {
+        description "Twice-elevated hole variants."
+    }
+    item goose title="Goose" goal=sub11 parent=manhuntOptimal icon="item/feather" {
+        description "Reek's manhunt variant, optimized by doogile; needs 3 blackstone."
+    }
+    item quickhunt title="Quickhunt" goal=sub11 parent=manhuntOptimal icon="item/rabbit_foot" {
+        description "Manhunt with the quicksand route and the crossroads hole; needs 2 blackstone."
+    }
+    item pearlToTriple title="Pearl to the Triple" goal=sub15 parent=topDownEasy icon="item/ender_pearl" label="Triple" {
+        description "Pearl up to the triple from the back and land on a door."
+    }
+    item housingExitClip title="Exit Pearl Clip" goal=sub10 parent=pearlToTriple icon="item/ender_pearl" label="Exit clip" {
+        description "Pearl clip out of housing."
+    }
+}
+
+category bridge title="Bridge" theme=bastion {
+    item cracksmoker title="Cracksmoker" goal=firstCompletion icon="block/cracked_polished_blackstone_bricks" {
+        description "Right triple only, both or none: block hoglins, break gold, throw, dig the hole."
+    }
+    item donkeyKongEasy title="Donkey Kong" goal=sub30 parent=cracksmoker icon="block/ladder" label="Easy" {
+        description "Left triple only: mine the chalice, staircase up, aggro, trade from the triple's floor hole."
+    }
+    item donkeyKongOptimal title="Donkey Kong" goal=sub15 parent=donkeyKongEasy icon="block/ladder" label="Optimal" {
+        description "The advanced Donkey Kong."
+    }
+    item estrogen title="Estrogen" goal=sub12 parent=donkeyKongOptimal icon="block/crimson_fungus" {
+        description "Left side with three pre-crafted stairs from the chalice; a Hamazon variant."
+    }
+    item singleSingle title="Single Single" goal=sub20 parent=cracksmoker icon="item/golden_shovel" {
+        description "Both ramparts single, with the Mogul hole; about 14 piglins."
+    }
+    item lowerSideEntry title="Lower-Side Entry" goal=sub20 parent=cracksmoker icon="item/iron_pickaxe" {
+        description "Enter from the lower side."
+    }
+    item walterExtension title="Walter Extension" goal=sub8 parent=lowerSideEntry icon="item/stick" {
+        description "Lower-back extension for 2–4 more piglins."
+    }
+    item rampartDetection title="Rampart Detection" goal=sub20 parent=cracksmoker icon="block/gilded_blackstone" {
+        description "E-ray left versus right and an F5 check."
+    }
+    item daisy title="Daisy" goal=sub15 parent=rampartDetection icon="block/oxeye_daisy" {
+        description "Safe chalice-to-chalice route for an open right triple."
+    }
+    item soog title="Soog" goal=sub13 parent=rampartDetection icon="item/sugar" {
+        description "Advanced right side from on top of the triple with an auto funnel; also safe soog."
+    }
+    item tntChalice title="TNT Chalice" goal=sub13 parent=cracksmoker icon="block/tnt_side" {
+        description "TNT on the chalice, fuse overlapped with crafting, fire knockback cancel."
+    }
+    item lodesteal title="Lodesteal" goal=sub10 parent=tntChalice icon="block/lodestone_side" {
+        description "Left triple to chalice."
+    }
+    item bankHeist title="Bank Heist" goal=sub10 parent=tntChalice icon="block/gold_block" {
+        description "Right triple to chalice."
+    }
+    item subway title="Subway" goal=sub10 parent=tntChalice icon="block/rail" {
+        description "Right triple to chalice: hide behind the pillar while the lava drains."
+    }
+    item boatlice title="Boatlice TTC Hole" goal=sub9 parent=tntChalice icon="item/oak_boat" {
+        description "Triple-to-chalice hole, standard and TNT, open and buried."
+    }
+}
+
+category treasure title="Treasure" theme=bastion {
+    item safeBoomer title="Safe Boomer" goal=firstCompletion icon="block/magma" {
+        description "The safe default treasure route."
+    }
+    item chestPriorities title="Chest Priorities" goal=sub30 parent=safeBoomer icon="block/barrel_side" {
+        description "Take the wall chest by the moat first."
+    }
+    item lavaRampart title="Lava-Filled Rampart" goal=sub30 parent=safeBoomer icon="item/lava_bucket" {
+        description "Use the other tower for the hole."
+    }
+    item backEntry title="Back Entry" goal=sub20 parent=safeBoomer icon="item/iron_pickaxe" {
+        description "Mine through the back wall and follow the hallway to the staircase."
+    }
+    item spawnerPearlHang title="Spawner Pearl Hang" goal=sub15 parent=safeBoomer icon="item/ender_pearl" {
+        description "Pearl hang and break the magma cube spawner so pie-ray works again."
+    }
+    item glowdar title="Glowdar" goal=sub8 parent=spawnerPearlHang icon="block/glowstone" {
+        description "Pie-ray from inside treasure without breaking the spawner."
+    }
+    item bottomTreasure title="Bottom Treasure" goal=sub15 parent=safeBoomer icon="item/magma_cream" {
+        description "Extra gold or spawner access; knock distracted piglins into lava."
+    }
+    item boomer title="Boomer" goal=sub12 parent=safeBoomer icon="item/fire_charge" {
+        description "The optimal Boomer route."
+    }
+    item tntTreasure title="TNT Treasure" goal=sub12 parent=boomer icon="block/tnt_side" {
+        description "TNT on a soft block in the second tower's gold wall; saves 5–8 s."
+    }
+}
+
+category stables title="Stables" theme=bastion {
+    item goodGap title="Good Gap" goal=firstCompletion icon="block/polished_basalt_side" scope=ranked {
+        description "Check the gaps from the center staircase; Ranked guarantees at least one good gap."
+    }
+    item classicGap title="Classic Gap Blocks" goal=sub30 parent=goodGap icon="block/basalt_side" {
+        description "The safe gap blocks."
+    }
+    item badGapChest title="Bad-Gap Chest" goal=sub30 parent=goodGap icon="block/barrel_side" {
+        description "Reach the chest through the middle-staircase hallway."
+    }
+    item tripleToGapEasy title="Triple to Gap" goal=sub20 parent=goodGap icon="item/gold_ingot" label="Middle" {
+        description "Middle TTG and the safe Suigi variant."
+    }
+    item tripleToGapOptimal title="Triple to Gap" goal=sub15 parent=tripleToGapEasy icon="item/gold_ingot" label="Side" {
+        description "Side, exposed and buried variants for 16–18+ piglins."
+    }
+    item doubleTriple title="Double Triple" goal=sub12 parent=tripleToGapOptimal icon="block/gold_block" label="Double" {
+        description "Double triple with its split and divorced variants."
+    }
+    item tripleTriple title="Triple Triple" goal=sub10 parent=doubleTriple icon="block/gold_block" label="Triple" {
+        description "Loot all three triples."
+    }
+    item hourglass title="Hourglass" goal=sub10 parent=doubleTriple icon="item/clock_00" {
+        description "Left triple, left bad gap, then right good gap."
+    }
+    item eski title="Eski" goal=sub9 parent=doubleTriple icon="block/gold_block" label="Eski" {
+        description "Right-side double triple."
+    }
+    item dtgb title="DTGB" goal=sub8 parent=doubleTriple icon="block/tnt_side" label="DTGB" {
+        description "TNT double triple on the left side."
+    }
+    item crispyEasy title="Crispy Hole" goal=sub13 parent=goodGap icon="item/golden_shovel" label="Easy" {
+        description "Variation 2 of the Crispy hole."
+    }
+    item crispyTnt title="CrispyTNT" goal=sub10 parent=crispyEasy icon="block/tnt_side" label="CrispyTNT" {
+        description "The Crispy hole with TNT."
+    }
+    item lGap title="L-Gap" goal=sub10 parent=crispyEasy icon="block/polished_blackstone" {
+        description "Backup route for a botched hole."
+    }
+    item crispyHard title="Crispy Hole" goal=sub7 parent=crispyEasy icon="item/golden_shovel" label="Hard" {
+        description "Variation 1, about 0.75 s faster."
+    }
+    item rampartTypes title="Rampart Types" goal=firstCompletion icon="block/blackstone" {
+        description "Identify triple, single, lantern and diagonal ramparts."
+    }
+}
+
+category fortress title="Fortress" theme=fortress {
+    item goodSide title="Good Side vs Bad Side" goal=firstCompletion icon="block/nether_bricks" {
+        description "Which side of the fortress to approach from."
+    }
+    item hallwayNavigation title="Hallway Navigation" goal=sub30 parent=goodSide icon="item/nether_brick" {
+        description "Hallway rules for finding the spawner."
+    }
+    item pieRayEasy title="Pie-Ray" goal=sub30 parent=goodSide icon="item/compass_00" label="4 borders" {
+        description "Check all four chunk borders on the pie chart."
+    }
+    item pieRayOptimal title="Pie-Ray" goal=sub20 parent=pieRayEasy icon="item/compass_00" label="2 crossings" {
+        description "Two crossings for four directions."
+    }
+    item pieRayTrades title="Pie-Ray During Trades" goal=sub13 parent=pieRayOptimal icon="item/compass_00" label="Trades" {
+        description "Overlap the pie-ray with bastion trades."
+    }
+    item negativePieRay title="Negative Pie-Ray" goal=sub12 parent=pieRayOptimal icon="item/compass_00" label="Negative" {
+        description "Rule out directions instead of finding the spawner."
+    }
+    item hyperNegativePieRay title="Hyper Enhanced Negative Pie-Ray" goal=sub10 parent=negativePieRay icon="item/compass_00" label="Hyper" {
+        description "The enhanced negative pie-ray, with a simulator map to practice."
+    }
+    item structureRegions title="Structure Regions" goal=sub15 parent=goodSide icon="item/filled_map" scope=ranked {
+        description "The fortress is within 16 chunks of the bastion."
+    }
+    item fortressPearlHang title="Pearl Hang to the Fortress" goal=sub12 parent=structureRegions icon="item/ender_pearl" {
+        description "Pearl hang toward the fortress."
+    }
+    item blazeKills title="Blaze Kills" goal=firstCompletion icon="item/blaze_rod" label="6–7 rods" {
+        description "Kill blazes and collect 6–7 rods."
+    }
+    item blazeKillsOptimal title="Blaze Kills" goal=sub20 parent=blazeKills icon="item/blaze_rod" label="Crits" {
+        description "Axe crit then sword crit, and a boat catch."
+    }
+    item spawnerClearing title="Spawner Clearing" goal=sub30 parent=blazeKills icon="block/spawner" label="Clear" {
+        description "Open up the spawn space and put out fire."
+    }
+    item tntSpawner title="TNT Spawner Setups" goal=sub15 parent=spawnerClearing icon="block/tnt_side" label="1–3 TNT" {
+        description "Clear the spawner area with 1, 2 or 3 TNT."
+    }
+    item tntDonut title="4-TNT Donut" goal=sub10 parent=tntSpawner icon="block/tnt_side" label="4 TNT" {
+        description "The 4-TNT donut, and handling looting-sword drops."
+    }
+    item spawnerSplit title="Spawner Split" goal=sub10 parent=spawnerClearing icon="block/spawner" label="Split" {
+        description "When to split between spawners, about 7 s per blaze."
+    }
+    item soulSandPlatform title="Soul Sand Platform" goal=sub30 parent=blazeKills icon="block/soul_sand" {
+        description "Stand on a soul sand platform at the spawner."
+    }
+    item blazeBedEasy title="Blaze Bed" goal=sub20 parent=blazeKills icon="composite/bed" label="1 bed" {
+        description "Kill the blazes with one bed."
+    }
+    item blazeBedOptimal title="Blaze Bed" goal=sub15 parent=blazeBedEasy icon="composite/bed" label="2 beds" {
+        description "Kill the blazes with two beds."
+    }
+    item blazeBedOrZero title="Blaze Bed or Zero" goal=sub12 parent=blazeBedOptimal icon="composite/bed" label="Or zero" scope=ranked {
+        description "Decide whether to spend beds on blazes or keep them for the zero cycle."
+    }
+    item dynamicRenderDistance title="Dynamic Render Distance" goal=sub13 parent=blazeKills icon="item/ender_eye" {
+        description "Change render distance to deal with stray blazes."
+    }
+    item witherSkeletons title="Wither Skeletons" goal=firstCompletion icon="item/stone_sword" {
+        description "Pillar beside the fence to stay out of reach."
+    }
+    item fortFirst title="Fort First" goal=sub13 icon="item/golden_apple" {
+        description "Go to the fortress first with a shield or an enchanted golden apple."
+    }
+}
+
+category findingStronghold title="Finding the Stronghold" theme=stronghold {
+    item followEyes title="Follow the Eyes" goal=firstCompletion icon="item/ender_eye" label="Follow" {
+        description "Throw eyes and follow them."
+    }
+    item ninjabrainEasy title="Ninjabrain Bot" goal=firstCompletion parent=followEyes icon="item/ender_eye" label="2 eyes" {
+        description "Two-eye triangulation with Ninjabrain Bot."
+    }
+    item fov30Measuring title="FOV 30 Measuring" goal=sub20 parent=ninjabrainEasy icon="item/ender_eye" label="FOV 30" {
+        description "Measure at FOV 30 and calibrate the standard deviation."
+    }
+    item tallZoom title="Tall Zoom" goal=sub15 parent=fov30Measuring icon="item/ender_eye" label="Zoom" {
+        description "Tall resolution, zoom and pixel adjustment."
+    }
+    item eyeWiggle title="Eye Wiggle" goal=sub12 parent=tallZoom icon="item/ender_eye" label="Wiggle" {
+        description "Measure both pixel offsets and trust only a matching result."
+    }
+    item boatEye title="Boat Eye" goal=sub13 parent=fov30Measuring icon="item/oak_boat" label="Eye" {
+        description "Single-eye measuring from a boat."
+    }
+    item minimalBoatEye title="Minimal-Input Boat Eye" goal=sub10 parent=boatEye icon="item/oak_boat" label="Minimal" {
+        description "Nether boat angle and a mod-360 hotkey for fewer inputs."
+    }
+    item digIn title="Dig In at 4,4" goal=firstCompletion parent=followEyes icon="item/iron_shovel" {
+        description "Dig down at block 4,4 of the stronghold chunk."
+    }
+    item blindEasy title="Blind Coordinates" goal=sub30 icon="block/obsidian" label="Rating" {
+        description "About 220 nether blocks out; check the F3+C blind rating."
+    }
+    item blindOptimal title="Blind Coordinates" goal=sub20 parent=blindEasy icon="block/obsidian" label="Head X°" scope=ranked {
+        description "Follow \"head X°\" until excellent and build at Y48+."
+    }
+    item fastBlindBuild title="Fast Blind Portal" goal=sub20 parent=blindEasy icon="block/obsidian" label="Fast build" {
+        description "Build the blind portal fast, at the end of a spawner cycle."
+    }
+    item doubleTravel title="Double Travel" goal=sub30 parent=blindEasy icon="block/crying_obsidian" {
+        description "Go back through and build at the bot's nether coordinates; 20 obsidian."
+    }
+    item portalLinking title="Portal Linking" goal=sub30 parent=doubleTravel icon="block/nether_portal" label="Linking" {
+        description "A close stronghold links the second portal back to the first."
+    }
+    item neighbouringOffsets title="Neighbouring Offsets" goal=sub13 parent=doubleTravel icon="block/nether_portal" label="Offsets" {
+        description "One portal between two adjacent candidate chunks."
+    }
+    item blindHungerReset title="Hunger Reset at Blind" goal=sub13 parent=blindEasy icon="composite/bed" label="Blind" {
+        description "Reset hunger with a bed and a 2×1 hole at the blind."
+    }
+    item oceanBlindReset title="Ocean Blind Reset" goal=sub11 parent=blindHungerReset icon="composite/bed" label="Ocean" {
+        description "Hunger reset when the blind exits onto water."
+    }
+    item oceanBlindTravel title="Ocean Blind Travel" goal=sub11 parent=blindEasy icon="item/oak_boat" label="Ocean" {
+        description "Boat-measure and travel when the blind exits onto water."
+    }
+}
+
+category stronghold title="Stronghold" theme=stronghold {
+    item portalRoom title="Find the Portal Room" goal=firstCompletion icon="item/ender_eye" {
+        description "Recognize rooms, find the portal room, fill the eyes."
+    }
+    item portalRoomSafety title="Portal Room Safety" goal=firstCompletion parent=portalRoom icon="block/spawner" {
+        description "Break the spawner and block the lava."
+    }
+    item setSpawn title="Set Spawn" goal=sub30 parent=portalRoomSafety icon="composite/bed" label="Spawn" {
+        description "Set spawn with a bed near the portal room."
+    }
+    item endPrep title="End Prep" goal=sub20 parent=portalRoomSafety icon="item/ender_pearl" scope=ranked {
+        description "End hotbar ready; the eye count is known per seed."
+    }
+    item portalFoodOverlap title="Portal Food Overlap" goal=sub12 parent=endPrep icon="item/cooked_beef" {
+        description "Food in the offhand, eat while filling the last eye."
+    }
+    item backwardsNavigation title="Backwards Navigation" goal=sub30 parent=portalRoom icon="block/stone_bricks" {
+        description "Every staircase leads to the starter; libraries are dead ends; listen for silverfish."
+    }
+    item navigationLaws title="Navigation Laws" goal=sub20 parent=backwardsNavigation icon="block/cracked_stone_bricks" {
+        description "forsen's law and Fyroah's law."
+    }
+    item hiddenRooms title="Hidden Rooms" goal=sub20 parent=backwardsNavigation icon="block/mossy_stone_bricks" {
+        description "Hidden rooms off 5-way crossings, on the −X/−Z side."
+    }
+    item preemptiveEasy title="Preemptive" goal=sub15 parent=navigationLaws icon="item/compass_00" label="Spike" {
+        description "Route to the biggest orange and green pie-chart spike."
+    }
+    item preemptiveOptimal title="Preemptive" goal=sub12 parent=preemptiveEasy icon="item/compass_00" label="Ratios" {
+        description "Pure versus mob readings, mob ratios, false positives."
+    }
+    item hitboxScan title="Hitbox Scan" goal=sub10 parent=preemptiveOptimal icon="item/compass_00" label="Hitbox" {
+        description "Hover and hitbox scans with hitbox wiggle."
+    }
+    item strongholdHungerReset title="Hunger Reset" goal=sub13 parent=preemptiveEasy icon="composite/bed" label="Reset" {
+        description "Reset hunger in the stronghold after the preemptive read."
+    }
+    item navigationDrills title="Navigation Drills" goal=sub15 parent=backwardsNavigation icon="item/map" {
+        description "Drill navigation in StrongholdTrainer."
+    }
+    item hardNavs title="Hard Navs" goal=sub10 parent=navigationDrills icon="item/filled_map" {
+        description "Practice the hard navs spreadsheet."
+    }
+}
+
+category endFight title="End Fight" theme=end {
+    item avoidEndermen title="Avoid Endermen" goal=firstCompletion icon="item/ender_pearl" {
+        description "Keep the crosshair 20° off the horizon; boat-trap an aggroed one."
+    }
+    item reachIsland title="Reach the Island" goal=firstCompletion icon="block/end_stone" {
+        description "Bridge or pearl to the island."
+    }
+    item perchKill title="Perch Kill" goal=firstCompletion parent=reachIsland icon="item/golden_sword" {
+        description "Melee crits and beds on the perched dragon."
+    }
+    item preCraftBeds title="Pre-Craft Beds" goal=sub30 parent=perchKill icon="composite/bed" label="Pre-craft" {
+        description "Craft the beds before entering the End."
+    }
+    item oneCycleEasy title="One Cycle" goal=sub30 parent=perchKill icon="composite/bed" label="5 beds" {
+        description "Kill the dragon in a single perch."
+    }
+    item oneCycleSetup title="One-Cycle Setup" goal=sub30 parent=oneCycleEasy icon="block/obsidian" {
+        description "Obsidian on the side the dragon comes from, wait behind the pillars, hitboxes on."
+    }
+    item oneCycleOptimal title="One Cycle" goal=sub20 parent=oneCycleEasy icon="composite/bed" label="4 beds" {
+        description "Four beds, or 3+1, on the same perch."
+    }
+    item halfBow title="Half Bow" goal=sub15 parent=oneCycleEasy icon="item/bow" scope=ranked {
+        description "Shoot most crystals so the dragon perches sooner."
+    }
+    item damagelessOneshot title="Damageless Oneshot" goal=sub13 parent=halfBow icon="item/arrow" {
+        description "Melee, then a weak arrow while moving fast; a backup for a failed zero or one cycle."
+    }
+    item fullHealth title="Full Health Entry" goal=sub20 icon="item/golden_carrot" {
+        description "Enter at full health, or hunger-reset with saturation."
+    }
+    item buriedSpawnEscape title="Buried Spawn Escape" goal=sub15 icon="item/iron_pickaxe" {
+        description "Pearl clip out of a buried spawn at O54–O56."
+    }
+}
+
+category zeroCycle title="Zero Cycle" theme=end {
+    item zeroPracticeMap title="Zero Practice Map" goal=sub15 icon="item/map" {
+        description "Mescht's zero cycle practice map."
+    }
+    item nodeReading title="Node Reading" goal=sub15 icon="item/ender_eye" {
+        description "Front vs back, diagonal vs 1/8, read during the first pearl."
+    }
+    item standardSetup title="Standard Setup" goal=sub15 parent=nodeReading icon="block/crying_obsidian" label="Standard" {
+        description "Staircase 2, bridge 1, two indestructible blocks, the bed between them."
+    }
+    item towerPearl title="Tower Pearl" goal=sub15 parent=standardSetup icon="item/ender_pearl" label="Tower" {
+        description "Jump-pearl onto the tower without hitting the crystal."
+    }
+    item bedTiming title="Bed Timing" goal=sub15 parent=standardSetup icon="composite/bed" label="M-88 y95" {
+        description "Five single beds on front M-88, standing at y95."
+    }
+    item bedCorrection title="Late Bed Correction" goal=sub15 parent=bedTiming icon="composite/bed" label="Correction" {
+        description "Fix a late bed with an early one, or skip a rotation."
+    }
+    item savingFailingZero title="Saving a Failing Zero" goal=sub8 parent=bedCorrection icon="composite/bed" label="Save" {
+        description "A lower bed, the crystal as an explosive, or a chase-down."
+    }
+    item frontLowY90 title="Front Low Towers" goal=sub15 parent=bedTiming icon="block/obsidian" label="Front y90" {
+        description "Small Boy, Small Cage, Tall Cage and M-85 at y90, standing on 28 −27."
+    }
+    item frontLowY95 title="Front Low Towers" goal=sub15 parent=frontLowY90 icon="block/obsidian" label="Front y95" {
+        description "Small Boy to M-88 at y95, same standing block."
+    }
+    item backLowY90 title="Back Low Towers" goal=sub15 parent=frontLowY95 icon="block/obsidian" label="Back y90" {
+        description "Small Boy to M-85 at y90, standing on −30 25."
+    }
+    item goNoGo title="Go or No-Go" goal=sub15 parent=backLowY90 icon="item/oak_sign" {
+        description "Fall back to a one cycle on setups you can't hit yet."
+    }
+    item allTowersY95 title="All Low Towers" goal=sub13 parent=backLowY90 icon="block/obsidian" label="All y95" {
+        description "Every non-offset front and back setup at y95, plus y99 on front M-85 and M-88."
+    }
+    item m91 title="M-91" goal=sub13 parent=allTowersY95 icon="block/obsidian" label="M-91 y99" {
+        description "Front y95 and y99, back y99."
+    }
+    item m91BackOffset title="M-91 Back Offset" goal=sub12 parent=m91 icon="block/obsidian" label="M-91 B y95" {
+        description "Back y95 offset, standing on −29 26."
+    }
+    item t97 title="T-97" goal=sub10 parent=m91BackOffset icon="block/obsidian" label="T-97 y100" {
+        description "Back y100 on −28 26, front offset y99 on 27 −28."
+    }
+    item t97BackY99 title="T-97 Back" goal=sub9 parent=t97 icon="block/obsidian" label="T-97 B y99" {
+        description "Back y99, in the variant of your choice."
+    }
+    item t100FrontY104 title="T-100 Front" goal=sub9 parent=t97 icon="block/obsidian" label="T-100 F y104" {
+        description "Front y104 on T-100."
+    }
+    item t94 title="T-94" goal=sub12 parent=allTowersY95 icon="block/obsidian" label="T-94 y99" {
+        description "Front and back y99; on back, anchors only as the obsidian."
+    }
+    item towerIdentification title="Tower Identification" goal=sub12 parent=allTowersY95 icon="item/name_tag" {
+        description "Name every tower at a glance, from Small Boy to Tall Boy."
+    }
+    item eighthLow title="1/8" goal=sub10 parent=allTowersY95 icon="item/compass_00" label="y88/y92" {
+        description "Straight node, standing on 23 0 front and −23 0 back."
+    }
+    item eighthHigh title="1/8" goal=sub9 parent=eighthLow icon="item/compass_00" label="y97" {
+        description "The higher straight setup, with a 3+2."
+    }
+    item eighthTwoPlusTwo title="1/8 2+2" goal=sub7 parent=eighthHigh icon="item/compass_00" label="2+2" {
+        description "Standing on 22 0 front and −23 −1 back."
+    }
+    item lenience title="Lenience" goal=sub10 parent=allTowersY95 icon="item/clock_00" {
+        description "How much spare time each setup leaves for your spawn."
+    }
+    item multiblock title="Multiblock Variants" goal=sub7 parent=lenience icon="block/obsidian" label="Multiblock" {
+        description "Two bed positions and a diagonal standing block for consistent damage."
+    }
+    item nodeAlignedMultiblock title="Node-Aligned Multiblock" goal=sub7 parent=multiblock icon="block/obsidian" label="Node-aligned" {
+        description "hasbiWalks' optional set aligned with the actual node."
+    }
+    item perSeedChoice title="Per-Seed Choice" goal=sub6 parent=lenience icon="item/writable_book" {
+        description "Choose between a zero, a oneshot or a ground zero for each seed."
+    }
+    item overhangSpawns title="Overhang Spawns" goal=sub13 parent=standardSetup icon="block/end_stone" label="Overhang" {
+        description "Run back and pearl, or build up first."
+    }
+    item tripleStack title="Triple Stack" goal=sub11 parent=standardSetup icon="block/crying_obsidian" label="Triple stack" {
+        description "Build the setup with a triple stack, with backups for misplaced blocks."
+    }
+    item tallBoySide title="Tall Boy Side" goal=sub11 parent=tripleStack icon="block/obsidian" label="Tall Boy y90/y94" {
+        description "Standing on 29 −29 front and −30 28 back; bed order depends on rotation."
+    }
+    item t100Side title="T-100 Side" goal=sub11 parent=tallBoySide icon="block/obsidian" label="T-100 y90" {
+        description "The Tall Boy side standing block, on T-100 at y90."
+    }
+    item t100Y100 title="T-100" goal=sub8 parent=t100Side icon="block/obsidian" label="T-100 y100" {
+        description "Front and back y100; back needs a bow."
+    }
+    item universalSide title="Universal Side" goal=sub11 parent=tallBoySide icon="block/obsidian" label="Universal" {
+        description "Standing on 28 −30 front and −29 29 back; works on T-94, T-97 and T-100."
+    }
+    item tallBoyFrontY104 title="Tall Boy Front" goal=sub7 parent=tallBoySide icon="block/obsidian" label="Tall Boy F y104" {
+        description "Front y104 on Tall Boy, and back y104 on T-100."
+    }
+    item bowPlusOne title="Bow +1" goal=sub10 parent=bedTiming icon="item/bow" label="M-88 y95" {
+        description "An arrow before the first bed lets two beds land on one rotation."
+    }
+    item bowOffsetSide title="Bow on Offset and Side" goal=sub9 parent=bowPlusOne icon="item/bow" label="Offset & side" {
+        description "Bow +1 on offset and side setups, good rotations only."
+    }
+    item threePlusTwo title="3+2" goal=sub10 parent=bowPlusOne icon="item/arrow" label="3+2" {
+        description "Three rotations, two of them with doubles."
+    }
+    item doubleShot title="Double Shot" goal=sub8 parent=threePlusTwo icon="item/spectral_arrow" label="2+2" {
+        description "Extra arrows correct the dragon onto the node, making 2+2 consistent."
+    }
+    item twoPlusTwoY104 title="2+2" goal=sub6 parent=doubleShot icon="item/end_crystal" label="y104" {
+        description "Two rotations with doubles from the highest standing height."
+    }
+    item exoticExplosives title="Exotic Explosives" goal=sub6 parent=doubleShot icon="block/tnt_side" {
+        description "More than two explosives per rotation, such as 5+1 universal back."
+    }
+    item crossbow title="Crossbow +1" goal=sub8 parent=bowPlusOne icon="item/crossbow_standby" {
+        description "Pre-load the crossbow for the +1."
+    }
+    item arrowRotationFlip title="Arrow Rotation Flip" goal=sub7 parent=bowPlusOne icon="item/arrow" label="Flip" {
+        description "Shoot early to keep the rotation, late to flip it."
+    }
+    item anchors title="Respawn Anchors" goal=sub13 parent=bedTiming icon="block/respawn_anchor_side0" label="Anchors" {
+        description "Anchors after beds, as the obsidian, with a hard block cover."
+    }
+    item bedAnchorDoubles title="Bed + Anchor Doubles" goal=sub10 parent=anchors icon="block/respawn_anchor_side0" label="Doubles" {
+        description "A bed and an anchor on the same rotation; place the anchor first."
+    }
+    item midZeroEating title="Mid-Zero Eating" goal=sub11 parent=bedTiming icon="item/cooked_beef" {
+        description "Eat during the zero to survive a low-health back dragon."
+    }
+    item presortedHotbar title="Pre-Sorted Hotbar" goal=sub15 icon="item/chest_minecart" {
+        description "Pre-craft explosives and sort the hotbar before the End."
+    }
+    item sortingBetweenPearls title="Sorting Between Pearls" goal=sub9 parent=presortedHotbar icon="item/ender_pearl" label="Sorting" {
+        description "Sort the inventory between pearls instead of in advance."
+    }
+    item portalRoomDeathReset title="Portal Room Death Reset" goal=sub15 icon="item/bone" {
+        description "Death-reset in the portal room before entering the End."
+    }
+    item pearlClipNormal title="Pearl Clip" goal=sub12 icon="item/iron_pickaxe" label="O56/O57" {
+        description "Clip out of a buried spawn at O56 and O57."
+    }
+    item buriedLowHeights title="Buried Low Heights" goal=sub12 parent=pearlClipNormal icon="block/end_stone" label="Buried" {
+        description "y86 and y90 setups and offsets for buried spawns."
+    }
+    item pearlClipShift title="Pearl Clip" goal=sub11 parent=pearlClipNormal icon="item/iron_pickaxe" label="Shift clip" {
+        description "The shift-clip version."
+    }
+    item buriedHighClips title="Pearl Clip" goal=sub10 parent=pearlClipShift icon="item/iron_pickaxe" label="O58+" {
+        description "Clips from O58 and deeper."
+    }
+    item buriedHighSetups title="Buried High Setups" goal=sub6 parent=buriedHighClips icon="item/iron_pickaxe" label="O59+" {
+        description "High setups from O59 and deeper."
+    }
+}
+
+category forFun title="For Fun" theme=fun {
+    item bucketlessPortal title="Bucketless Portal" goal=sub20 icon="block/obsidian" {
+        description "Ranked always guarantees iron for a bucket."
+    }
+    item tntCannon title="TNT Cannon" goal=sub15 icon="block/tnt_side" {
+        description "Launch TNT at distant trees."
+    }
+    item treasureMap title="Treasure Map" goal=sub15 icon="item/filled_map" {
+        description "Ranked keeps buried treasure away from shipwrecks."
+    }
+    item classicTravel title="Calculated Travel" goal=sub20 icon="item/ender_eye" label="Classic" {
+        description "Educated, calculated and perfect travel, absorbed by Ninjabrain Bot."
+    }
+    item divineTravel title="Divine Travel" goal=sub20 icon="item/ender_eye" label="Divine" {
+        description "Doesn't work in Ranked: overworld and nether seeds are independent."
+    }
+    item classicBartering title="Classic Bartering" goal=sub30 icon="item/gold_ingot" {
+        description "Bartering at the portal."
+    }
+    item beefSaladHole title="Beef Salad Hole" goal=sub13 icon="item/cooked_beef" {
+        description "Superseded by the Crispy hole, still a fallback."
+    }
+    item groundZero title="Ground Zero" goal=sub13 icon="composite/bed" {
+        description "Works on any End, about 15 s slower than a zero."
+    }
+    item toeTickler title="Toe Tickler" goal=sub7 icon="item/feather" {
+        description "The theoretical fastest TNT gap route."
+    }
+    item boatTntTreasure title="Boat TNT Treasure" goal=sub12 icon="item/oak_boat" {
+        description "A concept for improving TNT treasure."
+    }
+    item seedQueue title="SeedQueue" goal=sub15 icon="item/wheat_seeds" {
+        description "Wall resetting, RSG only."
+    }
+    item oldBridgeNames title="Old Bridge Names" goal=sub20 icon="item/name_tag" {
+        description "Double Single, Left Triple, Right Triple, Double Triple, Buried."
     }
 }

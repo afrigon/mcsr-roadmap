@@ -1,8 +1,11 @@
+import type { Rank } from "./Rank";
+
 export class Goal {
   constructor(
     readonly id: string,
     readonly title: string,
-    readonly equivalent: string | null,
+    readonly shortTitle: string,
+    readonly rank: Rank | null,
     readonly order: number,
   ) {}
 
