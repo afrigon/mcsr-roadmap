@@ -1,0 +1,57 @@
+---
+import type { Category } from "../roadmap/Category";
+import { DependencyKind } from "../roadmap/DependencyKind";
+import { itemPath } from "../roadmap/itemPath";
+import type { Roadmap } from "../roadmap/Roadmap";
+import type { Row } from "../roadmap/Row";
+import { headerHeight } from "../timeline/TimelineGeometry";
+import { TimelineLayout } from "../timeline/TimelineLayout";
+import AdvancementFrame from "./AdvancementFrame.astro";
+
+interface Props {
+  roadmap: Roadmap;
+  row: Row;
+  category: Category;
+}
+
+const { roadmap, row, category } = Astro.props;
+const layout = new TimelineLayout(roadmap, row);
+---
+
+<section class="mb-10">
+  <h2 class="mb-3 text-lg font-semibold text-title">{row.title}</h2>
+  <div class="bevel overflow-x-auto bg-panel/80">
+    <div class="relative" style={`width: ${layout.width}px; height: ${layout.height}px;`}>
+      {
+        layout.columns.map((column) => (
+          <div
+            class="absolute top-0 bottom-0 border-l-2 border-bevel-dark pt-3 pl-3"
+            style={`left: ${column.x - 12}px; width: ${column.width + 24}px; height: ${headerHeight}px;`}
+          >
+            <p class="text-sm font-semibold">{column.goal.title}</p>
+            {column.goal.equivalent && <p class="text-xs text-muted">{column.goal.equivalent}</p>}
+          </div>
+        ))
+      }
+      <svg class="pointer-events-none absolute inset-0" width={layout.width} height={layout.height} aria-hidden="true">
+        {
+          layout.edges.map((edge) => (
+            <path
+              d={edge.path}
+              data-status-of={edge.from.item.id}
+              fill="none"
+              stroke-width="2"
+              stroke-dasharray={edge.kind === DependencyKind.Upgrades ? "6 4" : undefined}
+              class="stroke-bevel-light data-[status=mastered]:stroke-mastered"
+            />
+          ))
+        }
+      </svg>
+      {
+        layout.nodes.map((node) => (
+          <AdvancementFrame node={node} href={itemPath(roadmap, node.item, category)} />
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -34,7 +34,7 @@ importers:
         specifier: runtime:^26.13.0
         version: runtime:26.13.0
       typescript:
-        specifier: '6'
+        specifier: ^6.0.3
         version: 6.0.3
 
 packages:

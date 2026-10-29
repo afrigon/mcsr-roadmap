@@ -1,0 +1,38 @@
+---
+import { Scope } from "../roadmap/Scope";
+import { frameHeight, frameWidth } from "../timeline/TimelineGeometry";
+import type { TimelineNode } from "../timeline/TimelineNode";
+
+interface Props {
+  node: TimelineNode;
+  href: string | null;
+}
+
+const { node, href } = Astro.props;
+const { item } = node;
+const Tag = href === null ? "button" : "a";
+---
+
+<Tag
+  type={href === null ? "button" : undefined}
+  href={href ?? undefined}
+  popovertarget={href === null ? item.id : undefined}
+  title={item.title}
+  data-status-of={item.id}
+  data-prerequisites={item.prerequisiteIds.join(" ")}
+  style={`left: ${node.x}px; top: ${node.y}px; width: ${frameWidth}px; height: ${frameHeight}px;`}
+  class:list={[
+    "group bevel absolute flex flex-col justify-center border-l-4 border-not-learned bg-panel px-3 text-left text-sm",
+    "hover:bg-panel-raised data-[status=practicing]:border-practicing data-[status=mastered]:border-mastered",
+    { "opacity-60": node.external },
+  ]}
+>
+  <span class="line-clamp-2 leading-snug group-data-[status=mastered]:text-title">{item.title}</span>
+  {item.scope === Scope.Ranked && <span class="text-xs text-ranked">Ranked</span>}
+  <span
+    class="absolute -top-2 -right-2 hidden h-5 w-5 items-center justify-center bg-warning text-xs font-bold text-black group-data-prerequisite-warning:flex"
+    title="A prerequisite is still not learned"
+  >
+    !
+  </span>
+</Tag>

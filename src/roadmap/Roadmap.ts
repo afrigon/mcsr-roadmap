@@ -50,6 +50,14 @@ export class Roadmap {
     return item.prerequisiteIds.map((id) => this.item(id));
   }
 
+  dependentsOf(item: Item): Item[] {
+    return this.items.filter((candidate) => candidate.prerequisiteIds.includes(item.id));
+  }
+
+  categoryOf(item: Item): Category {
+    return this.categories.find((category) => category.items.includes(item))!;
+  }
+
   timelineItemsFor(row: Row): Item[] {
     const included = new Set<Item>();
     const pending = [...row.items];

@@ -1,0 +1,41 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  start?: number;
+}
+
+const { id, title, start = 0 } = Astro.props;
+---
+
+<figure class="my-4" data-youtube data-video-id={id} data-start={start}>
+  <button type="button" class="bevel group relative block aspect-video w-full overflow-hidden bg-panel-raised">
+    <img
+      src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`}
+      alt=""
+      loading="lazy"
+      class="h-full w-full object-cover opacity-80 group-hover:opacity-100"
+    />
+    <span class="absolute inset-0 flex items-center justify-center text-5xl text-white drop-shadow">▶</span>
+  </button>
+  <figcaption class="mt-1 text-sm text-muted">{title}</figcaption>
+</figure>
+
+<script>
+  document.addEventListener("click", (event) => {
+    const button = (event.target as Element).closest("[data-youtube] > button");
+
+    if (button === null) {
+      return;
+    }
+
+    const figure = button.parentElement!;
+    const iframe = document.createElement("iframe");
+    const parameters = new URLSearchParams({ autoplay: "1", start: figure.dataset.start ?? "0" });
+    iframe.src = `https://www.youtube-nocookie.com/embed/${figure.dataset.videoId}?${parameters}`;
+    iframe.allow = "autoplay; encrypted-media; picture-in-picture";
+    iframe.allowFullscreen = true;
+    iframe.className = "aspect-video w-full";
+    button.replaceWith(iframe);
+  });
+</script>

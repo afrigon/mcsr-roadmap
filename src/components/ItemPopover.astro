@@ -1,0 +1,90 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import type { Category } from "../roadmap/Category";
+import { DependencyKind } from "../roadmap/DependencyKind";
+import type { Item } from "../roadmap/Item";
+import type { Roadmap } from "../roadmap/Roadmap";
+import { Scope } from "../roadmap/Scope";
+import ItemLink from "./ItemLink.astro";
+import StatusPicker from "./StatusPicker.astro";
+import YouTube from "./YouTube.astro";
+
+interface Props {
+  roadmap: Roadmap;
+  item: Item;
+  category: Category;
+  page: CollectionEntry<"items"> | undefined;
+}
+
+const { roadmap, item, category, page } = Astro.props;
+const dependents = roadmap.dependentsOf(item);
+const Content = page === undefined ? null : (await render(page)).Content;
+---
+
+<div
+  popover
+  id={item.id}
+  data-item-popover
+  data-status-of={item.id}
+  data-prerequisites={item.prerequisiteIds.join(" ")}
+  class="group bevel max-h-[85vh] w-[min(48rem,calc(100vw-2rem))] overflow-y-auto bg-panel p-6 text-text"
+>
+  <header class="mb-4 flex items-start justify-between gap-4">
+    <div>
+      <h2 class="text-xl font-semibold group-data-[status=mastered]:text-title">{item.title}</h2>
+      <p class="text-sm text-muted">
+        {item.goal.title}
+        {item.scope === Scope.Ranked && <span class="text-ranked"> · Ranked</span>}
+      </p>
+    </div>
+    <button
+      type="button"
+      popovertarget={item.id}
+      popovertargetaction="hide"
+      class="bevel bg-panel-raised px-2 text-muted hover:text-text"
+      aria-label="Close"
+    >
+      ✕
+    </button>
+  </header>
+
+  <StatusPicker item={item} />
+  <p class="mt-2 hidden text-sm text-warning group-data-prerequisite-warning:block">
+    Some prerequisites are still not learned.
+  </p>
+
+  {
+    item.dependencies.length > 0 && (
+      <section class="mt-4">
+        <h3 class="mb-1 text-sm font-semibold text-muted">Prerequisites</h3>
+        <ul class="space-y-1 text-sm">
+          {item.dependencies.map((dependency) => (
+            <ItemLink
+              roadmap={roadmap}
+              item={roadmap.item(dependency.id)}
+              category={category}
+              note={dependency.kind === DependencyKind.Upgrades ? "easier version" : undefined}
+            />
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    dependents.length > 0 && (
+      <section class="mt-4">
+        <h3 class="mb-1 text-sm font-semibold text-muted">Unlocks</h3>
+        <ul class="space-y-1 text-sm">
+          {dependents.map((dependent) => (
+            <ItemLink roadmap={roadmap} item={dependent} category={category} />
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <article class="item-page mt-6 border-t-2 border-bevel-dark pt-4">
+    {Content === null ? <p class="text-muted">No page yet.</p> : <Content components={{ YouTube }} />}
+  </article>
+</div>

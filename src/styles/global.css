@@ -1,0 +1,99 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-backdrop: #17130f;
+  --color-backdrop-alternate: #1c1813;
+  --color-panel: #212121;
+  --color-panel-raised: #2e2e2e;
+  --color-bevel-light: #5c5c5c;
+  --color-bevel-dark: #0a0a0a;
+  --color-text: #e6e6e6;
+  --color-muted: #a3a3a3;
+  --color-title: #ffff55;
+  --color-not-learned: #7a7a7a;
+  --color-practicing: #55ff55;
+  --color-mastered: #ffaa00;
+  --color-warning: #ff5555;
+  --color-ranked: #55ffff;
+  --color-link: #8fb8ff;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-backdrop);
+    background-image: repeating-conic-gradient(
+      var(--color-backdrop) 0 25%,
+      var(--color-backdrop-alternate) 0 50%
+    );
+    background-size: 32px 32px;
+    color: var(--color-text);
+  }
+
+  [popover]::backdrop {
+    background: rgb(0 0 0 / 0.6);
+  }
+}
+
+@utility bevel {
+  box-shadow:
+    inset 2px 2px 0 var(--color-bevel-light),
+    inset -2px -2px 0 var(--color-bevel-dark);
+}
+
+@utility bevel-pressed {
+  box-shadow:
+    inset 2px 2px 0 var(--color-bevel-dark),
+    inset -2px -2px 0 var(--color-bevel-light);
+}
+
+@layer components {
+  .item-page {
+    line-height: 1.6;
+
+    & h2 {
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--color-title);
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    & p,
+    & ul,
+    & ol,
+    & table {
+      margin-bottom: 0.75rem;
+    }
+
+    & ul {
+      list-style: square;
+      padding-left: 1.25rem;
+    }
+
+    & ol {
+      list-style: decimal;
+      padding-left: 1.25rem;
+    }
+
+    & a {
+      color: var(--color-link);
+      text-decoration: underline;
+    }
+
+    & code {
+      background: var(--color-panel-raised);
+      padding: 0 0.25rem;
+      font-size: 0.9em;
+    }
+
+    & th,
+    & td {
+      border: 1px solid var(--color-bevel-light);
+      padding: 0.25rem 0.5rem;
+      text-align: left;
+    }
+  }
+}

@@ -1,0 +1,27 @@
+---
+import type { Item } from "../roadmap/Item";
+import { Status, statusLabels } from "../status/Status";
+
+interface Props {
+  item: Item;
+}
+
+const { item } = Astro.props;
+---
+
+<div class="flex gap-2" role="group" aria-label="Status">
+  {
+    Object.values(Status).map((status) => (
+      <button
+        type="button"
+        data-status-option={status}
+        data-item-id={item.id}
+        data-item-title={item.title}
+        aria-pressed="false"
+        class="bevel bg-panel-raised px-3 py-1 text-sm text-muted hover:text-text aria-pressed:bevel-pressed aria-pressed:text-text"
+      >
+        {statusLabels[status]}
+      </button>
+    ))
+  }
+</div>

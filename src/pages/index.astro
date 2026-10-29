@@ -1,0 +1,20 @@
+---
+import CategoryTabs from "../components/CategoryTabs.astro";
+import Layout from "../layouts/Layout.astro";
+import { roadmapFile } from "../roadmap/RoadmapFiles";
+import { RoadmapParser } from "../roadmap/RoadmapParser";
+
+const roadmap = RoadmapParser.readFile(roadmapFile);
+---
+
+<Layout title="Home">
+  <main class="mx-auto max-w-3xl px-6 py-12">
+    <h1 class="mb-4 text-3xl font-semibold text-title">MCSR Ranked roadmap</h1>
+    <p class="mb-6 text-muted">
+      Skills for Minecraft 1.16.1 ranked speedrunning, placed in the Break the Barrier time goal they unlock. Open an
+      advancement to read how to learn it and track whether you have learned it, are practicing it, or have mastered
+      it. Progress is saved in this browser.
+    </p>
+    <CategoryTabs categories={roadmap.categories} current={null} />
+  </main>
+</Layout>
