@@ -1,0 +1,173 @@
+goals {
+    goal firstCompletion title="First completion"
+    goal sub30 title="Sub 30" equivalent="Coal (29:35)"
+    goal sub20 title="Sub 20" equivalent="Iron → Gold (24:27 → 17:23)"
+    goal sub15 title="Sub 15" equivalent="Emerald (14:00)"
+    goal sub13 title="Sub 13" equivalent="High Emerald"
+    goal sub12 title="Sub 12" equivalent="Diamond (11:21)"
+    goal sub11 title="Sub 11" equivalent="Mid Diamond"
+    goal sub10 title="Sub 10" equivalent="Netherite (9:27)"
+    goal sub9 title="Sub 9" equivalent="Mid Netherite"
+    goal sub8 title="Sub 8" equivalent="Top Netherite"
+    goal sub7 title="Sub 7" equivalent="Top ~10 players"
+    goal sub6 title="Sub 6" equivalent="Record pace"
+}
+
+category end title="End" {
+    row zeroCycle title="Zero cycle" {
+        item practiceMap title="Practice map setup" goal=sub15
+        item nodeReading title="Node reading: front vs back, diagonal vs 1/8" goal=sub15
+        item towerIdentification title="Tower identification (s76 → t103)" goal=sub15
+        item standingHeights title="Block coordinates and standing heights" goal=sub15 {
+            requires towerIdentification
+        }
+        item towerPearl title="Jump pearl onto the tower" goal=sub15
+        item standardSetup title="Standard setup build" goal=sub15 {
+            requires towerPearl standingHeights
+        }
+        item bedTiming title="Bed timing on F m88 y95" goal=sub15 {
+            requires standardSetup nodeReading
+        }
+        item bedCorrection title="Correcting a late bed, skipping a rotation" goal=sub15 {
+            requires bedTiming
+        }
+        item frontLowTowers title="Front low towers at y90/95" goal=sub15 {
+            requires bedTiming towerIdentification
+        }
+        item backLowTowers title="Back low towers at y90" goal=sub15 {
+            requires bedTiming towerIdentification
+        }
+        item presortedHotbar title="Pre-crafted explosives, pre-sorted hotbar" goal=sub15
+        item portalRoomDeathReset title="Death reset in the portal room" goal=sub15
+        item goNoGo title="Go/no-go: fall back to one cycle" goal=sub15 {
+            requires frontLowTowers backLowTowers
+        }
+
+        item allStandardY95 title="All non-offset front and back at y95, y99 on F m85/m88" goal=sub13 {
+            upgrades frontLowTowers
+            requires backLowTowers
+        }
+        item m91Standard title="m91: F y95/99, B y99" goal=sub13 {
+            requires allStandardY95
+        }
+        item anchors title="Respawn anchors as explosives" goal=sub13 {
+            requires bedTiming
+        }
+        item rotationDirection title="Clockwise vs counter-clockwise rotations" goal=sub13 {
+            requires nodeReading
+        }
+        item overhangSpawns title="Overhang spawns" goal=sub13 {
+            requires standardSetup
+        }
+
+        item m91BackOffset title="m91 B y95 offset" goal=sub12 {
+            requires m91Standard
+        }
+        item t94Y99 title="t94 F/B y99" goal=sub12 {
+            requires allStandardY95 anchors
+        }
+        item pearlClipNormal title="Pearl clip O56/O57" goal=sub12
+        item buriedLowHeights title="Low heights for buried spawns" goal=sub12 {
+            requires pearlClipNormal allStandardY95
+        }
+
+        item tripleStack title="Triple-stack build with misplace backups" goal=sub11 {
+            upgrades standardSetup
+        }
+        item tallBoySide title="Tall Boy side y90/94" goal=sub11 {
+            requires tripleStack rotationDirection
+        }
+        item t100Side title="t100 y90 side" goal=sub11 {
+            requires tallBoySide
+        }
+        item universalSide title="Universal side" goal=sub11 {
+            requires tallBoySide
+        }
+        item lowHealthZero title="Low-health zero: eating mid-zero" goal=sub11 {
+            requires bedTiming
+        }
+        item pearlClipShift title="Pearl clip, shift-clip version" goal=sub11 {
+            upgrades pearlClipNormal
+        }
+
+        item bowPlusOne title="Bow +1 on F m88 y95" goal=sub10 {
+            requires bedTiming
+        }
+        item threePlusTwo title="3+2 on standard y90/95/99" goal=sub10 {
+            requires bowPlusOne allStandardY95
+        }
+        item bedAnchorDoubles title="Bed + anchor doubles" goal=sub10 {
+            requires anchors
+        }
+        item t97Setups title="t97 B y100, t97 F offset y99" goal=sub10 {
+            requires t94Y99 m91BackOffset
+        }
+        item eighthLow title="1/8 front and back at y88/92" goal=sub10 {
+            requires nodeReading allStandardY95
+        }
+        item buriedHighClips title="Buried O58+ clips" goal=sub10 {
+            upgrades pearlClipShift
+        }
+        item lenience title="Lenience per spawn" goal=sub10 {
+            requires goNoGo
+        }
+
+        item eighthHigh title="1/8 at y97, 1/8 3+2" goal=sub9 {
+            upgrades eighthLow
+            requires threePlusTwo
+        }
+        item bowOffsetSide title="Bow on offset and side setups" goal=sub9 {
+            requires bowPlusOne universalSide m91BackOffset
+        }
+        item t97BackY99 title="t97 B y99, t100 F y104" goal=sub9 {
+            requires t97Setups
+        }
+        item zeroWithoutSetup title="Zero without setup: sorting between pearls" goal=sub9 {
+            upgrades presortedHotbar
+        }
+
+        item doubleShot title="Double shot, 2+2 at y95 and y99" goal=sub8 {
+            upgrades threePlusTwo
+        }
+        item t100Y100 title="t100 y100 F/B" goal=sub8 {
+            requires t100Side bowPlusOne
+        }
+        item savingFailingZero title="Saving a failing zero" goal=sub8 {
+            requires bedCorrection
+        }
+        item crossbowPreload title="Crossbow pre-loaded +1" goal=sub8 {
+            requires bowPlusOne
+        }
+
+        item multiblockAdjusted title="Multiblock-adjusted variants" goal=sub7 {
+            requires lenience rotationDirection
+        }
+        item nodeAlignedMultiblock title="Node-aligned multiblock set" goal=sub7 {
+            requires multiblockAdjusted
+        }
+        item tallBoyFrontY104 title="Tall Boy F y104, t100 B y104" goal=sub7 {
+            requires tallBoySide t97BackY99
+        }
+        item arrowRotationFlip title="Arrow-induced rotation flip" goal=sub7 {
+            requires bowPlusOne rotationDirection
+        }
+        item eighthTwoPlusTwo title="1/8 2+2" goal=sub7 {
+            upgrades eighthHigh
+            requires doubleShot
+        }
+
+        item twoPlusTwoY104 title="2+2 at y104" goal=sub6 {
+            upgrades doubleShot
+            requires tallBoyFrontY104
+        }
+        item exoticExplosives title="More than two explosives per rotation" goal=sub6 {
+            requires doubleShot
+        }
+        item buriedHighSetups title="Buried O59+ with high setups" goal=sub6 {
+            requires buriedHighClips tallBoyFrontY104
+        }
+        item perSeedChoice title="Per-seed choice of End strategy" goal=sub6 {
+            requires lenience
+        }
+    }
+}
