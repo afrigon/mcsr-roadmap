@@ -32,10 +32,10 @@ category end title="End" {
             requires bedTiming
         }
         item frontLowTowers title="Front low towers at y90/95" goal=sub15 {
-            requires bedTiming towerIdentification
+            requires bedTiming
         }
         item backLowTowers title="Back low towers at y90" goal=sub15 {
-            requires bedTiming towerIdentification
+            requires bedTiming
         }
         item presortedHotbar title="Pre-crafted explosives, pre-sorted hotbar" goal=sub15
         item portalRoomDeathReset title="Death reset in the portal room" goal=sub15
@@ -103,7 +103,7 @@ category end title="End" {
             requires t94Y99 m91BackOffset
         }
         item eighthLow title="1/8 front and back at y88/92" goal=sub10 {
-            requires nodeReading allStandardY95
+            requires allStandardY95
         }
         item buriedHighClips title="Buried O58+ clips" goal=sub10 {
             upgrades pearlClipShift

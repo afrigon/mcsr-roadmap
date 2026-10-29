@@ -27,7 +27,7 @@ const Content = page === undefined ? null : (await render(page)).Content;
   data-item-popover
   data-status-of={item.id}
   data-prerequisites={item.prerequisiteIds.join(" ")}
-  class="group bevel max-h-[85vh] w-[min(48rem,calc(100vw-2rem))] overflow-y-auto bg-panel p-6 text-text"
+  class="group bevel m-auto max-h-[85vh] border-2 border-bevel-dark outline-hidden w-[min(48rem,calc(100vw-2rem))] overflow-y-auto bg-panel p-6 text-text"
 >
   <header class="mb-4 flex items-start justify-between gap-4">
     <div>

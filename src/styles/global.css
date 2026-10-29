@@ -22,6 +22,10 @@
 }
 
 @layer base {
+  :root {
+    color-scheme: dark;
+  }
+
   body {
     background-color: var(--color-backdrop);
     background-image: repeating-conic-gradient(
