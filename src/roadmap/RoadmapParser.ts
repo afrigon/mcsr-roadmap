@@ -7,7 +7,6 @@ import { Item } from "./Item";
 import { Rank } from "./Rank";
 import { Roadmap } from "./Roadmap";
 import { RoadmapError } from "./RoadmapError";
-import { Scope } from "./Scope";
 import { Theme } from "./Theme";
 
 export class RoadmapParser {
@@ -88,13 +87,15 @@ export class RoadmapParser {
   }
 
   private parseItem(node: Node): Item | null {
-    this.expectShape(node, 1, ["title", "goal", "parent", "icon", "label", "scope"]);
+    this.expectShape(node, 1, ["title", "goal", "parent", "icon", "label"]);
     const id = this.argument(node);
     const goalId = this.requiredProperty(node, "goal");
     const goal = this.goals.get(goalId);
     const iconValue = this.requiredProperty(node, "icon");
     const icon = IconReference.parse(iconValue);
-    const descriptions = this.children(node, ["description"]);
+    const children = this.children(node, ["description", "ranked"]);
+    const descriptions = children.filter((child) => child.getName() === "description");
+    const rankedNotes = children.filter((child) => child.getName() === "ranked");
 
     if (goal === undefined) {
       this.report(node, `item "${id}" has unknown goal "${goalId}"`);
@@ -108,8 +109,12 @@ export class RoadmapParser {
       this.report(node, `item "${id}" needs exactly one "description" child`);
     }
 
-    for (const description of descriptions) {
-      this.expectShape(description, 1, []);
+    if (rankedNotes.length > 1) {
+      this.report(node, `item "${id}" has more than one "ranked" note`);
+    }
+
+    for (const child of children) {
+      this.expectShape(child, 1, []);
     }
 
     if (goal === undefined || icon === null || descriptions.length !== 1) {
@@ -120,11 +125,11 @@ export class RoadmapParser {
       id,
       this.requiredProperty(node, "title"),
       goal,
-      this.enumProperty(node, "scope", Object.values(Scope)) ?? Scope.Any,
       this.optionalProperty(node, "parent"),
       icon,
       this.optionalProperty(node, "label"),
       this.argument(descriptions[0]!),
+      rankedNotes[0] === undefined ? null : this.argument(rankedNotes[0]),
     );
   }
 

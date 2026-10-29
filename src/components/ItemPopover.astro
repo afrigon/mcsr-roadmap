@@ -2,7 +2,6 @@
 import { render, type CollectionEntry } from "astro:content";
 import type { Item } from "../roadmap/Item";
 import type { Roadmap } from "../roadmap/Roadmap";
-import { Scope } from "../roadmap/Scope";
 import StatusPicker from "./StatusPicker.astro";
 import YouTube from "./YouTube.astro";
 
@@ -30,7 +29,7 @@ const Content = page === undefined ? null : (await render(page)).Content;
     <button type="button" class="popover-close" popovertarget={item.id} popovertargetaction="hide" aria-label="Close">✕</button>
   </header>
 
-  {item.scope === Scope.Ranked && <p class="ranked-label">Ranked only: relies on Ranked's seed filter, RNG standardization or seed pool</p>}
+  {item.rankedNote !== null && <p class="ranked-label"><b>Ranked</b> {item.rankedNote}</p>}
   <StatusPicker item={item} />
   <p class="item-path">
     {path.map((step, index) => (index === path.length - 1 ? <b>{step.title}</b> : <span>{step.title} → </span>))}

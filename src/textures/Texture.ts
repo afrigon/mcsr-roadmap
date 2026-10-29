@@ -1,6 +1,7 @@
 import { PNG } from "pngjs";
 
 const channels = 4;
+const alphaChannel = 3;
 
 export class Texture {
   private constructor(private readonly png: PNG) {}
@@ -60,5 +61,34 @@ export class Texture {
 
   paste(texture: Texture, x: number, y: number) {
     texture.png.bitblt(this.png, 0, 0, texture.width, texture.height, x, y);
+  }
+
+  overlay(texture: Texture, x: number, y: number) {
+    for (let sourceY = 0; sourceY < texture.height; sourceY++) {
+      for (let sourceX = 0; sourceX < texture.width; sourceX++) {
+        const source = (sourceY * texture.width + sourceX) * channels;
+
+        if (texture.png.data[source + alphaChannel] === 0) {
+          continue;
+        }
+
+        const target = ((y + sourceY) * this.width + x + sourceX) * channels;
+        texture.png.data.copy(this.png.data, target, source, source + channels);
+      }
+    }
+  }
+
+  scaled(factor: number): Texture {
+    const result = Texture.blank(this.width * factor, this.height * factor);
+
+    for (let y = 0; y < result.height; y++) {
+      for (let x = 0; x < result.width; x++) {
+        const source = (Math.floor(y / factor) * this.width + Math.floor(x / factor)) * channels;
+        const target = (y * result.width + x) * channels;
+        this.png.data.copy(result.png.data, target, source, source + channels);
+      }
+    }
+
+    return result;
   }
 }

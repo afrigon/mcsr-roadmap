@@ -1,6 +1,5 @@
 ---
 import type { CanvasNode } from "../canvas/CanvasNode";
-import { Scope } from "../roadmap/Scope";
 
 interface Props {
   node: CanvasNode;
@@ -21,8 +20,8 @@ const { item } = node;
   data-title={item.title}
   data-description={item.description}
   data-goal={item.goal.title}
-  data-ranked={item.scope === Scope.Ranked ? "" : undefined}
-  data-search-text={[item.title, item.label, item.description].filter((text) => text !== null).join(" ").toLowerCase()}
+  data-ranked={item.rankedNote === null ? undefined : ""}
+  data-search-text={[item.title, item.label, item.description, item.rankedNote].filter((text) => text !== null).join(" ").toLowerCase()}
   style={`left: ${node.x}px; top: ${node.y}px;`}
 >
   <img src={item.icon.path} alt="" width="32" height="32" />
