@@ -21,16 +21,23 @@ const { title } = Astro.props;
     <AdvancementToast />
     <script>
       import { CanvasController } from "../canvas/CanvasController";
+      import { SearchController } from "../canvas/SearchController";
       import { TooltipController } from "../canvas/TooltipController";
       import { StatusController } from "../status/StatusController";
       import { StatusStore } from "../status/StatusStore";
 
       const viewport = document.getElementById("viewport")!;
-      const world = document.getElementById("world")!;
-      const all = (selector: string) => [...document.querySelectorAll<HTMLElement>(selector)];
 
-      new CanvasController(viewport, world, all("[data-bracket]"), all("[data-band]"), all("[data-band-label]")).start();
-      new TooltipController(world, document.getElementById("tooltip")!).start();
+      const search = document.querySelector<HTMLElement>("[data-search]")!;
+
+      new CanvasController(viewport).start();
+      new SearchController(
+        search,
+        search.querySelector<HTMLInputElement>("[data-search-input]")!,
+        search.querySelector<HTMLElement>("[data-search-count]")!,
+        [...document.querySelectorAll<HTMLElement>("[data-frame]")],
+      ).start();
+      new TooltipController(viewport, document.getElementById("tooltip")!).start();
       new StatusController(document, StatusStore.fromWindow()).start();
     </script>
   </body>

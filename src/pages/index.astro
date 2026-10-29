@@ -1,7 +1,6 @@
 ---
 import { getCollection } from "astro:content";
 import Canvas from "../components/Canvas.astro";
-import GoalBrackets from "../components/GoalBrackets.astro";
 import Header from "../components/Header.astro";
 import ItemPopover from "../components/ItemPopover.astro";
 import Tooltip from "../components/Tooltip.astro";
@@ -17,7 +16,6 @@ const pages = new Map((await getCollection("items")).map((page) => [page.id, pag
 
 <Layout title="MCSR Ranked roadmap">
   <Header />
-  <GoalBrackets brackets={layout.brackets} />
   <Canvas layout={layout} />
   <Tooltip />
   {roadmap.items.map((item) => <ItemPopover roadmap={roadmap} item={item} page={pages.get(item.id)} />)}

@@ -7,3 +7,5 @@ export const gutter = 40;
 export const endPadding = 120;
 export const columnWidth = frameSize + columnGap;
 export const elbowRadius = 10;
+export const compactBracketWidth = 120;
+export const tinyBracketWidth = 56;

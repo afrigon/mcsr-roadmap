@@ -5,6 +5,7 @@ const toastDuration = 4000;
 
 export class StatusController {
   private toastTimer: number | undefined;
+  private readonly parents = new Map<string, string>();
 
   constructor(
     private readonly document: Document,
@@ -12,6 +13,10 @@ export class StatusController {
   ) {}
 
   start() {
+    for (const frame of this.document.querySelectorAll<HTMLElement>("[data-frame][data-parent]")) {
+      this.parents.set(frame.dataset.statusOf!, frame.dataset.parent!);
+    }
+
     this.applyAll();
 
     for (const button of this.document.querySelectorAll<HTMLButtonElement>("[data-status-option]")) {
@@ -47,16 +52,25 @@ export class StatusController {
       button.setAttribute("aria-pressed", String(selected));
     }
 
-    for (const element of this.document.querySelectorAll<HTMLElement>("[data-parent]")) {
-      element.toggleAttribute("data-warning", this.hasUnlearnedParent(element));
+    for (const element of this.document.querySelectorAll<HTMLElement>("[data-frame][data-parent]")) {
+      element.toggleAttribute("data-warning", this.hasUnlearnedAncestor(element.dataset.statusOf!));
     }
   }
 
-  private hasUnlearnedParent(element: HTMLElement): boolean {
-    return (
-      this.store.get(element.dataset.statusOf!) !== Status.NotLearned &&
-      this.store.get(element.dataset.parent!) === Status.NotLearned
-    );
+  private hasUnlearnedAncestor(id: string): boolean {
+    const status = this.store.get(id);
+
+    if (status === Status.NotLearned || status === Status.Ignored) {
+      return false;
+    }
+
+    let ancestor = this.parents.get(id);
+
+    while (ancestor !== undefined && this.store.get(ancestor) === Status.Ignored) {
+      ancestor = this.parents.get(ancestor);
+    }
+
+    return ancestor !== undefined && this.store.get(ancestor) === Status.NotLearned;
   }
 
   private showToast(title: string, icon: string) {

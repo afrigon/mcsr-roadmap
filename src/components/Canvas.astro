@@ -1,6 +1,7 @@
 ---
 import type { CanvasLayout } from "../canvas/CanvasLayout";
 import Frame from "./Frame.astro";
+import GoalBrackets from "./GoalBrackets.astro";
 
 interface Props {
   layout: CanvasLayout;
@@ -10,28 +11,18 @@ const { layout } = Astro.props;
 ---
 
 <div id="viewport" class="viewport">
-  <div
-    id="world"
-    class="world"
-    data-width={layout.width}
-    data-height={layout.height}
-    style={`width: ${layout.width}px; height: ${layout.height}px;`}
-  >
+  <GoalBrackets brackets={layout.brackets} width={layout.width} />
+  <div id="world" class="world" style={`width: ${layout.width}px; height: ${layout.height}px;`}>
     {
       layout.bands.map((band) => (
-        <div class="band" data-band data-theme={band.category.theme} style={`top: ${band.top}px; height: ${band.height}px;`} />
+        <div class="band" data-theme={band.category.theme} style={`top: ${band.top}px; height: ${band.height}px;`}>
+          <div class="band-label">{band.category.title}</div>
+        </div>
       ))
     }
     {
       layout.brackets.map((bracket) => (
         <div class="guide" style={`left: ${bracket.start}px; height: ${layout.height}px;`} />
-      ))
-    }
-    {
-      layout.bands.map((band) => (
-        <div class="band-label" data-band-label data-theme={band.category.theme} style={`top: ${band.top + 14}px;`}>
-          {band.category.title}
-        </div>
       ))
     }
     <svg class="links" width={layout.width} height={layout.height} aria-hidden="true">

@@ -4,15 +4,21 @@ import { goalIcon } from "../canvas/goalIcons";
 
 interface Props {
   brackets: readonly GoalBracket[];
+  width: number;
 }
 
-const { brackets } = Astro.props;
+const { brackets, width } = Astro.props;
 ---
 
-<div class="goals" aria-hidden="true">
+<div class="goals" style={`width: ${width}px;`} aria-hidden="true">
   {
     brackets.map((bracket) => (
-      <div class="bracket" data-bracket data-start={bracket.start} data-end={bracket.end} data-rank={bracket.goal.rank ?? "none"}>
+      <div
+        class="bracket"
+        data-rank={bracket.goal.rank ?? "none"}
+        data-size={bracket.size}
+        style={`left: ${bracket.start}px; width: ${bracket.width}px;`}
+      >
         <span>
           <img src={goalIcon(bracket.goal).path} alt="" width="14" height="14" />
           <b class="full">{bracket.goal.title}</b>

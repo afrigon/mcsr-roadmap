@@ -2,15 +2,15 @@ const tooltipGap = 12;
 
 export class TooltipController {
   constructor(
-    private readonly world: HTMLElement,
+    private readonly container: HTMLElement,
     private readonly tooltip: HTMLElement,
   ) {}
 
   start() {
-    this.world.addEventListener("pointerover", (event) => this.show(event));
-    this.world.addEventListener("pointerout", (event) => this.hideFor(event));
-    this.world.addEventListener("pointerdown", () => this.hide());
-    this.world.addEventListener("wheel", () => this.hide(), { passive: true });
+    this.container.addEventListener("pointerover", (event) => this.show(event));
+    this.container.addEventListener("pointerout", (event) => this.hideFor(event));
+    this.container.addEventListener("pointerdown", () => this.hide());
+    this.container.addEventListener("scroll", () => this.hide(), { passive: true });
   }
 
   private show(event: PointerEvent) {

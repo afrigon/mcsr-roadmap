@@ -1,8 +1,14 @@
+---
+import SearchBox from "./SearchBox.astro";
+---
+
 <header class="site-header">
   <h1>MCSR Ranked roadmap</h1>
   <div class="legend">
     <span data-status="notLearned">Not learned</span>
     <span data-status="practicing">Practicing</span>
     <span data-status="mastered">Mastered</span>
+    <span data-status="ignored">Ignored</span>
   </div>
+  <SearchBox />
 </header>
