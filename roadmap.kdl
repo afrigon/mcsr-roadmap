@@ -1299,4 +1299,8 @@ category for-fun title="For Fun" theme=fun {
     item old-bridge-names title="Old Bridge Names" goal=sub20 icon="item/name_tag" {
         description "Double Single, Left Triple, Right Triple, Double Triple, Buried."
     }
+    item zero-oneshot title="Zero Oneshot" goal=sub10 icon="item/arrow" {
+        description "One arrow kills the dragon on the zero, from a standing spot scouted on the fixed seed."
+        ranked "Weekly race only, where every player gets the same seed."
+    }
 }

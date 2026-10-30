@@ -47,7 +47,7 @@ category zero-cycle title="Zero Cycle" theme=end {
 - `parent` is the item this one builds on, in the same category.
 - `icon` is `item/<texture>` or `block/<texture>` from the game, or `composite/bed`.
 - `label` is optional, shown under the icon when the icon alone is ambiguous.
-- `scope=ranked` marks a skill that only applies to Ranked.
+- An optional `ranked "…"` child notes how the skill differs or applies in Ranked.
 
 The build fails on unknown nodes or properties, unknown ids, a parent in another category or a later
 goal, parent cycles, and icons missing from the jar.
