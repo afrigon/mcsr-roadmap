@@ -176,6 +176,12 @@ category movement title="Movement" theme=fundamentals {
     item soulSandPillar title="Soul Sand Pillar" goal=sub13 parent=basicMovement icon="block/soul_sand" {
         description "Pillar up alternating soul sand and a solid block."
     }
+    item soulSandLava title="Soul Sand Beside Lava" goal=sub25 icon="block/soul_sand" label="Lava" {
+        description "Standing on soul sand level with lava sets you on fire: your hitbox reaches into the lava."
+    }
+    item soulSandEdge title="Soul Sand Edge Fall" goal=sub25 icon="block/soul_sand" label="Edge" {
+        description "Crouching doesn't stop you at an edge when you step from a full block onto soul sand."
+    }
     item headHitters title="Head Hitters" goal=sub15 icon="item/iron_helmet" label="Natural" {
         description "Sprint-jump under a low ceiling: each jump ends sooner, so you get the jump boost more often."
     }
@@ -185,6 +191,9 @@ category movement title="Movement" theme=fundamentals {
     item gravityBlockDig title="Dig Under Gravity Blocks" goal=sub11 icon="block/gravel" {
         description "Mine out the bottom of a sand or gravel column and walk through as it falls."
     }
+    item floatingGravel title="Floating Gravel" goal=sub25 icon="block/gravel" label="Floating" {
+        description "Generated floating gravel falls as soon as you place a block against its side."
+    }
     item swimming title="Swimming and Air Pockets" goal=sub45 icon="item/kelp" {
         description "Breathe from door and bed air pockets."
     }
@@ -193,6 +202,9 @@ category movement title="Movement" theme=fundamentals {
     }
     item boatGapJump title="Boat Gap Jump" goal=sub15 parent=boatTravel icon="item/oak_boat" label="Gap jump" {
         description "Jump a gap, place the boat on the far edge mid-air and ride the last stretch."
+    }
+    item boatLavaClip title="Boat Lava Clip" goal=sub20 parent=boatTravel icon="item/oak_boat" label="Clip" {
+        description "In a boat your hitbox reaches below the floor, so boating beside lava sets you on fire."
     }
     item boatDrop title="Boat Drop" goal=sub25 parent=boatTravel icon="item/oak_boat" label="Drop" {
         description "Ride a boat off a drop: the boat cancels fall damage, except at a few exact heights."

@@ -67,6 +67,9 @@ taken without a review. Each entry names what was decided and what to look at if
   dropped. Fire Place's goal is a guess. No source describes Air Place or Fire Place; their pages
   follow the owner's description, and Air Place's "the placement uses the block that is about to
   disappear" is an inference about how the same-tick placement works.
+- **Movement quirks** (owner's descriptions, no speedrun source): Soul Sand Beside Lava, Soul Sand
+  Edge Fall and Floating Gravel at Sub 25, Boat Lava Clip at Sub 20 under Boat Travel. The goals and
+  the "where it bites" examples are guesses.
 - **Seed Filter Guarantees** ranked note is a summary; the exact guarantees are per seed type and
   live on each category's items.
 
