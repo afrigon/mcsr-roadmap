@@ -28,7 +28,11 @@ const Content = page === undefined ? null : (await render(page)).Content;
       <p>{roadmap.categoryOf(item).title} · {item.goal.title}</p>
     </div>
     {import.meta.env.DEV && <EditPageButton item={item} />}
-    <button type="button" class="popover-close" popovertarget={item.id} popovertargetaction="hide" aria-label="Close">✕</button>
+    <button type="button" class="popover-close" popovertarget={item.id} popovertargetaction="hide" aria-label="Close">
+      <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+        <path d="M2 2 10 10 M10 2 2 10" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+      </svg>
+    </button>
   </header>
 
   {item.rankedNote !== null && <p class="ranked-label"><b>Ranked</b> {item.rankedNote}</p>}

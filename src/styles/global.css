@@ -635,6 +635,14 @@
     }
   }
 
+  .popover-close {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+  }
+
   .ranked-label {
     margin-top: 16px;
     padding: 8px 12px;
