@@ -1097,13 +1097,13 @@ category zeroCycle title="Zero Cycle" theme=end {
         description "Detonate an explosive and place the next one in its spot on the same tick."
     }
     item fallRecovery title="Fall Recovery" goal=sub12 parent=standardSetup icon="item/water_bucket" label="Fall" {
-        description "Get back onto the tower and into position after falling off."
+        description "Survive falling off the tower: water bucket or boat before you land."
     }
     item lostBlockRecovery title="Lost Block Recovery" goal=sub11 parent=fallRecovery icon="item/water_bucket" label="Block" {
-        description "Keep the zero going when the block under you is destroyed."
+        description "Survive when a bed or the dragon destroys the block under you."
     }
     item knockbackRecovery title="Knockback Recovery" goal=sub10 parent=fallRecovery icon="item/water_bucket" label="Knockback" {
-        description "Recover when the dragon knocks you off the setup."
+        description "Survive being knocked off the tower by the dragon."
     }
     item frontLowY90 title="Front Low Towers" goal=sub15 parent=bedTiming icon="block/obsidian" label="Front y90" {
         description "Small Boy, Small Cage, Tall Cage and M-85 at y90, standing on 28 −27."
