@@ -1,27 +1,4 @@
-An eye of ender starts from where the server thinks you are, not from what F3 shows. If those two
-disagree when you throw, the eye's line is wrong even though the bot reports full certainty.
-
-## How it works
-
-- Your client only tells the server your position after you have moved at least 0.03 blocks, or
-  after up to 1 second. Small movements in that window go unreported.
-- Throw inside that window and the eye launches from your old position while F3+C gives the new
-  one.
-- Any of these resyncs your position before a throw:
-  - exit a boat and don't move;
-  - jump in place once you are fully stopped (jumping with leftover momentum carries it);
-  - stand completely still for more than 1 second;
-  - a pearl landing, leaving a bed or respawning.
-- Walking into a corner only stops you faster; you still need to jump or wait.
-
-## How to practice
-
-1. Make "stop, jump, throw" or "boat out, throw" a fixed habit before every measured eye.
-2. When a 100% result misses, assume desync first and check whether you threw while moving.
-
-## Resources
+- [Char: desync visualising mod](https://github.com/char3210/desyncview/releases/tag/1.0)
 
 <YouTube id="uBqAeZMlEFQ" title="Char: eye desync in Minecraft speedruns" />
 <YouTube id="l-q-_4R8_6M" start={987} title="draconix: avoiding desync before a throw" />
-
-- [Char: desync visualising mod](https://github.com/char3210/desyncview/releases/tag/1.0)

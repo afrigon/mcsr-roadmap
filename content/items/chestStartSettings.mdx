@@ -1,48 +1,4 @@
-The first thing most overworld routes look for is a chest: buried treasure, a shipwreck or a village
-loot chest. StandardSettings can start every world already set up for that scan, so you spawn ready
-to read the pie chart instead of opening menus.
-
-## How it works
-
-StandardSettings applies these values on every new world. Render distance and entity distance go in
-its "on world join" values, which apply once the world has loaded.
-
-| Setting | Value | Why |
-| --- | --- | --- |
-| Render distance | 8 | Fewer loaded chunks keep the pie chart quiet, so a chest's spike stands out. |
-| Entity distance | 50% (the lowest) | Fewer far entities in the same slice as the chest. |
-| Entity culling | Off | Block entities behind terrain still count, so the chest shows through the ground. |
-| Chunk borders (F3+G) | On | You scan across chunk borders and dig at a fixed spot in the chunk. |
-| Pie directory | See below | The pie chart opens on the right section. |
-| F3 pause on world load | On | The world waits for you while it loads. |
-
-- The pie chart (Shift+F3) is a tree of sections. You move through it with the number keys while
-  the game is unpaused, and 0 backs out one level.
-- StandardSettings has a **Pie Directory** option (Ctrl+F, "pie") that sets the starting section on
-  every world. The two values runners use:
-
-| Directory | Used for |
-| --- | --- |
-| `root.gameRenderer.level.entities` | Mapless buried treasure and preemptive stronghold scans. Most high-level runners preset this one. |
-| `root.tick.level.entities.blockEntities` | Fortress finding: the blaze spawner shows as its own slice. |
-
-- Whichever one you preset, you navigate to the other during the run. HiTrippy suggests the
-  fortress directory while you're learning, because below 1200 Elo you get no buried treasure seeds
-  and you reach the fortress before the stronghold. Switch to the gameRenderer directory once you
-  scan for buried treasure or do preemptive.
-- These settings are for the scan, not for travel: once the chest is found, switch back (see
-  Restore Settings).
-
-## How to practice
-
-1. Set the values in StandardSettings, create a new world and check each one, including the pie
-   chart opening on the right section.
-2. In the nether, practice backing out with 0 and typing the path to the other directory until you
-   do it without looking at the labels.
-
-## Resources
+- [StandardSettings on GitHub](https://github.com/KingContaria/StandardSettings)
 
 <YouTube id="Uvy0LzZuCxU" start={577} title="HiTrippy: pie directory" />
 <YouTube id="egyiA_8FztM" start={1884} title="Mikeyboie: the pie chart" />
-
-- [StandardSettings on GitHub](https://github.com/KingContaria/StandardSettings)

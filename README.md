@@ -2,7 +2,7 @@
 
 A learning roadmap for MCSR Ranked, the Minecraft 1.16.1 ranked speedrun mod. Every skill is an
 advancement on one canvas, placed under the Break the Barrier time goal it unlocks and linked to the
-skill it builds on. Each one opens a page explaining how to learn it, and its status (not learned,
+skill it builds on. Each one opens a page of resources for learning it, and its status (not learned,
 practicing, mastered) is saved in the browser.
 
 ## Development
@@ -52,8 +52,8 @@ category zeroCycle title="Zero Cycle" theme=end {
 The build fails on unknown nodes or properties, unknown ids, a parent in another category or a later
 goal, parent cycles, and icons missing from the jar.
 
-An item's page is `content/items/<id>.mdx`, with the sections *How it works*, *How to practice* and
-*Resources*. Embed videos with `<YouTube id="…" start={seconds} title="…" />`. Pages are optional: the
+An item's page is `content/items/<id>.mdx`: its links and videos, with written content fitted to
+the item. Embed videos with `<YouTube id="…" start={seconds} title="…" />`. Pages are optional: the
 build lists items without one, and fails on a page with no matching item.
 
 Research notes behind the roadmap live in `research/`.

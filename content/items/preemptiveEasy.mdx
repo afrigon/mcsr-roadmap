@@ -1,31 +1,7 @@
-Preemptive navigation reads the profiler pie chart from the starter staircase to find the direction of
-the portal room's silverfish spawner, then routes straight at it. It replaces guessing with a
-direction before you take a step.
-
-## How it works
-
-- **Settings**: render distance 8, entity distance 50%, FOV 30, chunk borders off, entity culling off.
-- **Pie chart**: open the profiler (Shift+F3) and select `root.gameRenderer.level.entities` with the
-  number keys.
-- **Reading**: turn slowly and add the left-column percentages of `blockentities` (orange) and
-  `unspecified` (green). The direction with the biggest sum points at the spawner. A clean spawner
-  reading is about 45–62%.
-- Don't look at a block while reading: the block outline changes the numbers.
-- Then route toward that direction with your navigation knowledge.
-- It works from the staircase or from inside the second portal.
-
-## How to practice
-
-1. Set up the settings once in your practice instance and save them.
-2. In a preemptive practice map, read the spike, then fly in spectator to check the direction.
-3. Note which numbers come up most for you; they become your reference.
-
-## Resources
+- [Mimi and Meebie: A Deeper Look Into Preemptive Navigation](https://docs.google.com/document/d/1Xnmki5jOwuiwVnyv1b3VJLpiDWfNixgKW3zQowmpsYo/edit)
+- [addlama: preemptive setup document](https://docs.google.com/document/d/1NEJ_BaQOqyDlt-h2GiUg4zXlqBHv8YfMVdGpQhDLD8U/edit)
+- [Llama: preemptive practice map](https://www.mediafire.com/file/lzbecct99g8p22i/Lama%27s_Practice_Map.zip)
 
 <YouTube id="2dWq2wXy43M" title="addlama: preemptive navigation" />
 <YouTube id="sUK23ws2ceY" start={210} title="k4yfour: preemptive with the pie chart" />
 <YouTube id="4It26dOki7g" start={378} title="Mikeyboie: stronghold preemptive scan" />
-
-- [Mimi and Meebie: A Deeper Look Into Preemptive Navigation](https://docs.google.com/document/d/1Xnmki5jOwuiwVnyv1b3VJLpiDWfNixgKW3zQowmpsYo/edit)
-- [addlama: preemptive setup document](https://docs.google.com/document/d/1NEJ_BaQOqyDlt-h2GiUg4zXlqBHv8YfMVdGpQhDLD8U/edit)
-- [Llama: preemptive practice map](https://www.mediafire.com/file/lzbecct99g8p22i/Lama%27s_Practice_Map.zip)

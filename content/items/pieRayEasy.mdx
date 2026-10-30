@@ -1,34 +1,5 @@
-Pie-ray (also called piedar) finds a fortress before you can see it, using the debug pie chart. The chart lists block entities in loaded chunks, and blaze spawners show up as their own slice, so changing render distance and stepping across chunk borders tells you which way the spawner is.
-
-## How it works
-
-1. Turn on chunk borders (F3+G). Open the pie chart (Shift+F3) and go to `tick`, `level`,
-   `entities`, `blockEntities`.
-2. Raise render distance one step at a time (F3+F; Shift+F3+F lowers it) until a `mob_spawner`
-   slice appears. Call that value N.
-3. Lower to N−4 and refresh the chart (Shift+F3 twice). The spawner disappears: it only drops off
-   the chart once render distance is four lower.
-4. Raise to N−1. You are now one chunk short of loading the spawner.
-5. Cross the border into each neighbouring chunk in turn. The one that brings the spawner back is
-   the direction to go, and N is roughly the distance in chunks.
-6. If no side works, the spawner is diagonal: check the diagonal chunks.
-
-- Render distance loads a cone of directions, so a far spawner can be off to the left or right.
-  If you travel the distance and see nothing, scan again.
-- A treasure bastion's magma cube spawner shows up the same way.
-
-## How to practice
-
-1. Download the pie-ray simulator map from the Hyper Enhanced Negative Pie-Ray post below. It
-   places spawners around you each time you flick its lever.
-2. Run the full scan until you hit the right direction every time, without counting on your
-   fingers.
-3. Then do it on entry in practice runs, before moving.
-
-## Resources
+- [ClearColdWater on frontcage: pie-ray simulator map](https://frontcage.com/t/hyper-enhanced-negative-pie-ray-pie-ray-simulator-map-reposted/62)
 
 <YouTube id="5LuoaGFCoBU" title="k4yfour: finding a fortress in 100 seconds" />
 <YouTube id="JsFcAeBXVpk" start={470} title="Mikeyboie: how to scan for fortresses" />
 <YouTube id="71ABl45UyAE" title="Calisthenicuber: locating the fortress" />
-
-- [ClearColdWater on frontcage: pie-ray simulator map](https://frontcage.com/t/hyper-enhanced-negative-pie-ray-pie-ray-simulator-map-reposted/62)
