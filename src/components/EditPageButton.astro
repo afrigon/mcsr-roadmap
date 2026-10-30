@@ -1,0 +1,18 @@
+---
+import type { Item } from "../roadmap/Item";
+import { itemPageExtension, itemPagesDirectory } from "../roadmap/RoadmapFiles";
+
+interface Props {
+  item: Item;
+}
+
+const { item } = Astro.props;
+---
+
+<button type="button" class="popover-edit" data-open-in-editor={`${itemPagesDirectory}/${item.id}${itemPageExtension}`}>Edit</button>
+
+<script>
+  for (const button of document.querySelectorAll<HTMLElement>("[data-open-in-editor]")) {
+    button.addEventListener("click", () => fetch(`/__open-in-editor?file=${encodeURIComponent(button.dataset.openInEditor!)}`));
+  }
+</script>
