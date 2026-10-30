@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Canvas from "../components/Canvas.astro";
+import CategoryRail from "../components/CategoryRail.astro";
 import Header from "../components/Header.astro";
 import ItemPopover from "../components/ItemPopover.astro";
 import Tooltip from "../components/Tooltip.astro";
@@ -17,6 +18,7 @@ const pages = new Map((await getCollection("items")).map((page) => [page.id, pag
 <Layout title="MCSR Ranked roadmap">
   <Header />
   <Canvas layout={layout} />
+  <CategoryRail bands={layout.bands} />
   <Tooltip />
   {roadmap.items.map((item) => <ItemPopover roadmap={roadmap} item={item} page={pages.get(item.id)} />)}
 </Layout>

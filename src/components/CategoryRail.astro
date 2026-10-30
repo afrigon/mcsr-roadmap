@@ -1,0 +1,22 @@
+---
+import type { CanvasBand } from "../canvas/CanvasBand";
+
+interface Props {
+  bands: readonly CanvasBand[];
+}
+
+const { bands } = Astro.props;
+---
+
+<nav class="category-rail" aria-label="Categories" data-category-rail>
+  <div class="rail-track">
+    {
+      bands.map((band) => (
+        <button type="button" data-theme={band.category.theme} data-rail-target={band.category.id} style={`flex-grow: ${band.height};`}>
+          <span>{band.category.title}</span>
+        </button>
+      ))
+    }
+    <div class="rail-view" data-rail-view></div>
+  </div>
+</nav>

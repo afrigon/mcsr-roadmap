@@ -15,7 +15,7 @@ const { layout } = Astro.props;
   <div id="world" class="world" style={`width: ${layout.width}px; height: ${layout.height}px;`}>
     {
       layout.bands.map((band) => (
-        <div class="band" data-theme={band.category.theme} style={`top: ${band.top}px; height: ${band.height}px;`}>
+        <div class="band" data-band={band.category.id} data-theme={band.category.theme} style={`top: ${band.top}px; height: ${band.height}px;`}>
           <div class="band-label">{band.category.title}</div>
         </div>
       ))

@@ -22,6 +22,7 @@
   color-scheme: dark;
   --header-height: 52px;
   --goals-height: 54px;
+  --rail-width: 18px;
 }
 
 [data-theme="fundamentals"] { --tint: 125 160 200; }
@@ -252,7 +253,7 @@
 
   .viewport {
     position: fixed;
-    inset: var(--header-height) 0 0 0;
+    inset: var(--header-height) var(--rail-width) 0 0;
     overflow: auto;
     overscroll-behavior: none;
     cursor: grab;
@@ -305,6 +306,71 @@
       border-radius: 2px;
       background: rgb(var(--tint));
     }
+  }
+
+  .category-rail {
+    position: fixed;
+    inset: var(--header-height) 0 0 auto;
+    display: flex;
+    width: var(--rail-width);
+    padding: var(--goals-height) 4px 0;
+    background: var(--color-background);
+    border-left: 1px solid rgb(255 255 255 / 0.06);
+
+    & .rail-track {
+      position: relative;
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    & button {
+      position: relative;
+      min-height: 0;
+      flex-basis: 0;
+      border-radius: 3px;
+      cursor: pointer;
+      background: rgb(var(--tint) / 0.45);
+
+      &:hover,
+      &:focus-visible {
+        background: rgb(var(--tint));
+      }
+    }
+
+    & span {
+      position: absolute;
+      top: 50%;
+      right: calc(100% + 10px);
+      z-index: 6;
+      display: none;
+      translate: 0 -50%;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      pointer-events: none;
+      color: rgb(var(--tint));
+      background: var(--color-surface-raised);
+      box-shadow: 0 6px 18px rgb(0 0 0 / 0.45);
+    }
+
+    & button:hover span,
+    & button:focus-visible span {
+      display: block;
+    }
+  }
+
+  .rail-view {
+    position: absolute;
+    inset-inline: -2px;
+    border: 1.5px solid var(--color-text);
+    border-radius: 4px;
+    pointer-events: none;
   }
 
   .guide {
