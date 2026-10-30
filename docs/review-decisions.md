@@ -29,8 +29,8 @@ taken without a review. Each entry names what was decided and what to look at if
 
 - **Soul Sand Pillar** (Movement, Sub 13): added as requested; no source explains why alternating
   soul sand and a solid block helps, so the description only says what it is.
-- **Village bucket trade**: not added. No villager sells an empty bucket and no guide mentions a
-  trade; savanna village chests can hold a bucket, which could become a "Savanna House Bucket" item.
+- **Fisherman Bucket** (Village, Sub 20, child of Village Checklist): the bucket trade is a
+  fisherman's bucket of cod; the goal is a guess.
 - **Ruined portal axe chest**: folded into Ruined Portal Loot ("if it holds an axe, take it and break
   the chest with it"); the source video could not be re-checked.
 - **Dragon Chase-Down** (End Fight, Sub 13): description written from the zero-cycle notes, no
@@ -87,8 +87,8 @@ Things worth checking first:
   so the old "mine it out and recast" advice looks wrong; the page points to the completion video.
 - **Sneak Alignment** (Desert Temple) has no source describing the trick; the page only covers the
   closest documented clip. Keep, rename or drop.
-- **Boat During Portal**: Mojang bug reports suggest a player riding a boat inside a portal isn't
-  teleported, so the exact technique needs a source; the page stays general.
+- **Boat During Portal**: getting in and out of the boat for boat eye during the portal animation
+  (owner's description). Where the boat is placed is inferred.
 - **Low-confidence pages**: Lost Block Recovery, Knockback Recovery, Zero Without the Crystal,
   Triple Stack, Boat Climb, Piglin Pit Escape (gravel), Early Blind Reset, Both Spawners Active.
 

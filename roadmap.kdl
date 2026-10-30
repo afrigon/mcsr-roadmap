@@ -336,6 +336,9 @@ category village title="Village" theme=overworld {
     item villageChecklist title="Village Checklist" goal=sub30 parent=blacksmith icon="block/hay_block_side" {
         description "10+ logs, 2 beds and about 7 hay bales."
     }
+    item fishermanBucket title="Fisherman Bucket" goal=sub20 parent=villageChecklist icon="item/cod_bucket" {
+        description "No bucket in the loot: buy a bucket of cod from a fisherman and place the fish."
+    }
     item blacksmithObsidian title="Blacksmith Obsidian" goal=sub45 parent=blacksmith icon="block/obsidian" {
         description "Enter with the blacksmith's obsidian or go to the lava pools."
         ranked "Either 3 lava pools near the village or 8+ obsidian in the blacksmith."
@@ -899,7 +902,7 @@ category findingStronghold title="Finding the Stronghold" theme=stronghold {
         description "A mouse sensitivity that keeps boat angles exact, so entering the boat needs no F3+C."
     }
     item boatDuringPortal title="Boat During Portal" goal=sub13 parent=godSensitivity icon="item/oak_boat" label="Portal" {
-        description "Enter the boat while the portal animation plays."
+        description "Get in and out of the boat for boat eye during the portal animation, not after arriving."
     }
     item digIn title="Dig In at 4,4" goal=sub45 parent=followEyes icon="item/iron_shovel" {
         description "Dig down at block 4,4 of the stronghold chunk."
