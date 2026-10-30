@@ -1,12 +1,13 @@
+import { IconReference } from "../roadmap/IconReference";
 import { IconSource } from "../roadmap/IconSource";
-import type { IconReference } from "../roadmap/IconReference";
-import { RoadmapError } from "../roadmap/RoadmapError";
 import type { CompositeIcon } from "./CompositeIcon";
-import { compositeIcons } from "./compositeIcons";
+import { compositeIcons, missingIconName } from "./compositeIcons";
 import type { Texture } from "./Texture";
 import { TextureLibrary } from "./TextureLibrary";
 
 export class IconRenderer {
+  static readonly missing = new IconReference(IconSource.Composite, missingIconName);
+
   constructor(private readonly library: TextureLibrary) {}
 
   static fromEnvironment(): IconRenderer {
@@ -28,10 +29,8 @@ export class IconRenderer {
   }
 
   render(icon: IconReference): Texture {
-    const problems = this.problemsWith(icon);
-
-    if (problems.length > 0) {
-      throw new RoadmapError(problems);
+    if (this.problemsWith(icon).length > 0) {
+      return this.render(IconRenderer.missing);
     }
 
     const textures = this.sourcesOf(icon).map((source) => this.library.texture(source));

@@ -18,6 +18,19 @@ export class Texture {
     return new Texture(new PNG({ width, height }));
   }
 
+  static checkerboard(size: number, cellSize: number, first: readonly number[], second: readonly number[]): Texture {
+    const texture = Texture.blank(size, size);
+
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        const color = (Math.floor(x / cellSize) + Math.floor(y / cellSize)) % 2 === 0 ? first : second;
+        texture.png.data.set(color, (y * size + x) * channels);
+      }
+    }
+
+    return texture;
+  }
+
   get width(): number {
     return this.png.width;
   }

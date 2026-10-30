@@ -9,8 +9,17 @@ const hungerSize = 9;
 const hungerOutline = { x: 16, y: 27 };
 const hungerFill = { x: 52, y: 27 };
 const hungerScale = 3;
+const missingSize = 16;
+const missingCellSize = 8;
+const missingMagenta = [0xf8, 0x00, 0xf8, 0xff];
+const missingBlack = [0x00, 0x00, 0x00, 0xff];
+
+export const missingIconName = "missing";
 
 export const compositeIcons = [
+  new CompositeIcon(missingIconName, [], () =>
+    Texture.checkerboard(missingSize, missingCellSize, missingMagenta, missingBlack),
+  ),
   new CompositeIcon("bed", ["entity/bed/red"], ([bed]) => {
     const top = Texture.blank(bedFaceSize, bedFaceSize * 2);
     top.paste(bed!.crop(bedHeadTop.x, bedHeadTop.y, bedFaceSize, bedFaceSize), 0, 0);

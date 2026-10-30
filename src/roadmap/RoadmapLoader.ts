@@ -34,8 +34,9 @@ export class RoadmapLoader {
     const { data } = entry;
     const category = this.structure.category(data.category);
     const goal = this.structure.goal(data.goal);
-    const icon = IconReference.parse(data.icon);
+    const parsedIcon = IconReference.parse(data.icon);
     const report = (message: string) => this.problems.push(`${entry.filePath}: ${message}`);
+    const warn = (message: string) => console.warn(`${entry.filePath}: ${message}, showing the missing-texture icon`);
 
     if (category === undefined) {
       report(`unknown category "${data.category}"`);
@@ -45,13 +46,13 @@ export class RoadmapLoader {
       report(`unknown goal "${data.goal}"`);
     }
 
-    if (icon === null) {
-      report(`invalid icon "${data.icon}", expected item/<name>, block/<name> or composite/<name>`);
+    if (parsedIcon === null) {
+      warn(`invalid icon "${data.icon}", expected item/<name>, block/<name> or composite/<name>`);
     } else {
-      this.icons.problemsWith(icon).forEach(report);
+      this.icons.problemsWith(parsedIcon).forEach(warn);
     }
 
-    if (category === undefined || goal === undefined || icon === null) {
+    if (category === undefined || goal === undefined) {
       return null;
     }
 
@@ -61,7 +62,7 @@ export class RoadmapLoader {
       category,
       goal,
       data.parent ?? null,
-      icon,
+      parsedIcon ?? IconRenderer.missing,
       data.index,
       data.label ?? null,
       data.description,
