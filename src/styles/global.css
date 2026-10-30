@@ -255,6 +255,7 @@
     position: fixed;
     inset: var(--header-height) var(--rail-width) 0 0;
     overflow: auto;
+    scrollbar-width: none;
     overscroll-behavior: none;
     cursor: grab;
     user-select: none;
