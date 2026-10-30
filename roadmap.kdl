@@ -1127,7 +1127,7 @@ category zeroCycle title="Zero Cycle" theme=end {
         description "Back y95 offset, standing on −29 26."
     }
     item t97 title="T-97" goal=sub10 parent=m91BackOffset icon="block/obsidian" label="T-97 y100" {
-        description "Back y100 on −28 26, front offset y99 on 27 −28."
+        description "Back y100 and the front y99 offsets, plus y104 when you stand high enough."
     }
     item t97BackY99 title="T-97 Back" goal=sub9 parent=t97 icon="block/obsidian" label="T-97 B y99" {
         description "Back y99, in the variant of your choice."
@@ -1155,12 +1155,6 @@ category zeroCycle title="Zero Cycle" theme=end {
     }
     item lenience title="Lenience" goal=sub10 parent=allTowersY95 icon="item/clock_00" {
         description "How much spare time each setup leaves for your spawn."
-    }
-    item multiblock title="Multiblock Variants" goal=sub7 parent=lenience icon="block/obsidian" label="Multiblock" {
-        description "Two bed positions and a diagonal standing block for consistent damage."
-    }
-    item nodeAlignedMultiblock title="Node-Aligned Multiblock" goal=sub7 parent=multiblock icon="block/obsidian" label="Node-aligned" {
-        description "hasbiWalks' optional set aligned with the actual node."
     }
     item overhangSpawns title="Overhang Spawns" goal=sub13 parent=standardSetup icon="block/end_stone" label="Overhang" {
         description "Run back and pearl, or build up first."
@@ -1271,6 +1265,9 @@ category forFun title="For Fun" theme=fun {
     }
     item twoPlusOne title="2+1 Zero" goal=sub6 icon="block/respawn_anchor_side0" label="2+1" {
         description "Three explosives over two rotations, from pion's anchor square setup."
+    }
+    item nodeAlignedMultiblock title="Node-Aligned Multiblock" goal=sub7 icon="block/obsidian" {
+        description "hasbiWalks' all-multiblock set aligned with the actual node: slower to build, for fun."
     }
     item toeTickler title="Toe Tickler" goal=sub7 icon="item/feather" {
         description "The theoretical fastest TNT gap route."
