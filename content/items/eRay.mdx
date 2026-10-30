@@ -1,0 +1,30 @@
+E-ray finds the bastion through walls from the F3 entity counter, so you can leave the portal
+running the right way without seeing anything. It works on any nether where the bastion is within
+render distance.
+
+## How it works
+
+- Open F3. The top-left line `E: a/b` shows two numbers: `b` counts every entity loaded within
+  render distance, `a` only the ones inside your view.
+- A bastion holds about 30 mobs of its own in one spot, so when your view crosses it, the left
+  number jumps. That jump is the spike.
+- Switch to the thin macro: the window becomes a narrow strip, so the left number counts only a thin
+  slice in front of you and the spike points at an exact direction.
+- Turn slowly through a full circle, note the angle of the largest spike, switch back and run that
+  way.
+- A fortress's blazes and withers can also spike, but more gently; a bastion spikes sharply.
+
+## How to practice
+
+1. On practice seeds, e-ray before moving, then check your direction with F5 or the wide macro.
+2. Count your fake reads: each time you ran the wrong way, check whether you followed a gentle
+   spike instead of the sharp one.
+3. Turn slowly enough that a one-slice spike can't slip past between frames.
+
+## Resources
+
+<YouTube id="M-sffdCnv-4" title="k4yfour: how to find a bastion in 100 seconds" />
+<YouTube id="CRwiJcWWUlY" start={146} title="Mikeyboie: the E counter and spikes" />
+<YouTube id="yUeSm0C0t50" start={25} title="PudgyPenguin: e-ray walkthrough" />
+
+- [MCSR wiki: E-ray](https://mcsr.miraheze.org/wiki/E-ray)

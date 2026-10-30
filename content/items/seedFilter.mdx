@@ -1,0 +1,21 @@
+Ranked doesn't use random seeds: each seed type passes a filter that guarantees its structure is nearby, has enough loot and gives you a way into the nether. Knowing what is guaranteed tells you what to look for and when not to waste time searching.
+
+## How it works
+
+| Seed type | Elo needed | Guarantees |
+| --- | --- | --- |
+| Village | any | Within 7 chunks; a blacksmith; at least 7 iron, or 4 iron and 3 diamonds, counting the golem's 4; food in chests or hay bales; a river within 6 chunks; either 3 lava pools nearby or 8+ obsidian in the blacksmith. |
+| Shipwreck | any | Within 4 chunks; at least 7 iron, or 4 iron and 3 diamonds; some food; 2 magma ravines within 10 chunks. |
+| Desert Temple | any | Within 5 chunks; at least 7 iron, or 4 iron and 3 diamonds; some food; wood nearby (mostly); a river within 6 chunks; 3 lava pools nearby. |
+| Ruined Portal | 600 | Within 3 chunks; at least 18 iron nuggets beyond what the bucket or flint and steel needs; food, or animals with flint and steel or a Fire Aspect sword; enterable with obsidian or a bucket. |
+| Buried Treasure | 1200 | Within 5 chunks; at least 7 iron, or 4 iron and 3 diamonds; 2 magma ravines within 10 chunks. |
+
+- Snowy and taiga villages appear from 900 Elo. Taiga villages always have a 10+ obsidian enter.
+- In the nether, the intended bastion is the closest to 0,0 by at least 10 chunks and within 14 chunks of it, with open terrain from your entry. The fortress is within 16 chunks of that bastion.
+- The End is not filtered.
+- The overworld and nether come from independent seeds, so tricks that infer the nether from the overworld don't work.
+
+## Resources
+
+- [MCSR Ranked wiki: seed filter](https://wiki.mcsrranked.com/gameplay/seed)
+- [MCSR Ranked wiki: RNG standardization](https://wiki.mcsrranked.com/gameplay/rng)

@@ -1,0 +1,26 @@
+The F3 debug screen tells you where you are and which way you face. You read it constantly: to travel to Ninjabrain Bot's stronghold coordinates, to build the blind portal, and to follow coordinates in zero-cycle setups.
+
+## How it works
+
+- **XYZ**: your exact position with decimals. Y is height.
+- **Block**: the whole-number coordinates of the block you stand in. Use this line when you follow coordinates; Ninjabrain Bot and setup guides expect it. On negative coordinates, the rounded XYZ values read one off from Block.
+- **Chunk**: which 16×16 chunk you're in and your position inside it (0–15 on each axis). Buried treasure and stronghold staircases sit at fixed positions inside a chunk.
+- **Facing**: the compass direction, the axis it points along, and your yaw and pitch in degrees.
+
+| Facing | Axis |
+| --- | --- |
+| South | +Z |
+| North | −Z |
+| East | +X |
+| West | −X |
+
+- Nether coordinates are one eighth of overworld coordinates on X and Z.
+
+## How to practice
+
+1. In any world, pick a coordinate pair and walk to it using only the Block line and Facing.
+2. Turn until your yaw matches a target angle, as you will when following a Ninjabrain Bot angle.
+
+## Resources
+
+<YouTube id="l-q-_4R8_6M" start={1153} title="draconix: reading the Block line for stronghold coordinates" />

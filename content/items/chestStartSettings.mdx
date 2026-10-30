@@ -1,0 +1,23 @@
+The pie chart (Shift+F3) is the profiler that runners read to find buried treasure, fortresses and the stronghold. Presetting its directory in StandardSettings means it already shows the right section when you open it, instead of clicking through it every run.
+
+## How it works
+
+- The pie chart is a tree of sections. You move through it with the number keys while the game is unpaused, and 0 backs out one level.
+- StandardSettings has a **Pie Directory** option (Ctrl+F, "pie") that resets the starting section on every world. The two values runners use:
+
+| Directory | Used for |
+| --- | --- |
+| `root.gameRenderer.level.entities` | Mapless buried treasure and preemptive stronghold scans. Most high-level runners preset this one. |
+| `root.tick.level.entities.blockEntities` | Fortress finding: the blaze spawner shows as its own slice. |
+
+- Whichever one you preset, you navigate to the other during the run. HiTrippy suggests the fortress directory while you're learning, because below 1200 Elo you get no buried treasure seeds and you reach the fortress before the stronghold. Switch to the gameRenderer directory once you scan for buried treasure or do preemptive.
+
+## How to practice
+
+1. Set the Pie Directory, create a new world and open Shift+F3 to check it.
+2. In the nether, practice backing out with 0 and typing the path to the other directory until you do it without looking at the labels.
+
+## Resources
+
+<YouTube id="Uvy0LzZuCxU" start={577} title="HiTrippy: pie directory" />
+<YouTube id="egyiA_8FztM" start={1884} title="Mikeyboie: the pie chart" />

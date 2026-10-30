@@ -1,0 +1,29 @@
+Entering a boat snaps your view to a known angle. Ninjabrain Bot uses that to recover far more
+precision than F3+C prints, so one well-measured eye is usually enough to find the stronghold.
+
+## How it works
+
+- After the boat snap, every mouse movement turns you by a fixed step that depends on your
+  sensitivity. Knowing the start angle and the step, the bot can compute your exact angle.
+- Combined with tall resolution and pixel adjustment, the single eye is precise enough to go
+  straight to the stronghold.
+- Use a god sensitivity: one where entering a boat always lands on a valid angle, so you never need
+  F3+C when you get in. Ninjabrain Bot's boat icon must be green before you measure.
+- Bot settings: enable boat measurements, enter the exact sensitivity from `options.txt`, set the
+  resolution height to your tall resize (16384) and keep the allowable boat error at 0.03.
+- Workflow: get in and out of the boat, stand still, throw, measure with tall zoom, F3+C, correct
+  the pixels.
+- If the result is unsure, throw a second eye; in Ranked the second throw never breaks.
+
+## How to practice
+
+1. Set up god sensitivity first (see its page), then the bot settings above.
+2. Measure single eyes in practice seeds and check how often the top chunk is right.
+3. Watch the boat icon every time: a non-green icon means the measurement is wasted.
+
+## Resources
+
+<YouTube id="xg_2U7paSXI" start={220} title="mysticsheep: boat eye guide" />
+<YouTube id="l-q-_4R8_6M" start={977} title="draconix: measuring with a boat" />
+
+- [Ninjabrain Bot wiki: boat measurements](https://github.com/Ninjabrain1/Ninjabrain-Bot/wiki/Boat-measurements)

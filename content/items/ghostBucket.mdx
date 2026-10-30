@@ -1,0 +1,18 @@
+A ghost bucket looks full in your hotbar but is actually empty, so it won't place when you need it. It isn't random: it happens when you flick the crosshair onto a liquid and click before the game has caught up.
+
+## How it works
+
+- Your client and the world disagree by about a tick. If you flick onto lava and click, your client thinks you're looking at the lava and shows a lava bucket, but the world still thinks you're looking at the block next to it, so the bucket stays empty.
+- The same happens with water.
+- A real pickup usually shows the liquid disappear and refill. A fake one shows the bucket sprite but placing does nothing; the bucket may jump back to its stack when you click it.
+- Ghost buckets are an allowed glitch, so nothing about avoiding them is restricted. The fix is entirely in how you aim.
+
+## How to practice
+
+1. Look at the liquid, then click. Don't click during a flick, even one that doesn't feel fast.
+2. Build practice-map portals and pick up every lava source while consciously settling the crosshair first.
+3. After grabbing water you depend on, place it once to check if you have time.
+
+## Resources
+
+<YouTube id="Xm_eupwkt-A" title="Sinjin: how to prevent ghost buckets" />

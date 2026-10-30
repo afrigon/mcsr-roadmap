@@ -1,0 +1,22 @@
+Bastions and fortresses are placed on the same grid of structure regions, and each region holds at most one of them. Knowing the bastion's region tells you where the fortress cannot be, before any scan.
+
+## How it works
+
+- The nether is divided into square regions, roughly 400 blocks on a side, starting at 0,0. Each
+  region holds one bastion, one fortress, or neither.
+- Near spawn, runners call the four regions around 0,0 "quadrants" and name them by the signs of
+  X and Z: ++, +−, −+, −−.
+- So the fortress is never in the bastion's quadrant. Look at your coordinates in the bastion: at
+  least one sign must differ at the fortress.
+- Ranked adds that the fortress is within 16 chunks (256 blocks) of the bastion, with open
+  terrain between them. Search the neighbouring quadrants close to the bastion first.
+
+## How to practice
+
+1. In practice runs, read the bastion's X and Z signs as soon as you arrive.
+2. Before running the pie-ray, name the directions the fortress cannot be in.
+3. Check your guess against the scan result each time.
+
+## Resources
+
+<YouTube id="JsFcAeBXVpk" start={113} title="Mikeyboie: nether regions explained" />

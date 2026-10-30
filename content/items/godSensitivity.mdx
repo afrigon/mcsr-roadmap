@@ -1,0 +1,31 @@
+A god sensitivity is a mouse sensitivity whose smallest turning step divides the boat's snap angle
+exactly. With it, entering a boat always puts you on an angle Ninjabrain Bot already knows, so boat
+eye needs no extra F3+C.
+
+## How it works
+
+- Ninjabrain Bot assumes boat angle 0. Set its default boat mode to green boat.
+- The boat angle also survives the angle wrap that happens when you go through a portal or
+  teleport with a pearl.
+- ExeRSolver's list gives the valid values. Commonly used ones are 0.02291165, 0.058765005 and
+  0.07446537. Some also survive re-entering while the boat is still rotating, or turning past 105°
+  in the boat.
+- Rules: if you turn the boat itself (A/D), get in and out once more without pressing A/D. With
+  0.07446537, don't turn the mouse more than 105° while in the boat.
+- A god sensitivity changes how the mouse feels. Compensate with mouse DPI and cursor speed, or with
+  Toolscreen's global sensitivity.
+
+## How to practice
+
+1. Pick a value from the list or the calculator and write it into `options.txt` exactly.
+2. Adjust DPI until normal play feels the same as before.
+3. Do boat measurements in a test world and confirm the boat icon is green with no F3+C on entry.
+
+## Resources
+
+<YouTube id="m-E6zDdfS9g" start={771} title="Sen7i: god sensitivity setup" />
+<YouTube id="OQ_m-cVBOn4" title="HorizonMC: god sensitivity rules" />
+
+- [ExeRSolver: sensitivities that divide the boat angle](https://gist.github.com/ExeRSolver/c4e852bb2527069e08c1a5e0a9c47613)
+- [God sensitivity calculator](https://god-sens.torbaz.dev/)
+- [r0hkx on frontcage: how Minecraft sensitivity works](https://frontcage.com/t/how-minecraft-sensitivity-works/13)

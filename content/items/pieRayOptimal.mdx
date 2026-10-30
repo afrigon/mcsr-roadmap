@@ -1,0 +1,31 @@
+The basic pie-ray walks into all four neighbouring chunks. With one extra render distance step you can test all four directions with two border crossings out and two back, without walking back and forth through the starting chunk.
+
+## How it works
+
+Start exactly as in the basic pie-ray: find N, drop to N−4, refresh, raise to N−1.
+
+1. Cross into one side chunk, for example west. If the spawner appears, it is west.
+2. From there, cross into the diagonal chunk, for example north. If it appears, it is north.
+3. Raise render distance by one. From the corner chunk the spawner is now one chunk out of range
+   whether it is south or east.
+4. Walk back south into the previous chunk. If it appears, it is south.
+5. Walk east into the starting chunk. It appears: it is east.
+
+- The trick works because stepping away from the spawner puts it two chunks out of range, and
+  the extra render distance step brings it back to one.
+- If nothing appears after two crossings and the raise loads it right away, the spawner is
+  diagonal. The negative pie-ray handles that case.
+
+## How to practice
+
+1. Use the pie-ray simulator map and always start with the same first crossing direction, so the
+   pattern becomes muscle memory.
+2. Say each result as you cross ("not west, not north, raise, not south, east").
+3. Move to practice runs once you can do it without stopping to think.
+
+## Resources
+
+<YouTube id="JsFcAeBXVpk" start={3791} title="Mikeyboie: fast fortress scan" />
+<YouTube id="71ABl45UyAE" start={81} title="Calisthenicuber: checking four directions with two crossings" />
+
+- [ClearColdWater on frontcage: pie-ray simulator map](https://frontcage.com/t/hyper-enhanced-negative-pie-ray-pie-ray-simulator-map-reposted/62)
