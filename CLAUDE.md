@@ -18,6 +18,8 @@ TypeScript and Tailwind v4. See README.md for the data format.
 
 - `roadmap.kdl` is KDL v2. A parent sits in the same category with a goal no later than the child's.
 - Labels only where the title or icon alone would be ambiguous.
+- Goal, category and item ids, and so the page filenames, are kebab-case (`m91-back-offset`). Digits
+  stay attached to the word before them (`sub45`, `t97`).
 
 ## Item pages
 
@@ -29,4 +31,4 @@ TypeScript and Tailwind v4. See README.md for the data format.
 
 ## Notes
 
-- `roadmap.md`, `research/` and `docs/review-decisions.md` stay until the roadmap is settled.
+- `research/` holds the sourced notes behind the roadmap and stays until the roadmap is settled.

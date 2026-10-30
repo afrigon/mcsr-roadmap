@@ -34,8 +34,8 @@ aubr dev
 `roadmap.kdl` defines the goals and a flat list of categories, each a tinted band of items:
 
 ```kdl
-category zeroCycle title="Zero Cycle" theme=end {
-    item bowPlusOne title="Bow +1" goal=sub10 parent=bedTiming icon="item/bow" label="M-88 y95" {
+category zero-cycle title="Zero Cycle" theme=end {
+    item bow-plus-one title="Bow +1" goal=sub10 parent=bed-timing icon="item/bow" label="M-88 y95" {
         description "An arrow before the first bed lets two beds land on one rotation."
     }
 }
