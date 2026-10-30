@@ -52,8 +52,21 @@ taken without a review. Each entry names what was decided and what to look at if
 - **For Fun goals**: chosen per item; Jungle Temple Sub 20, Shift Clutch Sub 11 (labelled
   "Not legal"), Neo Sub 9, Sprint-Bridging Sub 10, Explosion Pearl Boost Sub 8, 1+3 Zero Sub 6, Lava
   Boat Sub 20.
-- **BeefSalad**: the Safe variant is the parent (Sub 15) and the classic hole builds on it (Sub 13);
-  both stay in For Fun.
+- **Exit Early** (Movement, Sub 20, child of Boat Drop): confirmed by Calisthenicuber's movement guide
+  ("they'll get out of the boat right before they hit the ground"). Boat Re-Entry (Sub 15) comes from
+  the same guide; "boat velocity reset" is the ruleset's name for the glitch, not a runner name.
+- **Pages written from the owner's description, with no speedrun source**: Wall Bridging, Gap Block,
+  Boat Gap Jump, Eye Pearl Recovery. Knockback Displacement comes from PvP guides and the knockback
+  mechanic; Keeping Blazes on the Platform's positioning advice is inferred from that mechanic.
+- **Goals for the added items** are first guesses: Optimized Java Sub 30, Wall Bridging Sub 15, Gap
+  Block Sub 12, Boat Gap Jump Sub 15, Keeping Blazes on the Platform Sub 20, Knockback Displacement
+  Sub 12, Eye Pearl Recovery Sub 15, Listen for the Portal Room Sub 20, Gold Pickaxe Buried Spawn
+  Sub 12, Slab Cycle Sub 12.
+- **Zero saves**: Saving a Failing Zero is split into Lower Bed Save (Sub 12), Crystal Save (Sub 11),
+  Fire Place (Sub 9) and Air Place (Sub 6, child of Fire Place); full bow and mining back anchors are
+  dropped. Fire Place's goal is a guess. No source describes Air Place or Fire Place; their pages
+  follow the owner's description, and Air Place's "the placement uses the block that is about to
+  disappear" is an inference about how the same-tick placement works.
 - **Seed Filter Guarantees** ranked note is a summary; the exact guarantees are per seed type and
   live on each category's items.
 
@@ -85,7 +98,7 @@ Applied:
 
 - Descriptions: Debug Keys, Craft While Travelling, Crying Obsidian Completions, Iron Golem (crits),
   Perch Kill (full-charge hits, since crits add no damage to the dragon), Buried Spawn Escape
-  (O54–O55, no overlap with Pearl Clip), Pearl Clip O58+, Safe BeefSalad Hole, Classic Bartering,
+  (O54–O55, no overlap with Pearl Clip), Pearl Clip O58+, Classic Bartering,
   SeedQueue, Wither Skeletons, Block a Hallway (2.4 blocks tall, not 3), Home Portal Blind,
   Navigation Laws, Hitbox Scan, Gravel Trades, Bastion Pre-Craft, Half-Down, TNT Housing, Donkey Kong
   (optimal), Lower-Side Entry, Manhunt Hole Variants, Lodesteal, Bank Heist, Chest Priorities, Triple
@@ -97,7 +110,6 @@ Applied:
 - **Pearl Crawl**'s parent is Ender Pearl Basics (it doesn't build on the pearl hang).
 - **Walter Extension** moved to Sub 10: frontcage calls it standard for lower-bridge routes.
 - **Rampart Types** moved from Stables to the general Bastion category.
-- **BeefSalad holes** are siblings: the safe variant is the classic hole plus three blocks.
 - **Jungle Temple** is labelled "Event".
 - New ranked notes on Find a Bastion, Find a Fortress, Piglin Rules and Fire Resistance Timing, from
   `research/ranked-context.md`.

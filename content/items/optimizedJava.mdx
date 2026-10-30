@@ -1,0 +1,31 @@
+Minecraft 1.16.1 runs on whatever Java the launcher hands it, and the default is rarely the best.
+A recent Java with a tuned garbage collector loads worlds faster and stutters less, which matters
+most when you reset often.
+
+## Which Java
+
+- Use Java 17 to 22. Adoptium, Oracle and Azul builds perform about the same; if unsure, take
+  Adoptium 21. The Ranked mod needs 17 or newer for replays and Discord status.
+- GraalVM starts a little slower but runs better once warmed up, over a long session.
+- Avoid Java 23 and newer: their default garbage collector mode slows SeedQueue, and from 24 it
+  can't be turned off.
+
+## Prism Launcher settings
+
+- Edit the instance, then Settings, then Java. Tick the Java installation box and **Skip Java
+  compatibility checks**, then pick your Java, or download 21 with Prism's built-in downloader.
+- For GraalVM, extract it into Prism's `java` folder so Auto-Detect finds it.
+- Memory: about 2000–2500 MB maximum (the Ranked wiki says around 3000 MB). With SeedQueue, add
+  about 250 MB per queued seed.
+- JVM arguments from maskersss's guide:
+
+```
+-XX:+UseZGC -XX:+AlwaysPreTouch -Dgraal.TuneInlinerExploration=1 -XX:NmethodSweepActivity=1
+```
+
+## Sources
+
+<YouTube id="l-q-_4R8_6M" title="draconix: Ranked setup, including Java in Prism" />
+
+- [maskersss: Java and arguments guide](https://gist.github.com/maskersss/5847d594fc6ce4feb66fbd2d3fda281d)
+- [MCSR Ranked wiki](https://wiki.mcsrranked.com)

@@ -19,14 +19,20 @@ category setup title="Setup" theme=fundamentals {
     item installRanked title="Install Ranked" goal=firstCompletion icon="item/knowledge_book" {
         description "Prism Launcher with the MCSR Ranked mod."
     }
+    item optimizedJava title="Optimized Java" goal=sub30 parent=installRanked icon="block/furnace_front_on" {
+        description "Java 17–22 with tuned memory and JVM arguments in Prism Launcher."
+    }
     item coreSettings title="Core Settings" goal=sub45 parent=installRanked icon="item/comparator" {
         description "Brightness, GUI scale, FOV, subtitles on."
     }
     item standardSettings title="StandardSettings" goal=sub30 parent=coreSettings icon="item/repeater" {
         description "Restores your settings on every world."
     }
-    item pieChartPreset title="Pie Chart Preset" goal=sub25 parent=standardSettings icon="item/clock_00" {
-        description "Preset the pie chart directory in StandardSettings."
+    item chestStartSettings title="Chest Start Settings" goal=sub25 parent=standardSettings icon="item/clock_00" {
+        description "Every world starts on chest-scan settings: render distance 8, entity distance 50%, pie chart preset."
+    }
+    item restoreSettings title="Restore Settings" goal=sub20 parent=chestStartSettings icon="item/comparator" {
+        description "Switch back to travel settings once the chest is found, or straight away on other seed types."
     }
     item basicKeybinds title="Basic Keybinds" goal=sub45 parent=installRanked icon="block/lever" {
         description "Reachable hotbar slots and an offhand swap key."
@@ -34,8 +40,8 @@ category setup title="Setup" theme=fundamentals {
     item advancedKeybinds title="Advanced Keybinds" goal=sub25 parent=basicKeybinds icon="block/tripwire_hook" {
         description "Side-button F3 and perspective, a render-distance key that doesn't crouch, toggle sprint."
     }
-    item wideMacro title="Wide Macro" goal=sub20 parent=advancedKeybinds icon="item/painting" label="Wide" {
-        description "Wide resolution with planar fog for nether terrain, through Waywall, Toolscreen or Jingle."
+    item wideMacro title="Wide Macro" goal=sub25 parent=advancedKeybinds icon="item/painting" label="Wide" {
+        description "Wide resolution with planar fog for nether terrain, through Waywall or Toolscreen."
     }
     item thinMacro title="Thin Macro" goal=sub15 parent=wideMacro icon="item/painting" label="Thin" {
         description "Thin resolution for pinpointing pie-chart spikes."
@@ -146,8 +152,14 @@ category movement title="Movement" theme=fundamentals {
     item basicMovement title="Sprint, Pillar, Bridge" goal=firstCompletion icon="block/cobblestone" label="Basics" {
         description "Sprint jumping, pillaring and basic bridging."
     }
+    item gapBlock title="Gap Block" goal=sub12 parent=basicMovement icon="block/stone" {
+        description "Place a block mid-jump to turn a 4-block gap into a 3-block jump."
+    }
     item sneakBridging title="Sneak Bridging" goal=sub30 parent=basicMovement icon="block/cobblestone" label="Sneak" {
         description "Bridge backward while sneaking at the edge."
+    }
+    item wallBridging title="Wall Bridging" goal=sub15 parent=sneakBridging icon="block/cobblestone" label="Wall" {
+        description "Bridge along a wall as you run, placing against its side."
     }
     item speedBridging title="Speed Bridging" goal=sub15 parent=sneakBridging icon="block/cobblestone" label="Speed" {
         description "Release crouch right after each placement; about three times faster than sneak bridging."
@@ -178,6 +190,18 @@ category movement title="Movement" theme=fundamentals {
     }
     item boatTravel title="Boat Travel" goal=sub30 parent=swimming icon="item/oak_boat" label="Travel" {
         description "Cross water by boat."
+    }
+    item boatGapJump title="Boat Gap Jump" goal=sub15 parent=boatTravel icon="item/oak_boat" label="Gap jump" {
+        description "Jump a gap, place the boat on the far edge mid-air and ride the last stretch."
+    }
+    item boatDrop title="Boat Drop" goal=sub25 parent=boatTravel icon="item/oak_boat" label="Drop" {
+        description "Ride a boat off a drop: the boat cancels fall damage, except at a few exact heights."
+    }
+    item boatExitEarly title="Exit Early" goal=sub20 parent=boatDrop icon="item/oak_boat" label="Exit" {
+        description "Leave the boat just before it lands, so a boat-break height can't kill you."
+    }
+    item boatReEntry title="Boat Re-Entry" goal=sub15 parent=boatDrop icon="item/oak_boat" label="Re-entry" {
+        description "Exit and re-enter the boat while riding down terrain to go farther."
     }
     item boatCrawl title="Boat Crawl" goal=sub13 parent=boatTravel icon="item/oak_boat" label="Crawl" {
         description "Crawl through tight spaces in a boat."
@@ -587,11 +611,11 @@ category housing title="Housing" theme=bastion {
     item tntHousing title="TNT Housing" goal=sub10 parent=topDownOptimal icon="block/tnt_side" {
         description "Blow up the buried gold line with button-lit TNT once the piglins are trading."
     }
-    item manhuntEasy title="Manhunt" goal=sub25 parent=topDownEasy icon="item/lead" label="RSG" {
+    item manhuntEasy title="Manhunt" goal=sub25 parent=topDownEasy icon="item/lead" label="Basic" {
         description "Enter from the bottom, break the center chest, block pathing, dig an instant trading hole."
     }
-    item manhuntOptimal title="Manhunt" goal=sub15 parent=manhuntEasy icon="item/lead" label="Ranked" {
-        description "The Ranked variation: upper backups and a hard toggle for 20–23 piglins."
+    item manhuntOptimal title="Manhunt" goal=sub15 parent=manhuntEasy icon="item/lead" label="Full" {
+        description "The base route plus a hard toggle and the upper backups, for 20–23 piglins."
     }
     item wetManhunt title="Wet Manhunt" goal=sub13 parent=manhuntOptimal icon="item/water_bucket" {
         description "Manhunt across a lava floor with a gold-item distraction."
@@ -793,6 +817,12 @@ category fortress title="Fortress" theme=fortress {
     item soulSandPlatform title="Soul Sand Platform" goal=sub30 parent=spawnerClearing icon="block/soul_sand" {
         description "Soul sand edges stop blazes drifting off and make fireballs soul fire."
     }
+    item keepBlazesOnPlatform title="Keeping Blazes on the Platform" goal=sub20 parent=blazeKills icon="item/blaze_rod" {
+        description "Stand and hit so knockback pushes blazes onto the platform, not off it."
+    }
+    item knockbackDisplacement title="Knockback Displacement" goal=sub12 parent=keepBlazesOnPlatform icon="item/iron_sword" {
+        description "Turn toward where the blaze should fly just before a sprint hit lands."
+    }
     item tntDonut title="4-TNT Donut" goal=sub20 parent=spawnerClearing icon="block/tnt_side" label="Donut" {
         description "Four TNT around the spawner; fast, but can leave hard blocks."
     }
@@ -881,6 +911,9 @@ category findingStronghold title="Finding the Stronghold" theme=stronghold {
         description "Keep travelling toward \"head X°\" until the rating is excellent."
         ranked "Building at Y48 or higher in the nether guarantees a surface exit."
     }
+    item eyePearlRecovery title="Eye Pearl Recovery" goal=sub15 parent=blindOptimal icon="item/ender_pearl" {
+        description "Over an ocean, pearl after a thrown eye to pick it up before it's lost."
+    }
     item fastBlindBuild title="Fast Blind Portal" goal=sub20 parent=blindEasy icon="block/obsidian" label="Fast build" {
         description "Build the blind portal fast, at the end of a spawner cycle."
     }
@@ -913,6 +946,9 @@ category findingStronghold title="Finding the Stronghold" theme=stronghold {
 category stronghold title="Stronghold" theme=stronghold {
     item portalRoom title="Find the Portal Room" goal=firstCompletion icon="item/ender_eye" {
         description "Recognize rooms, find the portal room, fill the eyes."
+    }
+    item listenForPortalRoom title="Listen for the Portal Room" goal=sub20 parent=portalRoom icon="block/note_block" {
+        description "Silverfish hisses in the subtitles point to the portal room's spawner."
     }
     item portalRoomSafety title="Portal Room Safety" goal=firstCompletion parent=portalRoom icon="block/spawner" {
         description "Break the spawner and block the lava."
@@ -1006,6 +1042,9 @@ category endFight title="End Fight" theme=end {
     item buriedSpawnEscape title="Buried Spawn Escape" goal=sub15 icon="item/iron_pickaxe" {
         description "Pearl clip out of a buried spawn at O54–O55."
     }
+    item goldPickaxeBuriedSpawn title="Gold Pickaxe Buried Spawn" goal=sub12 parent=buriedSpawnEscape icon="item/golden_pickaxe" {
+        description "Dig out of a buried End spawn with a gold pickaxe: end stone in 0.4 s."
+    }
     item safetyPillar title="Safety Pillar" goal=sub20 parent=reachIsland icon="block/obsidian" label="Safety" {
         description "Pillar up after the kill so an enderman can't end the run before the portal."
     }
@@ -1030,8 +1069,17 @@ category zeroCycle title="Zero Cycle" theme=end {
     item bedCorrection title="Late Bed Correction" goal=sub13 parent=bedTiming icon="composite/bed" label="Correction" {
         description "Fix a late bed with an early one, or skip a rotation."
     }
-    item savingFailingZero title="Saving a Failing Zero" goal=sub8 parent=bedCorrection icon="composite/bed" label="Save" {
-        description "A lower bed, the crystal as an explosive, or a chase-down."
+    item lowerBedSave title="Lower Bed Save" goal=sub12 parent=bedCorrection icon="composite/bed" label="Lower bed" {
+        description "Dragon too low: bed 1–2 blocks lower, or drop down and bed where you stood."
+    }
+    item crystalSave title="Crystal Save" goal=sub11 parent=bedCorrection icon="item/end_crystal" label="Crystal" {
+        description "Out of explosives on a tall tower: the tower's crystal is the last one."
+    }
+    item firePlace title="Fire Place" goal=sub9 parent=bedCorrection icon="item/flint_and_steel" label="Fire" {
+        description "No block left to place on: aim at the previous explosive's fire to place the next one."
+    }
+    item airPlace title="Air Place" goal=sub6 parent=firePlace icon="composite/bed" label="Air" {
+        description "Detonate an explosive and place the next one in its spot on the same tick."
     }
     item fallRecovery title="Fall Recovery" goal=sub12 parent=standardSetup icon="item/water_bucket" label="Fall" {
         description "Get back onto the tower and into position after falling off."
@@ -1099,9 +1147,6 @@ category zeroCycle title="Zero Cycle" theme=end {
     item nodeAlignedMultiblock title="Node-Aligned Multiblock" goal=sub7 parent=multiblock icon="block/obsidian" label="Node-aligned" {
         description "hasbiWalks' optional set aligned with the actual node."
     }
-    item perSeedChoice title="Per-Seed Choice" goal=sub6 parent=lenience icon="item/writable_book" {
-        description "Choose between a zero, a oneshot or a ground zero for each seed."
-    }
     item overhangSpawns title="Overhang Spawns" goal=sub13 parent=standardSetup icon="block/end_stone" label="Overhang" {
         description "Run back and pearl, or build up first."
     }
@@ -1130,10 +1175,13 @@ category zeroCycle title="Zero Cycle" theme=end {
         description "Bow +1 on offset and side setups, good rotations only."
     }
     item threePlusTwo title="3+2" goal=sub10 parent=bowPlusOne icon="item/arrow" label="3+2" {
-        description "Three rotations, two of them with doubles."
+        description "Three rotations with two extra explosives."
     }
     item doubleShot title="Double Shot" goal=sub8 parent=threePlusTwo icon="item/spectral_arrow" label="2+2" {
         description "Extra arrows correct the dragon onto the node, making 2+2 consistent."
+    }
+    item queerArrow title="Queer Arrow" goal=sub6 parent=doubleShot icon="item/arrow" {
+        description "An arrow at the start of the dragon's rotation, and how to finish after a bed break."
     }
     item twoPlusTwoY104 title="2+2" goal=sub6 parent=doubleShot icon="item/end_crystal" label="y104" {
         description "Two rotations with doubles from the highest standing height."
@@ -1197,10 +1245,7 @@ category forFun title="For Fun" theme=fun {
     item classicBartering title="Classic Bartering" goal=sub30 icon="item/gold_ingot" {
         description "Trading with piglins outside a bastion route."
     }
-    item beefSaladSafe title="BeefSalad Hole" goal=sub15 icon="item/cooked_beef" label="Safe" {
-        description "The classic BeefSalad hole plus three safety blocks against late piglins from below."
-    }
-    item beefSaladHole title="BeefSalad Hole" goal=sub13 icon="item/cooked_beef" label="Classic" {
+    item beefSaladHole title="BeefSalad Hole" goal=sub13 icon="item/cooked_beef" {
         description "Auto-funnel hole for the stables gap finish; superseded by the Crispy hole, still a fallback."
     }
     item groundZero title="Ground Zero" goal=sub13 icon="composite/bed" label="Ground" {
@@ -1208,6 +1253,9 @@ category forFun title="For Fun" theme=fun {
     }
     item onePlusThree title="1+3 Zero" goal=sub6 icon="composite/bed" label="1+3" {
         description "One explosion plus three chained ones in a single rotation; a party trick."
+    }
+    item twoPlusOne title="2+1 Zero" goal=sub6 icon="block/respawn_anchor_side0" label="2+1" {
+        description "Three explosives over two rotations, from pion's anchor square setup."
     }
     item toeTickler title="Toe Tickler" goal=sub7 icon="item/feather" {
         description "The theoretical fastest TNT gap route."
@@ -1232,6 +1280,9 @@ category forFun title="For Fun" theme=fun {
     }
     item seedQueue title="SeedQueue" goal=sub15 icon="item/wheat_seeds" {
         description "Wall resetting; random seed (RSG) only."
+    }
+    item slabCycle title="Slab Cycle" goal=sub12 icon="block/smooth_stone_slab_side" {
+        description "One cycle from slabs beside the fountain, with no obsidian or water."
     }
     item oldBridgeNames title="Old Bridge Names" goal=sub20 icon="item/name_tag" {
         description "Double Single, Left Triple, Right Triple, Double Triple, Buried."
