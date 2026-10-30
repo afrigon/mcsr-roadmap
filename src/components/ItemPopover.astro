@@ -9,12 +9,13 @@ import YouTube from "./YouTube.astro";
 interface Props {
   roadmap: Roadmap;
   item: Item;
-  page: CollectionEntry<"items"> | undefined;
+  page: CollectionEntry<"items">;
 }
 
 const { roadmap, item, page } = Astro.props;
 const path = roadmap.pathTo(item);
-const Content = page === undefined ? null : (await render(page)).Content;
+const { Content } = await render(page);
+const hasContent = (page.body ?? "").trim() !== "";
 ---
 
 <div popover id={item.id} class="item-popover" data-item-popover>
@@ -26,9 +27,9 @@ const Content = page === undefined ? null : (await render(page)).Content;
           {item.title}
           {item.label !== null && <span class="popover-label">{item.label}</span>}
         </h2>
-        <p>{roadmap.categoryOf(item).title} · {item.goal.title}</p>
+        <p>{item.category.title} · {item.goal.title}</p>
       </div>
-      {import.meta.env.DEV && <EditPageButton item={item} />}
+      {import.meta.env.DEV && <EditPageButton filePath={page.filePath!} />}
       <button type="button" class="popover-close" popovertarget={item.id} popovertargetaction="hide" aria-label="Close">
         <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
           <path d="M2 2 10 10 M10 2 2 10" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
@@ -43,7 +44,7 @@ const Content = page === undefined ? null : (await render(page)).Content;
     </p>
     <p class="item-description">{item.description}</p>
     <article class="item-page">
-      {Content === null ? <p class="muted">No page yet.</p> : <Content components={{ YouTube }} />}
+      {hasContent ? <Content components={{ YouTube }} /> : <p class="muted">No page yet.</p>}
     </article>
   </div>
 </div>

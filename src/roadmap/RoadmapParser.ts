@@ -1,23 +1,16 @@
-import { readFileSync } from "node:fs";
 import { getLocation, parse, type Node } from "@bgotink/kdl";
 import { Category } from "./Category";
 import { Goal } from "./Goal";
-import { IconReference } from "./IconReference";
-import { Item } from "./Item";
 import { Rank } from "./Rank";
-import { Roadmap } from "./Roadmap";
 import { RoadmapError } from "./RoadmapError";
+import { RoadmapStructure } from "./RoadmapStructure";
 import { Theme } from "./Theme";
 
 export class RoadmapParser {
   private readonly problems: string[] = [];
   private readonly goals = new Map<string, Goal>();
 
-  static readFile(path: string): Roadmap {
-    return new RoadmapParser().parse(readFileSync(path, "utf8"));
-  }
-
-  parse(text: string): Roadmap {
+  parse(text: string): RoadmapStructure {
     const document = parse(text, { storeLocations: true });
     const categories: Category[] = [];
 
@@ -47,7 +40,7 @@ export class RoadmapParser {
       throw new RoadmapError(this.problems);
     }
 
-    return new Roadmap([...this.goals.values()], categories);
+    return new RoadmapStructure([...this.goals.values()], categories);
   }
 
   private parseGoals(node: Node) {
@@ -77,60 +70,13 @@ export class RoadmapParser {
     const id = this.argument(node);
     const themeValue = this.requiredProperty(node, "theme");
     const theme = this.enumProperty(node, "theme", Object.values(Theme));
-    const items = this.children(node, ["item"]).flatMap((child) => this.parseItem(child) ?? []);
+    this.children(node, []);
 
     if (themeValue === "" || theme === null) {
       return null;
     }
 
-    return new Category(id, this.requiredProperty(node, "title"), theme, items);
-  }
-
-  private parseItem(node: Node): Item | null {
-    this.expectShape(node, 1, ["title", "goal", "parent", "icon", "label"]);
-    const id = this.argument(node);
-    const goalId = this.requiredProperty(node, "goal");
-    const goal = this.goals.get(goalId);
-    const iconValue = this.requiredProperty(node, "icon");
-    const icon = IconReference.parse(iconValue);
-    const children = this.children(node, ["description", "ranked"]);
-    const descriptions = children.filter((child) => child.getName() === "description");
-    const rankedNotes = children.filter((child) => child.getName() === "ranked");
-
-    if (goal === undefined) {
-      this.report(node, `item "${id}" has unknown goal "${goalId}"`);
-    }
-
-    if (icon === null) {
-      this.report(node, `item "${id}" has invalid icon "${iconValue}", expected item/<name>, block/<name> or composite/<name>`);
-    }
-
-    if (descriptions.length !== 1) {
-      this.report(node, `item "${id}" needs exactly one "description" child`);
-    }
-
-    if (rankedNotes.length > 1) {
-      this.report(node, `item "${id}" has more than one "ranked" note`);
-    }
-
-    for (const child of children) {
-      this.expectShape(child, 1, []);
-    }
-
-    if (goal === undefined || icon === null || descriptions.length !== 1) {
-      return null;
-    }
-
-    return new Item(
-      id,
-      this.requiredProperty(node, "title"),
-      goal,
-      this.optionalProperty(node, "parent"),
-      icon,
-      this.optionalProperty(node, "label"),
-      this.argument(descriptions[0]!),
-      rankedNotes[0] === undefined ? null : this.argument(rankedNotes[0]),
-    );
+    return new Category(id, this.requiredProperty(node, "title"), theme);
   }
 
   private enumProperty<Value extends string>(node: Node, name: string, values: Value[]): Value | null {

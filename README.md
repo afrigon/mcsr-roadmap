@@ -31,29 +31,50 @@ aubr dev
 
 ## Content
 
-`roadmap.kdl` defines the goals and a flat list of categories, each a tinted band of items:
+`roadmap.kdl` defines the goals and the categories, each a tinted band on the canvas, in the order
+they appear:
 
 ```kdl
-category zero-cycle title="Zero Cycle" theme=end {
-    item bow-plus-one title="Bow +1" goal=sub10 parent=bed-timing icon="item/bow" label="M-88 y95" {
-        description "An arrow before the first bed lets two beds land on one rotation."
-    }
+goals {
+    goal sub10 title="Sub 10" short="10" rank=diamond
 }
+
+category zero-cycle title="Zero Cycle" theme=end
 ```
 
-- `goal` is one of the ids in the `goals` node; goals carry the `rank` that colours their bracket.
+- A goal's `rank` colours its bracket.
 - `theme` is one of fundamentals, overworld, desert, ocean, nether, fortress, bastion, stronghold,
   end or fun.
-- `parent` is the item this one builds on, in the same category.
+
+Every item is a file under `content/items/`, named after its id. Subfolders are only for
+organising the files; the site ignores them.
+
+```mdx
+---
+title: Bow +1
+label: M-88 y95
+category: zero-cycle
+goal: sub10
+parent: bed-timing
+icon: item/bow
+index: 120
+description: An arrow before the first bed lets two beds land on one rotation.
+---
+
+- [A link](https://example.com)
+
+<YouTube id="…" start={seconds} title="…" />
+```
+
+- `category` and `goal` are ids from `roadmap.kdl`.
+- `parent` is optional: the item this one builds on, in the same category.
 - `icon` is `item/<texture>` or `block/<texture>` from the game, or `composite/bed`.
+- `index` orders the item within its category; leave gaps so new items fit between.
 - `label` is optional, shown under the icon when the icon alone is ambiguous.
-- An optional `ranked "…"` child notes how the skill differs or applies in Ranked.
+- `ranked` is optional: how the skill differs or applies in Ranked.
 
-The build fails on unknown nodes or properties, unknown ids, a parent in another category or a later
-goal, parent cycles, and icons missing from the jar.
-
-An item's page is `content/items/<id>.mdx`: its links and videos, with written content fitted to
-the item. Embed videos with `<YouTube id="…" start={seconds} title="…" />`. Pages are optional: the
-build lists items without one, and fails on a page with no matching item.
+The body holds the item's links and videos, with written content fitted to the item. The build fails
+on unknown fields, ids used twice, unknown categories or goals, a parent in another category or a
+later goal, parent cycles, an index used twice in a category, and icons missing from the jar.
 
 Research notes behind the roadmap live in `research/`.

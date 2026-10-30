@@ -1,4 +1,3 @@
-import type { Item } from "./Item";
 import type { Theme } from "./Theme";
 
 export class Category {
@@ -6,6 +5,5 @@ export class Category {
     readonly id: string,
     readonly title: string,
     readonly theme: Theme,
-    readonly items: readonly Item[],
   ) {}
 }

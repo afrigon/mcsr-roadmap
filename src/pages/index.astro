@@ -7,10 +7,9 @@ import ItemPopover from "../components/ItemPopover.astro";
 import Tooltip from "../components/Tooltip.astro";
 import { CanvasLayout } from "../canvas/CanvasLayout";
 import Layout from "../layouts/Layout.astro";
-import { roadmapFile } from "../roadmap/RoadmapFiles";
-import { RoadmapParser } from "../roadmap/RoadmapParser";
+import { RoadmapLoader } from "../roadmap/RoadmapLoader";
 
-const roadmap = RoadmapParser.readFile(roadmapFile);
+const roadmap = await RoadmapLoader.load();
 const layout = new CanvasLayout(roadmap);
 const pages = new Map((await getCollection("items")).map((page) => [page.id, page]));
 ---
@@ -20,5 +19,5 @@ const pages = new Map((await getCollection("items")).map((page) => [page.id, pag
   <Canvas layout={layout} />
   <CategoryRail bands={layout.bands} />
   <Tooltip />
-  {roadmap.items.map((item) => <ItemPopover roadmap={roadmap} item={item} page={pages.get(item.id)} />)}
+  {roadmap.items.map((item) => <ItemPopover roadmap={roadmap} item={item} page={pages.get(item.id)!} />)}
 </Layout>

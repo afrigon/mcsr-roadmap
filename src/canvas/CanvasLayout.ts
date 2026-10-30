@@ -31,9 +31,10 @@ export class CanvasLayout {
     let top = 0;
 
     for (const category of roadmap.categories) {
-      const rowCount = this.assignRows(category.items);
+      const items = roadmap.itemsIn(category);
+      const rowCount = this.assignRows(items);
       const height = labelStrip + rowCount * (frameSize + rowGap) - rowGap + bandPadding * 2;
-      const nodes = category.items.map((item) => {
+      const nodes = items.map((item) => {
         const node = new CanvasNode(
           item,
           this.columnX(this.columns.get(item)!),

@@ -5,23 +5,31 @@ import { RoadmapError } from "./RoadmapError";
 
 export class Roadmap {
   private readonly itemsById = new Map<string, Item>();
-  private readonly categoriesByItem = new Map<Item, Category>();
+  private readonly itemsByCategory = new Map<Category, Item[]>();
 
   constructor(
     readonly goals: readonly Goal[],
     readonly categories: readonly Category[],
+    items: readonly Item[],
   ) {
     const problems: string[] = [];
 
     for (const category of categories) {
-      for (const item of category.items) {
-        if (this.itemsById.has(item.id)) {
-          problems.push(`item id "${item.id}" is used more than once`);
-        }
+      this.itemsByCategory.set(category, []);
+    }
 
-        this.itemsById.set(item.id, item);
-        this.categoriesByItem.set(item, category);
+    for (const item of items) {
+      if (this.itemsById.has(item.id)) {
+        problems.push(`item id "${item.id}" is used more than once`);
       }
+
+      this.itemsById.set(item.id, item);
+      this.itemsByCategory.get(item.category)!.push(item);
+    }
+
+    for (const [category, categoryItems] of this.itemsByCategory) {
+      categoryItems.sort((first, second) => first.index - second.index);
+      problems.push(...this.indexProblems(category, categoryItems));
     }
 
     for (const item of this.items) {
@@ -34,7 +42,11 @@ export class Roadmap {
   }
 
   get items(): Item[] {
-    return this.categories.flatMap((category) => category.items);
+    return this.categories.flatMap((category) => this.itemsIn(category));
+  }
+
+  itemsIn(category: Category): readonly Item[] {
+    return this.itemsByCategory.get(category)!;
   }
 
   item(id: string): Item {
@@ -52,11 +64,7 @@ export class Roadmap {
   }
 
   childrenOf(item: Item): Item[] {
-    return this.categoryOf(item).items.filter((candidate) => candidate.parent === item.id);
-  }
-
-  categoryOf(item: Item): Category {
-    return this.categoriesByItem.get(item)!;
+    return this.itemsIn(item.category).filter((candidate) => candidate.parent === item.id);
   }
 
   pathTo(item: Item): Item[] {
@@ -67,6 +75,12 @@ export class Roadmap {
     }
 
     return path;
+  }
+
+  private indexProblems(category: Category, items: readonly Item[]): string[] {
+    return items
+      .filter((item, position) => position > 0 && items[position - 1]!.index === item.index)
+      .map((item) => `"${item.id}" has index ${item.index}, already used in ${category.title}`);
   }
 
   private parentProblems(item: Item): string[] {
@@ -80,7 +94,7 @@ export class Roadmap {
       return [`"${item.id}" has unknown parent "${item.parent}"`];
     }
 
-    if (this.categoriesByItem.get(parent) !== this.categoriesByItem.get(item)) {
+    if (parent.category !== item.category) {
       return [`"${item.id}" has parent "${parent.id}" from another category`];
     }
 
