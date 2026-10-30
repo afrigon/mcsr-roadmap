@@ -12,8 +12,8 @@
   --color-text-soft: #cfd3de;
   --color-muted: #8b92a5;
   --color-not-learned: #4a5163;
-  --color-practicing: #4ade80;
-  --color-mastered: #fbbf24;
+  --color-practicing: #fbbf24;
+  --color-mastered: #4ade80;
   --color-warning: #f87171;
   --color-link: #93c5fd;
 }
@@ -329,11 +329,11 @@
     }
 
     & path[data-status="practicing"] {
-      stroke: rgb(74 222 128 / 0.55);
+      stroke: color-mix(in srgb, var(--color-practicing) 55%, transparent);
     }
 
     & path[data-status="mastered"] {
-      stroke: rgb(251 191 36 / 0.7);
+      stroke: color-mix(in srgb, var(--color-mastered) 70%, transparent);
     }
   }
 
@@ -367,13 +367,17 @@
 
     &[data-status="practicing"] {
       border-color: var(--color-practicing);
-      box-shadow: 0 6px 18px rgb(0 0 0 / 0.45), 0 0 0 4px rgb(74 222 128 / 0.12);
+      box-shadow: 0 6px 18px rgb(0 0 0 / 0.45), 0 0 0 4px color-mix(in srgb, var(--color-practicing) 12%, transparent);
     }
 
     &[data-status="mastered"] {
       border-color: var(--color-mastered);
-      background: linear-gradient(160deg, #3a2f14, #221c0e);
-      box-shadow: 0 6px 22px rgb(251 191 36 / 0.25), 0 0 0 4px rgb(251 191 36 / 0.14);
+      background: linear-gradient(
+        160deg,
+        color-mix(in srgb, var(--color-mastered) 20%, var(--color-surface-raised)),
+        color-mix(in srgb, var(--color-mastered) 10%, var(--color-surface))
+      );
+      box-shadow: 0 6px 22px color-mix(in srgb, var(--color-mastered) 25%, transparent), 0 0 0 4px color-mix(in srgb, var(--color-mastered) 14%, transparent);
     }
 
     &[data-status="ignored"] {
@@ -713,7 +717,7 @@
     color: var(--color-text);
     background: rgb(26 29 36 / 0.94);
     backdrop-filter: blur(12px);
-    border: 1px solid rgb(251 191 36 / 0.4);
+    border: 1px solid color-mix(in srgb, var(--color-mastered) 40%, transparent);
     box-shadow: 0 12px 30px rgb(0 0 0 / 0.5);
 
     &:popover-open {
