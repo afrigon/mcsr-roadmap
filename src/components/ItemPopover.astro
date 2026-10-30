@@ -18,30 +18,32 @@ const Content = page === undefined ? null : (await render(page)).Content;
 ---
 
 <div popover id={item.id} class="item-popover" data-item-popover>
-  <header class="popover-head">
-    <div class="frame frame-static" data-status-of={item.id}><img src={item.icon.path} alt="" width="32" height="32" /></div>
-    <div class="popover-titles">
-      <h2>
-        {item.title}
-        {item.label !== null && <span class="popover-label">{item.label}</span>}
-      </h2>
-      <p>{roadmap.categoryOf(item).title} · {item.goal.title}</p>
-    </div>
-    {import.meta.env.DEV && <EditPageButton item={item} />}
-    <button type="button" class="popover-close" popovertarget={item.id} popovertargetaction="hide" aria-label="Close">
-      <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
-        <path d="M2 2 10 10 M10 2 2 10" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
-      </svg>
-    </button>
-  </header>
+  <div class="popover-scroll">
+    <header class="popover-head">
+      <div class="frame frame-static" data-status-of={item.id}><img src={item.icon.path} alt="" width="32" height="32" /></div>
+      <div class="popover-titles">
+        <h2>
+          {item.title}
+          {item.label !== null && <span class="popover-label">{item.label}</span>}
+        </h2>
+        <p>{roadmap.categoryOf(item).title} · {item.goal.title}</p>
+      </div>
+      {import.meta.env.DEV && <EditPageButton item={item} />}
+      <button type="button" class="popover-close" popovertarget={item.id} popovertargetaction="hide" aria-label="Close">
+        <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+          <path d="M2 2 10 10 M10 2 2 10" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+        </svg>
+      </button>
+    </header>
 
-  {item.rankedNote !== null && <p class="ranked-label"><b>Ranked</b> {item.rankedNote}</p>}
-  <StatusPicker item={item} />
-  <p class="item-path">
-    {path.map((step, index) => (index === path.length - 1 ? <b>{step.title}</b> : <span>{step.title} → </span>))}
-  </p>
-  <p class="item-description">{item.description}</p>
-  <article class="item-page">
-    {Content === null ? <p class="muted">No page yet.</p> : <Content components={{ YouTube }} />}
-  </article>
+    {item.rankedNote !== null && <p class="ranked-label"><b>Ranked</b> {item.rankedNote}</p>}
+    <StatusPicker item={item} />
+    <p class="item-path">
+      {path.map((step, index) => (index === path.length - 1 ? <b>{step.title}</b> : <span>{step.title} → </span>))}
+    </p>
+    <p class="item-description">{item.description}</p>
+    <article class="item-page">
+      {Content === null ? <p class="muted">No page yet.</p> : <Content components={{ YouTube }} />}
+    </article>
+  </div>
 </div>
