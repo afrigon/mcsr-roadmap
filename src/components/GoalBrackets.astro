@@ -1,5 +1,6 @@
 ---
 import type { GoalBracket } from "../canvas/GoalBracket";
+import { BracketSize } from "../canvas/BracketSize";
 import { goalIcon } from "../canvas/goalIcons";
 
 interface Props {
@@ -16,7 +17,8 @@ const { brackets, width } = Astro.props;
       <div
         class="bracket"
         data-rank={bracket.goal.rank ?? "none"}
-        data-size={bracket.size}
+        data-bracket
+        data-size={BracketSize.Full}
         style={`left: ${bracket.start}px; width: ${bracket.width}px;`}
       >
         <span>
@@ -24,6 +26,7 @@ const { brackets, width } = Astro.props;
           <b class="full">{bracket.goal.title}</b>
           <b class="short">{bracket.goal.shortTitle}</b>
         </span>
+        <small data-goal-progress={bracket.goal.id} />
       </div>
     ))
   }

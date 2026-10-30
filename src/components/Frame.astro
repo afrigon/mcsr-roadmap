@@ -20,6 +20,7 @@ const { item } = node;
   data-title={item.title}
   data-description={item.description}
   data-goal={item.goal.title}
+  data-goal-id={item.goal.id}
   data-ranked={item.rankedNote === null ? undefined : ""}
   data-search-text={[item.title, item.label, item.description, item.rankedNote].filter((text) => text !== null).join(" ").toLowerCase()}
   style={`left: ${node.x}px; top: ${node.y}px;`}

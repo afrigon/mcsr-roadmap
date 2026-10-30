@@ -1,3 +1,4 @@
+import { GoalProgress } from "./GoalProgress";
 import { Status } from "./Status";
 import type { StatusStore } from "./StatusStore";
 
@@ -6,11 +7,14 @@ const toastDuration = 4000;
 export class StatusController {
   private toastTimer: number | undefined;
   private readonly parents = new Map<string, string>();
+  private readonly progress: GoalProgress;
 
   constructor(
     private readonly document: Document,
     private readonly store: StatusStore,
-  ) {}
+  ) {
+    this.progress = new GoalProgress(document, store);
+  }
 
   start() {
     for (const frame of this.document.querySelectorAll<HTMLElement>("[data-frame][data-parent]")) {
@@ -55,6 +59,8 @@ export class StatusController {
     for (const element of this.document.querySelectorAll<HTMLElement>("[data-frame][data-parent]")) {
       element.toggleAttribute("data-warning", this.hasUnlearnedAncestor(element.dataset.statusOf!));
     }
+
+    this.progress.update();
   }
 
   private hasUnlearnedAncestor(id: string): boolean {

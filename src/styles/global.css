@@ -21,7 +21,7 @@
 :root {
   color-scheme: dark;
   --header-height: 52px;
-  --goals-height: 44px;
+  --goals-height: 54px;
 }
 
 [data-theme="fundamentals"] { --tint: 125 160 200; }
@@ -57,7 +57,7 @@
     image-rendering: pixelated;
   }
 
-  [popover]::backdrop {
+  [data-item-popover]::backdrop {
     background: rgb(0 0 0 / 0.45);
     backdrop-filter: blur(2px);
   }
@@ -144,10 +144,12 @@
 
     & span {
       position: absolute;
-      left: 50%;
+      left: 0;
+      right: 0;
       top: 0;
-      transform: translateX(-50%);
-      display: inline-flex;
+      width: max-content;
+      margin-inline: auto;
+      display: flex;
       align-items: center;
       gap: 5px;
       padding: 3px 10px 3px 6px;
@@ -184,6 +186,17 @@
 
     &[data-size="tiny"] span {
       padding: 3px 7px;
+    }
+
+    & small {
+      position: absolute;
+      top: 27px;
+      left: 0;
+      right: 0;
+      font-size: 10.5px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      color: var(--color-muted);
     }
   }
 
@@ -338,7 +351,7 @@
     transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
 
     &:hover {
-      transform: translateY(-2px);
+      transform: scale(1.06);
       box-shadow: 0 10px 24px rgb(0 0 0 / 0.55), inset 0 1px 0 rgb(255 255 255 / 0.1);
     }
 

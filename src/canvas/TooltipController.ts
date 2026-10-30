@@ -25,8 +25,12 @@ export class TooltipController {
     this.tooltip.querySelector("[data-tooltip-goal]")!.textContent = frame.dataset.goal ?? "";
     this.tooltip.toggleAttribute("data-ranked", frame.hasAttribute("data-ranked"));
     const bounds = frame.getBoundingClientRect();
-    this.tooltip.style.left = `${bounds.right + tooltipGap}px`;
-    this.tooltip.style.top = `${bounds.top}px`;
+    this.tooltip.style.left = "0px";
+    const width = this.tooltip.offsetWidth;
+    const fitsOnRight = bounds.right + tooltipGap + width <= window.innerWidth;
+    const left = fitsOnRight ? bounds.right + tooltipGap : bounds.left - tooltipGap - width;
+    this.tooltip.style.left = `${left}px`;
+    this.tooltip.style.top = `${bounds.top + (bounds.height - this.tooltip.offsetHeight) / 2}px`;
     this.tooltip.classList.add("visible");
   }
 
