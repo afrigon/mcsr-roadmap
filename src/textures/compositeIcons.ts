@@ -21,6 +21,7 @@ const shieldFace = { x: 1, y: 1 };
 const shieldWidth = 12;
 const shieldHeight = 22;
 const fireResistanceColor = [0xe4, 0x9a, 0x3a];
+const waterColor = [0x3f, 0x76, 0xe4];
 const missingSize = 16;
 const missingCellSize = 8;
 const missingMagenta = [0xf8, 0x00, 0xf8, 0xff];
@@ -71,6 +72,7 @@ export const compositeIcons = [
 
     return icon;
   }),
+  new CompositeIcon("water", ["block/water_still"], ([water]) => water!.firstFrame().tinted(waterColor)),
   new CompositeIcon("hunger", ["gui/icons"], ([icons]) => hudIcon(icons!, hungerOutline, hungerFill)),
   new CompositeIcon("heart_empty", ["gui/icons"], ([icons]) => hudIcon(icons!, heartOutline, null)),
   new CompositeIcon("heart_half", ["gui/icons"], ([icons]) => hudIcon(icons!, heartOutline, heartHalf)),
