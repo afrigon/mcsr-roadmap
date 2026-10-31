@@ -70,7 +70,8 @@ description: An arrow before the first bed lets two beds land on one rotation.
 - `parent` is optional: the item this one builds on, in the same category.
 - `icon` is `item/<texture>` or `block/<texture>` from the game, or `composite/bed`, `composite/hunger`,
   `composite/shield`, `composite/heart_empty`, `composite/heart_half`, `composite/heart_full`,
-  `composite/splash_potion_fire_resistance` or `composite/water`.
+  `composite/splash_potion_fire_resistance`, `composite/water` or
+  `composite/water_breathing`.
 - `index` orders the item within its category; leave gaps so new items fit between.
 - `label` is optional, shown under the icon when the icon alone is ambiguous.
 - `ranked` is optional: how the skill differs or applies in Ranked.

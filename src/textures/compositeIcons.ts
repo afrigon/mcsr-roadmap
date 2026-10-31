@@ -72,6 +72,7 @@ export const compositeIcons = [
 
     return icon;
   }),
+  new CompositeIcon("water_breathing", ["mob_effect/water_breathing"], ([effect]) => effect!),
   new CompositeIcon("water", ["block/water_still"], ([water]) => water!.firstFrame().tinted(waterColor)),
   new CompositeIcon("hunger", ["gui/icons"], ([icons]) => hudIcon(icons!, hungerOutline, hungerFill)),
   new CompositeIcon("heart_empty", ["gui/icons"], ([icons]) => hudIcon(icons!, heartOutline, null)),
