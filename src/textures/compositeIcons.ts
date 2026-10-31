@@ -1,14 +1,22 @@
 import { CompositeIcon } from "./CompositeIcon";
 import { Texture } from "./Texture";
 
+interface Point {
+  x: number;
+  y: number;
+}
+
 const bedFaceSize = 16;
 const bedHeadTop = { x: 6, y: 6 };
 const bedFootTop = { x: 6, y: 28 };
 const iconSize = 32;
-const hungerSize = 9;
+const hudSpriteSize = 9;
+const hudScale = 3;
 const hungerOutline = { x: 16, y: 27 };
 const hungerFill = { x: 52, y: 27 };
-const hungerScale = 3;
+const heartOutline = { x: 16, y: 0 };
+const heartFull = { x: 52, y: 0 };
+const heartHalf = { x: 61, y: 0 };
 const shieldFace = { x: 1, y: 1 };
 const shieldWidth = 12;
 const shieldHeight = 22;
@@ -18,6 +26,20 @@ const missingMagenta = [0xf8, 0x00, 0xf8, 0xff];
 const missingBlack = [0x00, 0x00, 0x00, 0xff];
 
 export const missingIconName = "missing";
+
+function hudIcon(sheet: Texture, outline: Point, fill: Point | null): Texture {
+  const sprite = sheet.crop(outline.x, outline.y, hudSpriteSize, hudSpriteSize);
+
+  if (fill !== null) {
+    sprite.overlay(sheet.crop(fill.x, fill.y, hudSpriteSize, hudSpriteSize), 0, 0);
+  }
+
+  const icon = Texture.blank(iconSize, iconSize);
+  const offset = Math.floor((iconSize - hudSpriteSize * hudScale) / 2);
+  icon.overlay(sprite.scaled(hudScale), offset, offset);
+
+  return icon;
+}
 
 export const compositeIcons = [
   new CompositeIcon(missingIconName, [], () =>
@@ -42,13 +64,8 @@ export const compositeIcons = [
 
     return icon;
   }),
-  new CompositeIcon("hunger", ["gui/icons"], ([icons]) => {
-    const hunger = icons!.crop(hungerOutline.x, hungerOutline.y, hungerSize, hungerSize);
-    hunger.overlay(icons!.crop(hungerFill.x, hungerFill.y, hungerSize, hungerSize), 0, 0);
-    const icon = Texture.blank(iconSize, iconSize);
-    const offset = (iconSize - hungerSize * hungerScale) / 2;
-    icon.overlay(hunger.scaled(hungerScale), Math.floor(offset), Math.floor(offset));
-
-    return icon;
-  }),
+  new CompositeIcon("hunger", ["gui/icons"], ([icons]) => hudIcon(icons!, hungerOutline, hungerFill)),
+  new CompositeIcon("heart_empty", ["gui/icons"], ([icons]) => hudIcon(icons!, heartOutline, null)),
+  new CompositeIcon("heart_half", ["gui/icons"], ([icons]) => hudIcon(icons!, heartOutline, heartHalf)),
+  new CompositeIcon("heart_full", ["gui/icons"], ([icons]) => hudIcon(icons!, heartOutline, heartFull)),
 ];
