@@ -9,6 +9,9 @@ const hungerSize = 9;
 const hungerOutline = { x: 16, y: 27 };
 const hungerFill = { x: 52, y: 27 };
 const hungerScale = 3;
+const shieldFace = { x: 1, y: 1 };
+const shieldWidth = 12;
+const shieldHeight = 22;
 const missingSize = 16;
 const missingCellSize = 8;
 const missingMagenta = [0xf8, 0x00, 0xf8, 0xff];
@@ -26,6 +29,16 @@ export const compositeIcons = [
     top.paste(bed!.crop(bedFootTop.x, bedFootTop.y, bedFaceSize, bedFaceSize), 0, bedFaceSize);
     const icon = Texture.blank(iconSize, iconSize);
     icon.paste(top.rotatedCounterClockwise(), 0, (iconSize - bedFaceSize) / 2);
+
+    return icon;
+  }),
+  new CompositeIcon("shield", ["entity/shield_base_nopattern"], ([shield]) => {
+    const icon = Texture.blank(iconSize, iconSize);
+    icon.paste(
+      shield!.crop(shieldFace.x, shieldFace.y, shieldWidth, shieldHeight),
+      (iconSize - shieldWidth) / 2,
+      (iconSize - shieldHeight) / 2,
+    );
 
     return icon;
   }),
