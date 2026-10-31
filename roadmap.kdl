@@ -19,6 +19,7 @@ category setup title="Setup" theme=fundamentals
 category crafting title="Crafting" theme=fundamentals
 category inventory title="Inventory" theme=fundamentals
 category movement title="Movement" theme=fundamentals
+category survival title="Survival" theme=fundamentals
 category overworld title="Overworld" theme=overworld
 category village title="Village" theme=overworld
 category desert-temple title="Desert Temple" theme=desert
