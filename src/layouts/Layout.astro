@@ -25,6 +25,7 @@ const { title } = Astro.props;
       import { CategoryRailController } from "../canvas/CategoryRailController";
       import { SearchController } from "../canvas/SearchController";
       import { TooltipController } from "../canvas/TooltipController";
+      import { ViewMemory } from "../canvas/ViewMemory";
       import { StatusController } from "../status/StatusController";
       import { StatusStore } from "../status/StatusStore";
 
@@ -47,6 +48,7 @@ const { title } = Astro.props;
       ).start();
       new TooltipController(viewport, document.getElementById("tooltip")!).start();
       new StatusController(document, StatusStore.fromWindow()).start();
+      ViewMemory.fromWindow(viewport).start();
     </script>
   </body>
 </html>
