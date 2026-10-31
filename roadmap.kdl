@@ -16,8 +16,8 @@ goals {
 }
 
 category setup title="Setup" theme=fundamentals
-category crafting title="Crafting" theme=fundamentals
 category inventory title="Inventory" theme=fundamentals
+category crafting title="Crafting" theme=fundamentals
 category movement title="Movement" theme=fundamentals
 category survival title="Survival" theme=fundamentals
 category overworld title="Overworld" theme=overworld
