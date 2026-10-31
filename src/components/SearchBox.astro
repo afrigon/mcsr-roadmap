@@ -1,5 +1,12 @@
 <div class="search" data-search>
   <button type="button" data-search-open>Search <kbd>Ctrl+F</kbd></button>
-  <input type="search" placeholder="Search titles and descriptions" aria-label="Search the roadmap" data-search-input />
+  <span class="search-field">
+    <input type="search" placeholder="Search titles and descriptions" aria-label="Search the roadmap" data-search-input />
+    <button type="button" aria-label="Clear search" data-search-clear>
+      <svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
+        <path d="M2 2 10 10 M10 2 2 10" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+      </svg>
+    </button>
+  </span>
   <span data-search-count aria-live="polite"></span>
 </div>

@@ -12,6 +12,7 @@ export class SearchController {
   start() {
     document.addEventListener("keydown", (event) => this.handleShortcut(event));
     this.box.querySelector("[data-search-open]")!.addEventListener("click", () => this.open());
+    this.box.querySelector("[data-search-clear]")!.addEventListener("click", () => this.clear());
     this.input.addEventListener("input", () => this.search());
     this.input.addEventListener("keydown", (event) => this.handleKey(event));
   }
@@ -43,6 +44,12 @@ export class SearchController {
     this.box.toggleAttribute("data-open", true);
     this.input.focus();
     this.input.select();
+  }
+
+  private clear() {
+    this.input.value = "";
+    this.search();
+    this.input.focus();
   }
 
   private close() {
