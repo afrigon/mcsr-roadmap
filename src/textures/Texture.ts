@@ -91,6 +91,20 @@ export class Texture {
     }
   }
 
+  tinted(color: readonly number[]): Texture {
+    const result = Texture.blank(this.width, this.height);
+    this.png.data.copy(result.png.data);
+
+    for (let pixel = 0; pixel < this.width * this.height; pixel++) {
+      for (let channel = 0; channel < alphaChannel; channel++) {
+        const offset = pixel * channels + channel;
+        result.png.data[offset] = Math.round((result.png.data[offset]! * color[channel]!) / 255);
+      }
+    }
+
+    return result;
+  }
+
   scaled(factor: number): Texture {
     const result = Texture.blank(this.width * factor, this.height * factor);
 

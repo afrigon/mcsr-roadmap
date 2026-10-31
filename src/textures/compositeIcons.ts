@@ -20,6 +20,7 @@ const heartHalf = { x: 61, y: 0 };
 const shieldFace = { x: 1, y: 1 };
 const shieldWidth = 12;
 const shieldHeight = 22;
+const fireResistanceColor = [0xe4, 0x9a, 0x3a];
 const missingSize = 16;
 const missingCellSize = 8;
 const missingMagenta = [0xf8, 0x00, 0xf8, 0xff];
@@ -61,6 +62,12 @@ export const compositeIcons = [
       (iconSize - shieldWidth) / 2,
       (iconSize - shieldHeight) / 2,
     );
+
+    return icon;
+  }),
+  new CompositeIcon("splash_potion_fire_resistance", ["item/potion_overlay", "item/splash_potion"], ([liquid, bottle]) => {
+    const icon = liquid!.tinted(fireResistanceColor);
+    icon.overlay(bottle!, 0, 0);
 
     return icon;
   }),
