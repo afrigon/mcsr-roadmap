@@ -27,21 +27,11 @@ const shieldWidth = 12;
 const shieldHeight = 22;
 const fireResistanceColor = [0xe4, 0x9a, 0x3a];
 const waterColor = [0x3f, 0x76, 0xe4];
-const mobScale = 3;
-const headFront = { x: 8, y: 8, width: 8, height: 8 };
 const chestScale = 2;
 const chestLid = { x: 14, y: 14, width: 14, height: 5 };
 const chestBase = { x: 14, y: 33, width: 14, height: 10 };
 const chestLatch = { x: 1, y: 1, width: 2, height: 4 };
 const chestFront = { width: 14, height: 14, baseTop: 4, latchLeft: 6, latchTop: 2 };
-const piglinHead = { x: 8, y: 8, width: 10, height: 8 };
-const piglinSnout = { x: 32, y: 2, width: 4, height: 4, left: 3, top: 4 };
-const piglinLeftTusk = { x: 3, y: 1, width: 1, height: 2, left: 1, top: 6 };
-const piglinRightTusk = { x: 3, y: 5, width: 1, height: 2, left: 8, top: 6 };
-const ironGolemHead = { x: 8, y: 8, width: 8, height: 10 };
-const ironGolemNose = { x: 26, y: 2, width: 2, height: 4, left: 3, top: 7 };
-const ironGolemFace = { width: 8, height: 11 };
-const ironGolemScale = 2;
 const silverfishEggPrimary = [0x6e, 0x6e, 0x6e];
 const silverfishEggSecondary = [0x30, 0x30, 0x30];
 const missingSize = 16;
@@ -71,16 +61,6 @@ function hudIcon(sheet: Texture, outline: Point, fill: Point | null): Texture {
   }
 
   return centered(sprite, hudScale);
-}
-
-function headIcon(texture: Texture, overlay: Texture | null): Texture {
-  const head = part(texture, headFront);
-
-  if (overlay !== null) {
-    head.overlay(part(overlay, headFront), 0, 0);
-  }
-
-  return centered(head, mobScale);
 }
 
 export const compositeIcons = [
@@ -121,27 +101,6 @@ export const compositeIcons = [
     front.overlay(part(chest!, chestLatch), chestFront.latchLeft, chestFront.latchTop);
 
     return centered(front, chestScale);
-  }),
-  new CompositeIcon("blaze", ["entity/blaze"], ([blaze]) => headIcon(blaze!, null)),
-  new CompositeIcon("enderman", ["entity/enderman/enderman", "entity/enderman/enderman_eyes"], ([enderman, eyes]) =>
-    headIcon(enderman!, eyes!),
-  ),
-  new CompositeIcon("wither_skeleton", ["entity/skeleton/wither_skeleton"], ([skeleton]) => headIcon(skeleton!, null)),
-  new CompositeIcon("piglin", ["entity/piglin/piglin"], ([piglin]) => {
-    const face = part(piglin!, piglinHead);
-
-    for (const feature of [piglinSnout, piglinLeftTusk, piglinRightTusk]) {
-      face.overlay(part(piglin!, feature), feature.left, feature.top);
-    }
-
-    return centered(face, mobScale);
-  }),
-  new CompositeIcon("iron_golem", ["entity/iron_golem/iron_golem"], ([golem]) => {
-    const face = Texture.blank(ironGolemFace.width, ironGolemFace.height);
-    face.overlay(part(golem!, ironGolemHead), 0, 0);
-    face.overlay(part(golem!, ironGolemNose), ironGolemNose.left, ironGolemNose.top);
-
-    return centered(face, ironGolemScale);
   }),
   new CompositeIcon("silverfish", ["item/spawn_egg", "item/spawn_egg_overlay"], ([egg, spots]) => {
     const icon = egg!.tinted(silverfishEggPrimary);

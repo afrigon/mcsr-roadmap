@@ -70,9 +70,8 @@ description: An arrow before the first bed lets two beds land on one rotation.
 - `parent` is optional: the item this one builds on, in the same category.
 - `icon` is `item/<texture>` or `block/<texture>` from the game, or one of the composite icons built
   from several textures: `composite/bed`, `chest`, `shield`, `hunger`, `hunger_effect`, `heart_empty`,
-  `heart_half`, `heart_full`, `splash_potion_fire_resistance`, `water`, `water_breathing`, `blaze`,
-  `enderman`, `piglin`, `iron_golem`, `wither_skeleton` and `silverfish`, each written as
-  `composite/<name>`.
+  `heart_half`, `heart_full`, `splash_potion_fire_resistance`, `water`, `water_breathing` and
+  `silverfish`, each written as `composite/<name>`.
 - `index` orders the item within its category; leave gaps so new items fit between.
 - `label` is optional, shown under the icon when the icon alone is ambiguous.
 - `ranked` is optional: how the skill differs or applies in Ranked.
