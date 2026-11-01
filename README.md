@@ -7,7 +7,8 @@ practicing, mastered) is saved in the browser.
 
 ## Development
 
-The icons are the game's own textures, extracted at build time from a Minecraft 1.16.1 client jar.
+The icons are the game's own textures and models, rendered at build time from a Minecraft 1.16.1
+client jar.
 Point `MINECRAFT_CLIENT_JAR` at yours in a git-ignored `mise.local.toml`:
 
 ```toml
@@ -68,8 +69,10 @@ description: An arrow before the first bed lets two beds land on one rotation.
 
 - `category` and `goal` are ids from `roadmap.kdl`.
 - `parent` is optional: the item this one builds on, in the same category.
-- `icon` is `item/<texture>` or `block/<texture>` from the game, or one of the composite icons built
-  from several textures: `composite/bed`, `chest`, `shield`, `hunger`, `hunger_effect`, `heart_empty`,
+- `icon` is `item/<id>`, drawn from the item's model the way the game's inventory draws it (flat
+  for items like `item/iron_ingot`, a 3D block for `item/obsidian`; a name with no model is drawn as
+  that item texture), `block/<texture>` for a single flat block face, or one of the composite icons
+  built from several textures: `composite/bed`, `chest`, `shield`, `hunger`, `hunger_effect`, `heart_empty`,
   `heart_half`, `heart_full`, `splash_potion_fire_resistance`, `water`, `water_breathing` and
   `silverfish`, each written as `composite/<name>`.
 - `index` orders the item within its category; leave gaps so new items fit between.

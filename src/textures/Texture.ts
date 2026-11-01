@@ -72,6 +72,26 @@ export class Texture {
     return result;
   }
 
+  pixel(x: number, y: number): number[] {
+    const offset = (y * this.width + x) * channels;
+
+    return [...this.png.data.subarray(offset, offset + channels)];
+  }
+
+  blend(x: number, y: number, color: readonly number[]) {
+    const offset = (y * this.width + x) * channels;
+    const alpha = color[alphaChannel]! / 255;
+    const behind = this.png.data[offset + alphaChannel]! / 255;
+    const combined = alpha + behind * (1 - alpha);
+
+    for (let channel = 0; channel < alphaChannel; channel++) {
+      const mixed = color[channel]! * alpha + this.png.data[offset + channel]! * behind * (1 - alpha);
+      this.png.data[offset + channel] = combined === 0 ? 0 : Math.round(mixed / combined);
+    }
+
+    this.png.data[offset + alphaChannel] = Math.round(combined * 255);
+  }
+
   paste(texture: Texture, x: number, y: number) {
     texture.png.bitblt(this.png, 0, 0, texture.width, texture.height, x, y);
   }
