@@ -102,11 +102,10 @@ const offhandSlot = menu.slot(offhand);
 const offhandSpot = offhandSlot ?? { slot: offhand, key: offhand.key, x: hotbar.x - slotBox - slotGap, y: hotbar.y };
 const displaySlots = offhandSlot === undefined ? [...menu.slots, offhandSpot] : menu.slots;
 const keyGroups = [
-  ["Q", "F", "T"],
-  ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
-  ["Tab", Modifier.Shift, Modifier.Ctrl, "Space"],
+  ["F", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  ["Q", Modifier.Shift, Modifier.Ctrl],
+  ["Tab", "Space", "T"],
 ];
-const letterKeys = new Set([...keyGroups[0]!, ...keyGroups[1]!]);
 
 const bookButton =
   screen.bookButton === null
@@ -222,21 +221,21 @@ const defaultSpeed = 1;
         </svg>
       </span>
     </div>
-    <div class="inventory-inputs">
-      {
-        keyGroups.map((group) => (
-          <div class="inventory-key-group">
-            {group.map((key) => (
-              <kbd data-key={key} data-letter={letterKeys.has(key) ? true : undefined}>
-                {key}
-              </kbd>
-            ))}
-          </div>
-        ))
-      }
-      <div class="inventory-mouse" aria-label="Mouse buttons">
-        {[MouseButton.Left, MouseButton.Right].map((button) => <span data-key={button} data-button={button} />)}
-      </div>
+  </div>
+  <div class="inventory-inputs">
+    {
+      keyGroups.map((group) => (
+        <div class="inventory-key-group">
+          {group.map((key) => (
+            <kbd data-key={key} data-letter={key.length === 1 ? true : undefined}>
+              {key}
+            </kbd>
+          ))}
+        </div>
+      ))
+    }
+    <div class="inventory-mouse" aria-label="Mouse buttons">
+      {[MouseButton.Left, MouseButton.Right].map((button) => <span data-key={button} data-button={button} />)}
     </div>
   </div>
   <div class="inventory-controls">
