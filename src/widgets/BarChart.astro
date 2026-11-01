@@ -1,0 +1,89 @@
+---
+import { IconReference } from "../roadmap/IconReference";
+import { IconRenderer } from "../textures/IconRenderer";
+
+interface Category {
+  label: string;
+  icon?: string;
+}
+
+interface Series {
+  name: string;
+  values: readonly number[];
+}
+
+interface Props {
+  categories: readonly Category[];
+  series: readonly Series[];
+  title?: string;
+  unit?: string;
+}
+
+const { categories, series, title, unit } = Astro.props;
+
+for (const { name, values } of series) {
+  if (values.length !== categories.length) {
+    throw new Error(`BarChart series "${name}" has ${values.length} values for ${categories.length} categories`);
+  }
+}
+
+const max = Math.max(...series.flatMap(({ values }) => values));
+const icons = IconRenderer.fromEnvironment();
+const iconSource = (icon: string) => {
+  const png = icons.render(IconReference.parse(icon) ?? IconRenderer.missing).encode();
+
+  return `data:image/png;base64,${png.toString("base64")}`;
+};
+const format = (value: number) => (Number.isInteger(value) ? String(value) : value.toFixed(1));
+const rows = categories.map((category, categoryIndex) => ({
+  category,
+  bars: series.map(({ name, values }, index) => {
+    const value = values[categoryIndex]!;
+    const seriesName = series.length > 1 ? ` · ${name}` : "";
+    const unitSuffix = unit === undefined ? "" : ` ${unit}`;
+
+    return {
+      series: index + 1,
+      value: format(value),
+      ratio: value / max,
+      description: `${category.label}${seriesName}: ${format(value)}${unitSuffix}`,
+    };
+  }),
+}));
+---
+
+<figure class="bar-chart">
+  {title !== undefined && <figcaption>{title}</figcaption>}
+  {
+    series.length > 1 && (
+      <ul class="bar-chart-legend">
+        {series.map(({ name }, index) => (
+          <li>
+            <span class="bar-chart-swatch" data-series={index + 1} />
+            {name}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+  <div class="bar-chart-rows">
+    {
+      rows.map(({ category, bars }) => (
+        <div class="bar-chart-row">
+          <span class="bar-chart-label">
+            {category.icon !== undefined && <img src={iconSource(category.icon)} alt="" width="16" height="16" />}
+            {category.label}
+          </span>
+          <span class="bar-chart-bars">
+            {bars.map((bar) => (
+              <span class="bar-chart-line" title={bar.description}>
+                <span class="bar-chart-bar" data-series={bar.series} style={`--ratio: ${bar.ratio};`} />
+                <span class="bar-chart-value">{bar.value}</span>
+              </span>
+            ))}
+          </span>
+        </div>
+      ))
+    }
+  </div>
+</figure>

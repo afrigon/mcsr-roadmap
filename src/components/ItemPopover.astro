@@ -5,6 +5,9 @@ import type { Roadmap } from "../roadmap/Roadmap";
 import EditPageButton from "./EditPageButton.astro";
 import StatusPicker from "./StatusPicker.astro";
 import YouTube from "./YouTube.astro";
+import BarChart from "../widgets/BarChart.astro";
+import Tab from "../widgets/Tab.astro";
+import Tabs from "../widgets/Tabs.astro";
 
 interface Props {
   roadmap: Roadmap;
@@ -44,7 +47,7 @@ const hasContent = (page.body ?? "").trim() !== "";
     </p>
     <p class="item-description">{item.description}</p>
     <article class="item-page">
-      {hasContent ? <Content components={{ YouTube }} /> : <p class="muted">No page yet.</p>}
+      {hasContent ? <Content components={{ YouTube, BarChart, Tabs, Tab }} /> : <p class="muted">No page yet.</p>}
     </article>
   </div>
 </div>

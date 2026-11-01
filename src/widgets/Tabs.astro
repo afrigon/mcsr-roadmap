@@ -1,0 +1,12 @@
+<div class="tabs" data-tabs>
+  <div class="tabs-list" role="tablist" data-tabs-list></div>
+  <slot />
+</div>
+
+<script>
+  import { TabsController } from "./TabsController";
+
+  for (const tabs of document.querySelectorAll<HTMLElement>("[data-tabs]")) {
+    new TabsController(tabs).start();
+  }
+</script>

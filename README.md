@@ -80,4 +80,10 @@ The body holds the item's links and videos, with written content fitted to the i
 on unknown fields, ids used twice, unknown categories or goals, a parent in another category or a
 later goal, parent cycles, an index used twice in a category, and icons missing from the jar.
 
+Pages can also use the widgets in `src/widgets/`:
+
+- `<BarChart title="…" categories={[{ label, icon? }]} series={[{ name, values }]} unit="…" />`, a
+  horizontal bar chart; one measure per chart, with a legend once there are two series or more.
+- `<Tabs>` holding `<Tab label="…">` panels, one shown at a time.
+
 Research notes behind the roadmap live in `research/`.

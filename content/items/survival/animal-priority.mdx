@@ -7,3 +7,109 @@ icon: item/chicken
 index: 135
 description: Hunt pigs first, then cows, then sheep, then chickens.
 ---
+
+Expected food from one kill on fire, so the drops come out cooked. Looting adds the same half item
+per kill to every animal on average, so it never changes the order.
+
+<Tabs>
+  <Tab label="Looting 0">
+    <BarChart
+      title="Hunger per kill"
+      categories={[
+      { label: "Pig", icon: "item/cooked_porkchop" },
+      { label: "Cow", icon: "item/cooked_beef" },
+      { label: "Sheep", icon: "item/cooked_mutton" },
+      { label: "Chicken", icon: "item/cooked_chicken" },
+      ]}
+      series={[{ name: "Hunger per kill", values: [16, 16, 9, 6] }]}
+    />
+    <BarChart
+      title="Saturation per kill"
+      categories={[
+      { label: "Pig", icon: "item/cooked_porkchop" },
+      { label: "Cow", icon: "item/cooked_beef" },
+      { label: "Sheep", icon: "item/cooked_mutton" },
+      { label: "Chicken", icon: "item/cooked_chicken" },
+      ]}
+      series={[{ name: "Saturation per kill", values: [25.6, 25.6, 14.4, 7.2] }]}
+    />
+  </Tab>
+  <Tab label="Looting 1">
+    <BarChart
+      title="Hunger per kill"
+      categories={[
+      { label: "Pig", icon: "item/cooked_porkchop" },
+      { label: "Cow", icon: "item/cooked_beef" },
+      { label: "Sheep", icon: "item/cooked_mutton" },
+      { label: "Chicken", icon: "item/cooked_chicken" },
+      ]}
+      series={[{ name: "Hunger per kill", values: [20, 20, 12, 9] }]}
+    />
+    <BarChart
+      title="Saturation per kill"
+      categories={[
+      { label: "Pig", icon: "item/cooked_porkchop" },
+      { label: "Cow", icon: "item/cooked_beef" },
+      { label: "Sheep", icon: "item/cooked_mutton" },
+      { label: "Chicken", icon: "item/cooked_chicken" },
+      ]}
+      series={[{ name: "Saturation per kill", values: [32, 32, 19.2, 10.8] }]}
+    />
+  </Tab>
+  <Tab label="Looting 2">
+    <BarChart
+      title="Hunger per kill"
+      categories={[
+      { label: "Pig", icon: "item/cooked_porkchop" },
+      { label: "Cow", icon: "item/cooked_beef" },
+      { label: "Sheep", icon: "item/cooked_mutton" },
+      { label: "Chicken", icon: "item/cooked_chicken" },
+      ]}
+      series={[{ name: "Hunger per kill", values: [24, 24, 15, 12] }]}
+    />
+    <BarChart
+      title="Saturation per kill"
+      categories={[
+      { label: "Pig", icon: "item/cooked_porkchop" },
+      { label: "Cow", icon: "item/cooked_beef" },
+      { label: "Sheep", icon: "item/cooked_mutton" },
+      { label: "Chicken", icon: "item/cooked_chicken" },
+      ]}
+      series={[{ name: "Saturation per kill", values: [38.4, 38.4, 24, 14.4] }]}
+    />
+  </Tab>
+  <Tab label="Looting 3">
+    <BarChart
+      title="Hunger per kill"
+      categories={[
+      { label: "Pig", icon: "item/cooked_porkchop" },
+      { label: "Cow", icon: "item/cooked_beef" },
+      { label: "Sheep", icon: "item/cooked_mutton" },
+      { label: "Chicken", icon: "item/cooked_chicken" },
+      ]}
+      series={[{ name: "Hunger per kill", values: [28, 28, 18, 15] }]}
+    />
+    <BarChart
+      title="Saturation per kill"
+      categories={[
+      { label: "Pig", icon: "item/cooked_porkchop" },
+      { label: "Cow", icon: "item/cooked_beef" },
+      { label: "Sheep", icon: "item/cooked_mutton" },
+      { label: "Chicken", icon: "item/cooked_chicken" },
+      ]}
+      series={[{ name: "Saturation per kill", values: [44.8, 44.8, 28.8, 18] }]}
+    />
+  </Tab>
+</Tabs>
+
+How hard each animal is to finish:
+
+| Animal | Health | Flee speed | Hitbox (width × height) |
+| --- | --- | --- | --- |
+| Pig | 10 | 0.31 | 0.9 × 0.9 |
+| Cow | 10 | 0.40 | 0.9 × 1.4 |
+| Sheep | 8 | 0.29 | 0.9 × 1.3 |
+| Chicken | 4 | 0.35 | 0.4 × 0.7 |
+
+Pigs and cows drop the same food, but a panicking cow runs fastest of the four, so pigs come first.
+Looting only counts when your Looting weapon lands the killing blow, not the fire.
