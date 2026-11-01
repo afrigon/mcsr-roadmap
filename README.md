@@ -102,12 +102,12 @@ Pages can also use the widgets in `src/widgets/`:
   - `hold <shift|ctrl|left|right>` and `release <…>`: hold or let go of a modifier or mouse button.
   - `key <1–9|f|q>`: press a key over the hovered slot.
 
-  A nested list is a burst, such as `["click", "key 9", "click"]`: its inputs are 100 ms apart, while
-  every other input comes 300 ms after the one before. The demo runs the 1.16.1 inventory screen and
+  A nested list is a burst, such as `["click", "key 9", "click"]`: its inputs are 100 ms apart and
+  play as a single step, while every other input is its own step, 300 ms after the one before. The demo runs the 1.16.1 inventory screen and
   container logic, ported from the game, so two clicks on the same slot count as a double-click only
   within the game's 250 ms window: in practice, inside one burst. Shift-double-clicks, drags and
   hotkey swaps behave as they do in game, and the playback shows a double ring wherever the game
-  registered a double-click. Playback is separate: `pace` is the replay rate in inputs per second, 2 by default, and viewers replay at
+  registered a double-click. Playback is separate: `pace` is the replay rate in steps per second, 2 by default, and viewers replay at
   0.5×, 1× or 2× of it. Playback loops, resting `endPause` seconds (1.5 by default) on the result.
 
 Pages can start a blockquote with an alert marker to render it as a callout:

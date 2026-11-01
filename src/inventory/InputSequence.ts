@@ -15,6 +15,7 @@ export interface TimedInput {
   readonly text: string;
   readonly input: Input;
   readonly delay: number;
+  readonly step: number;
 }
 
 const separateGap = 300;
@@ -29,7 +30,7 @@ const verbs = ["hover", "click", "right-click", "hold", "release", "key"];
 
 export class InputSequence {
   static parse(entries: readonly InputEntry[]): TimedInput[] {
-    return entries.flatMap((entry) => {
+    return entries.flatMap((entry, step) => {
       const burst = typeof entry === "string" ? [entry] : entry;
 
       return burst.map((text, index) => {
@@ -37,7 +38,7 @@ export class InputSequence {
           throw new Error("A burst is a flat list of inputs; bursts cannot nest");
         }
 
-        return { text, input: InputSequence.input(text), delay: index === 0 ? separateGap : burstGap };
+        return { text, input: InputSequence.input(text), delay: index === 0 ? separateGap : burstGap, step };
       });
     });
   }

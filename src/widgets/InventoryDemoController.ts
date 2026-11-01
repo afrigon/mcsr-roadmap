@@ -10,7 +10,7 @@ interface Frame {
   held: Control[];
 }
 
-interface Step {
+interface InputView {
   pointer: string | null;
   ripple: Ripple | null;
   doubleClick: boolean;
@@ -21,7 +21,8 @@ interface DemoData {
   endPause: number;
   icons: string[];
   frames: Frame[];
-  steps: Step[];
+  inputs: InputView[];
+  stepEnds: number[];
 }
 
 const glideShare = 0.5;
@@ -42,6 +43,7 @@ export class InventoryDemoController {
   private readonly playButton: HTMLButtonElement;
   private readonly speedButtons: HTMLButtonElement[];
   private frame = 0;
+  private step = 0;
   private speed: number;
   private timer: number | undefined;
   private playing = false;
@@ -62,8 +64,8 @@ export class InventoryDemoController {
     this.speed = Number(pressed.dataset.speed);
   }
 
-  private get lastFrame(): number {
-    return this.data.frames.length - 1;
+  private get lastStep(): number {
+    return this.data.stepEnds.length;
   }
 
   private get stepDuration(): number {
@@ -80,12 +82,14 @@ export class InventoryDemoController {
     }
 
     this.show(0);
+    this.setStep(0);
     new ResizeObserver(() => this.movePointer(0)).observe(this.demo.querySelector(".inventory-panel")!);
   }
 
   private play() {
-    if (this.frame === this.lastFrame) {
+    if (this.step === this.lastStep) {
       this.show(0);
+      this.setStep(0);
       this.movePointer(0);
     }
 
@@ -103,7 +107,7 @@ export class InventoryDemoController {
   private next() {
     this.pause();
 
-    if (this.frame < this.lastFrame) {
+    if (this.step < this.lastStep) {
       this.advance(false);
     }
   }
@@ -111,8 +115,9 @@ export class InventoryDemoController {
   private previous() {
     this.pause();
 
-    if (this.frame > 0) {
-      this.show(this.frame - 1);
+    if (this.step > 0) {
+      this.setStep(this.step - 1);
+      this.show(this.step === 0 ? 0 : this.data.stepEnds[this.step - 1]!);
       this.movePointer(0);
     }
   }
@@ -126,30 +131,50 @@ export class InventoryDemoController {
   }
 
   private advance(continuing: boolean) {
-    const step = this.data.steps[this.frame]!;
-    const glide = this.stepDuration * glideShare;
+    const end = this.data.stepEnds[this.step]!;
+
+    this.playInput(end, this.stepDuration / (end - this.frame), continuing);
+  }
+
+  private playInput(end: number, duration: number, continuing: boolean) {
+    const input = this.data.inputs[this.frame]!;
+    const glide = duration * glideShare;
 
     this.movePointer(glide, this.pointerSlot(this.frame + 1));
     this.timer = window.setTimeout(() => {
       this.show(this.frame + 1);
-      this.ripple(step.ripple, step.doubleClick);
+      this.ripple(input.ripple, input.doubleClick);
+
+      if (this.frame < end) {
+        this.timer = window.setTimeout(() => this.playInput(end, duration, continuing), duration - glide);
+
+        return;
+      }
+
+      this.setStep(this.step + 1);
 
       if (!continuing) {
         return;
       }
 
-      if (this.frame === this.lastFrame) {
+      if (this.step === this.lastStep) {
         this.timer = window.setTimeout(() => this.restart(), (this.data.endPause * 1000) / this.speed);
 
         return;
       }
 
-      this.timer = window.setTimeout(() => this.advance(true), this.stepDuration - glide);
+      this.timer = window.setTimeout(() => this.advance(true), duration - glide);
     }, glide);
+  }
+
+  private setStep(step: number) {
+    this.step = step;
+    this.progress.textContent = `${step} / ${this.lastStep}`;
   }
 
   private restart() {
     this.show(0);
+    this.setStep(0);
     this.movePointer(this.stepDuration * glideShare);
     this.timer = window.setTimeout(() => this.advance(true), this.stepDuration);
   }
@@ -157,7 +182,7 @@ export class InventoryDemoController {
   private show(frame: number) {
     this.frame = frame;
     const { slots, cursor, held } = this.data.frames[frame]!;
-    const interacted = this.data.steps[frame - 1]?.ripple !== null && frame > 0;
+    const interacted = frame > 0 && this.data.inputs[frame - 1]!.ripple !== null;
     const activeSlot = interacted ? this.slots.get(this.pointerSlot(frame)) : undefined;
 
     for (const [key, element] of this.slots) {
@@ -174,14 +199,13 @@ export class InventoryDemoController {
       held.some((control) => control === MouseButton.Left || control === MouseButton.Right),
     );
     this.fill(this.held, cursor);
-    this.progress.textContent = `${frame} / ${this.lastFrame}`;
   }
 
   private pointerSlot(frame: number): string {
     return (
-      this.data.steps
+      this.data.inputs
         .slice(0, frame)
-        .map((step) => step.pointer)
+        .map((input) => input.pointer)
         .findLast((pointer) => pointer !== null) ?? restingSlot
     );
   }

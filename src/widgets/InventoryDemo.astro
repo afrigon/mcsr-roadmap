@@ -72,12 +72,13 @@ const frames = snapshots.map(({ state, held }) => ({
   cursor: encode(state.cursor),
   held,
 }));
-const steps = inputs.map(({ input }, index) => ({
+const inputViews = inputs.map(({ input }, index) => ({
   pointer: input.pointer?.key ?? null,
   ripple: input.ripple,
   doubleClick: doubleClicks[index]!,
 }));
-const demo = { pace, endPause, icons: iconPaths, frames, steps };
+const stepEnds = inputs.flatMap(({ step }, index) => (inputs[index + 1]?.step === step ? [] : [index + 1]));
+const demo = { pace, endPause, icons: iconPaths, frames, inputs: inputViews, stepEnds };
 const speeds = [0.5, 1, 2];
 const defaultSpeed = 1;
 ---
@@ -137,7 +138,7 @@ const defaultSpeed = 1;
       </button>
       <button type="button" data-control="next" aria-label="Next input">›</button>
     </div>
-    <span class="inventory-progress" data-progress>0 / {inputs.length}</span>
+    <span class="inventory-progress" data-progress>0 / {stepEnds.length}</span>
     <div class="tabs-list" role="group" aria-label="Playback speed">
       {
         speeds.map((speed) => (
