@@ -154,10 +154,12 @@ export class InventoryDemoController {
     this.frame = frame;
     const { slots, cursor, held } = this.data.frames[frame]!;
     const interacted = this.data.steps[frame - 1]?.ripple !== null && frame > 0;
-    const activeSlot = interacted ? this.slots.get(this.pointerSlot(frame)) : undefined;
+    const hoveredSlot = this.slots.get(this.pointerSlot(frame));
+    const activeSlot = interacted ? hoveredSlot : undefined;
 
     for (const [key, element] of this.slots) {
       this.fill(element, slots[key] ?? null);
+      element.toggleAttribute("data-hovered", element === hoveredSlot);
       element.toggleAttribute("data-active", element === activeSlot);
     }
 

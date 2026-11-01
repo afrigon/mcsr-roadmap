@@ -1079,6 +1079,15 @@
     border-radius: 4px;
     background: var(--color-background);
 
+    &[data-hovered]::after {
+      position: absolute;
+      inset: 0;
+      border-radius: 3px;
+      background: rgb(255 255 255 / 0.5);
+      content: "";
+      pointer-events: none;
+    }
+
     &[data-active] {
       outline: 2px solid var(--color-link);
       outline-offset: -1px;
@@ -1193,6 +1202,7 @@
     transition-timing-function: ease-in-out;
 
     & svg {
+      position: relative;
       display: block;
       fill: var(--color-text);
       stroke: var(--color-background);
@@ -1208,8 +1218,8 @@
 
   .inventory-held {
     position: absolute;
-    top: 10px;
-    left: 8px;
+    top: -16px;
+    left: -16px;
     display: grid;
     place-items: center;
     width: 32px;
