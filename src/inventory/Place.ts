@@ -3,7 +3,8 @@ import type { InventoryState } from "./InventoryState";
 import type { Slot } from "./Slot";
 
 export class Place implements Action {
-  readonly inputs = ["Click"];
+  readonly modifier = null;
+  readonly press = { device: "mouse" } as const;
 
   constructor(readonly slot: Slot) {}
 

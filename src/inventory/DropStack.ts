@@ -1,9 +1,11 @@
 import type { Action } from "./Action";
 import type { InventoryState } from "./InventoryState";
+import { Modifier } from "./Modifier";
 import type { Slot } from "./Slot";
 
 export class DropStack implements Action {
-  readonly inputs = ["Ctrl", "Q"];
+  readonly modifier = Modifier.Ctrl;
+  readonly press = { device: "keyboard", key: "Q" } as const;
 
   constructor(readonly slot: Slot) {}
 

@@ -1040,6 +1040,7 @@
   }
 
   .inventory-panel {
+    position: relative;
     display: inline-grid;
     grid-template-columns: auto auto;
     gap: 10px 8px;
@@ -1099,51 +1100,115 @@
     text-shadow: 1px 1px 0 rgb(0 0 0 / 0.8);
   }
 
-  .inventory-cursor {
+  .inventory-hotkeys {
+    display: grid;
+    grid-template-columns: repeat(9, 36px);
+    grid-column: 2;
+    grid-row: 4;
+    gap: 2px;
+    margin-top: -6px;
+    justify-items: center;
+  }
+
+  .inventory-demo kbd {
+    position: relative;
+    padding: 1px 5px;
+    border: 1px solid var(--color-line);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 11px;
+    color: var(--color-muted);
+    background: var(--color-surface);
+    transition:
+      color 120ms,
+      border-color 120ms,
+      background 120ms;
+
+    &[data-held] {
+      color: var(--color-text);
+      border-color: var(--color-link);
+      background: var(--color-surface-raised);
+    }
+  }
+
+  .inventory-keys {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+
+    & kbd {
+      padding: 3px 10px;
+      font-size: 12px;
+    }
+  }
+
+  .inventory-pointer {
     position: absolute;
-    top: 14px;
-    left: 14px;
-    z-index: 1;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    pointer-events: none;
+    transition-property: translate;
+    transition-timing-function: ease-in-out;
+
+    & svg {
+      display: block;
+      fill: var(--color-text);
+      stroke: var(--color-background);
+      stroke-width: 1.2;
+      filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.6));
+    }
+  }
+
+  .inventory-held {
+    position: absolute;
+    top: 10px;
+    left: 8px;
     display: grid;
     place-items: center;
     width: 32px;
     height: 32px;
-    pointer-events: none;
+
+    &:empty {
+      display: none;
+    }
   }
 
-  .inventory-steps {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin: 10px 0 8px;
+  .inventory-ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--color-link);
+    border-radius: 50%;
+    pointer-events: none;
+    translate: -50% -50%;
+    animation: inventory-ripple 400ms ease-out forwards;
 
-    & li {
-      display: inline-flex;
-      gap: 2px;
-      padding: 2px;
-      border-radius: 6px;
-      opacity: 0.55;
+    .inventory-pointer > & {
+      top: 0;
+      left: 0;
+    }
+  }
 
-      &[data-done] {
-        opacity: 0.35;
-      }
-
-      &[data-active] {
-        opacity: 1;
-        background: var(--color-surface-raised);
-      }
+  @keyframes inventory-ripple {
+    from {
+      scale: 0.2;
+      opacity: 0.9;
     }
 
-    & kbd {
-      padding: 1px 5px;
-      border: 1px solid var(--color-line);
-      border-bottom-width: 2px;
-      border-radius: 4px;
-      font-family: inherit;
-      font-size: 11px;
-      color: var(--color-text-soft);
-      background: var(--color-surface);
+    to {
+      scale: 1;
+      opacity: 0;
     }
+  }
+
+  .inventory-progress {
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-soft);
   }
 
   .inventory-controls {

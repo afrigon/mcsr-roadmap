@@ -1,3 +1,6 @@
+import type { Modifier } from "../inventory/Modifier";
+import type { Press } from "../inventory/Press";
+
 type EncodedStack = [icon: number, count: number];
 
 interface Frame {
@@ -5,85 +8,105 @@ interface Frame {
   cursor: EncodedStack | null;
 }
 
+interface Step {
+  slot: string;
+  modifier: Modifier | null;
+  press: Press;
+}
+
 interface DemoData {
   pace: number;
   icons: string[];
   frames: Frame[];
-  steps: string[];
+  steps: Step[];
 }
+
+const glideShare = 0.5;
 
 export class InventoryDemoController {
   private readonly data: DemoData;
+  private readonly panel: HTMLElement;
   private readonly slots: Map<string, HTMLElement>;
-  private readonly steps: HTMLElement[];
+  private readonly keys: Map<string, HTMLElement>;
+  private readonly pointer: HTMLElement;
+  private readonly held: HTMLElement;
+  private readonly progress: HTMLElement;
   private readonly playButton: HTMLButtonElement;
   private readonly speedButtons: HTMLButtonElement[];
-  private readonly cursor = document.createElement("span");
   private frame = 0;
   private speed: number;
   private timer: number | undefined;
+  private playing = false;
 
   constructor(private readonly demo: HTMLElement) {
     this.data = JSON.parse(demo.dataset.inventoryDemo!) as DemoData;
+    this.panel = demo.querySelector<HTMLElement>(".inventory-panel")!;
     this.slots = new Map(
       [...demo.querySelectorAll<HTMLElement>("[data-slot]")].map((slot) => [slot.dataset.slot!, slot]),
     );
-    this.steps = [...demo.querySelectorAll<HTMLElement>("[data-step]")];
+    this.keys = new Map([...demo.querySelectorAll<HTMLElement>("kbd[data-key]")].map((key) => [key.dataset.key!, key]));
+    this.pointer = demo.querySelector<HTMLElement>(".inventory-pointer")!;
+    this.held = demo.querySelector<HTMLElement>(".inventory-held")!;
+    this.progress = demo.querySelector<HTMLElement>("[data-progress]")!;
     this.playButton = demo.querySelector<HTMLButtonElement>('[data-control="play"]')!;
     this.speedButtons = [...demo.querySelectorAll<HTMLButtonElement>("[data-speed]")];
-    this.speed = Number(this.speedButtons[0]!.dataset.speed);
-    this.cursor.className = "inventory-cursor";
+    const pressed = this.speedButtons.find((button) => button.getAttribute("aria-pressed") === "true")!;
+    this.speed = Number(pressed.dataset.speed);
   }
 
   private get lastFrame(): number {
     return this.data.frames.length - 1;
   }
 
-  private get playing(): boolean {
-    return this.timer !== undefined;
+  private get stepDuration(): number {
+    return 1000 / (this.data.pace * this.speed);
   }
 
   start() {
     this.playButton.addEventListener("click", () => (this.playing ? this.pause() : this.play()));
-    this.demo.querySelector('[data-control="previous"]')!.addEventListener("click", () => this.step(-1));
-    this.demo.querySelector('[data-control="next"]')!.addEventListener("click", () => this.step(1));
+    this.demo.querySelector('[data-control="previous"]')!.addEventListener("click", () => this.previous());
+    this.demo.querySelector('[data-control="next"]')!.addEventListener("click", () => this.next());
 
     for (const button of this.speedButtons) {
       button.addEventListener("click", () => this.setSpeed(Number(button.dataset.speed)));
     }
 
     this.show(0);
+    this.movePointer(0);
   }
 
   private play() {
     if (this.frame === this.lastFrame) {
       this.show(0);
+      this.movePointer(0);
     }
 
+    this.playing = true;
     this.playButton.textContent = "Pause";
-    this.schedule();
+    this.advance(true);
   }
 
   private pause() {
-    window.clearInterval(this.timer);
-    this.timer = undefined;
+    window.clearTimeout(this.timer);
+    this.playing = false;
     this.playButton.textContent = "Play";
   }
 
-  private schedule() {
-    window.clearInterval(this.timer);
-    this.timer = window.setInterval(() => {
-      this.show(this.frame + 1);
+  private next() {
+    this.pause();
 
-      if (this.frame === this.lastFrame) {
-        this.pause();
-      }
-    }, 1000 / (this.data.pace * this.speed));
+    if (this.frame < this.lastFrame) {
+      this.advance(false);
+    }
   }
 
-  private step(direction: number) {
+  private previous() {
     this.pause();
-    this.show(Math.min(Math.max(this.frame + direction, 0), this.lastFrame));
+
+    if (this.frame > 0) {
+      this.show(this.frame - 1);
+      this.movePointer(0);
+    }
   }
 
   private setSpeed(speed: number) {
@@ -92,34 +115,80 @@ export class InventoryDemoController {
     for (const button of this.speedButtons) {
       button.setAttribute("aria-pressed", String(Number(button.dataset.speed) === speed));
     }
+  }
 
-    if (this.playing) {
-      this.schedule();
-    }
+  private advance(continuing: boolean) {
+    const step = this.data.steps[this.frame]!;
+    const glide = this.stepDuration * glideShare;
+
+    this.hold(step.modifier);
+    this.movePointer(glide, step.slot);
+    this.timer = window.setTimeout(() => {
+      this.show(this.frame + 1);
+      this.ripple(step.press);
+
+      if (!continuing) {
+        return;
+      }
+
+      if (this.frame === this.lastFrame) {
+        this.pause();
+
+        return;
+      }
+
+      this.timer = window.setTimeout(() => this.advance(true), this.stepDuration - glide);
+    }, glide);
   }
 
   private show(frame: number) {
     this.frame = frame;
     const { slots, cursor } = this.data.frames[frame]!;
-    const activeStep = frame - 1;
-    const activeSlot = activeStep < 0 ? undefined : this.slots.get(this.data.steps[activeStep]!);
+    const activeSlot = this.slots.get(this.data.steps[frame - 1]?.slot ?? "");
 
     for (const [key, element] of this.slots) {
       this.fill(element, slots[key] ?? null);
       element.toggleAttribute("data-active", element === activeSlot);
     }
 
-    for (const [index, step] of this.steps.entries()) {
-      step.toggleAttribute("data-active", index === activeStep);
-      step.toggleAttribute("data-done", index < activeStep);
+    this.fill(this.held, cursor);
+    this.hold(this.restingModifier(frame));
+    this.progress.textContent = `Step ${frame} of ${this.lastFrame}`;
+  }
+
+  private restingModifier(frame: number): Modifier | null {
+    const previous = this.data.steps[frame - 1];
+    const next = this.data.steps[frame];
+
+    return previous !== undefined && next !== undefined && previous.modifier === next.modifier ? previous.modifier : null;
+  }
+
+  private hold(modifier: Modifier | null) {
+    for (const [key, element] of this.keys) {
+      element.toggleAttribute("data-held", key === modifier);
+    }
+  }
+
+  private movePointer(duration: number, slotKey = this.data.steps[this.frame - 1]?.slot) {
+    const slot = slotKey === undefined ? undefined : this.slots.get(slotKey);
+    const x = slot === undefined ? this.panel.clientWidth / 2 : slot.offsetLeft + slot.offsetWidth / 2;
+    const y = slot === undefined ? this.panel.clientHeight / 2 : slot.offsetTop + slot.offsetHeight / 2;
+
+    this.pointer.style.transitionDuration = `${duration}ms`;
+    this.pointer.style.translate = `${x}px ${y}px`;
+  }
+
+  private ripple(press: Press) {
+    const target = press.device === "mouse" ? this.pointer : this.keys.get(press.key);
+
+    if (target === undefined) {
+      return;
     }
 
-    if (cursor !== null && activeSlot !== undefined) {
-      this.fill(this.cursor, cursor);
-      activeSlot.append(this.cursor);
-    } else {
-      this.cursor.remove();
-    }
+    const ripple = document.createElement("span");
+    ripple.className = "inventory-ripple";
+    ripple.addEventListener("animationend", () => ripple.remove());
+    target.append(ripple);
   }
 
   private fill(element: HTMLElement, stack: EncodedStack | null) {

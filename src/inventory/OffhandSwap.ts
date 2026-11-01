@@ -3,7 +3,8 @@ import type { InventoryState } from "./InventoryState";
 import { Slot } from "./Slot";
 
 export class OffhandSwap implements Action {
-  readonly inputs = ["F"];
+  readonly modifier = null;
+  readonly press = { device: "keyboard", key: "F" } as const;
 
   constructor(readonly slot: Slot) {}
 

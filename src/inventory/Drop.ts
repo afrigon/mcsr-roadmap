@@ -3,7 +3,8 @@ import type { InventoryState } from "./InventoryState";
 import type { Slot } from "./Slot";
 
 export class Drop implements Action {
-  readonly inputs = ["Q"];
+  readonly modifier = null;
+  readonly press = { device: "keyboard", key: "Q" } as const;
 
   constructor(readonly slot: Slot) {}
 

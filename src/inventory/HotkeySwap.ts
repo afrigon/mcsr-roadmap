@@ -1,10 +1,12 @@
 import type { Action } from "./Action";
 import type { InventoryState } from "./InventoryState";
+import type { Press } from "./Press";
 import { Slot } from "./Slot";
 import { SlotSection } from "./SlotSection";
 
 export class HotkeySwap implements Action {
-  readonly inputs: readonly string[];
+  readonly modifier = null;
+  readonly press: Press;
   private readonly hotbarSlot: Slot;
 
   constructor(
@@ -12,7 +14,7 @@ export class HotkeySwap implements Action {
     readonly slot: Slot,
   ) {
     this.hotbarSlot = Slot.of(SlotSection.Hotbar, hotbarIndex);
-    this.inputs = [String(hotbarIndex)];
+    this.press = { device: "keyboard", key: String(hotbarIndex) };
   }
 
   apply(state: InventoryState): InventoryState {

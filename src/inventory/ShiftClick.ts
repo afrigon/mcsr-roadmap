@@ -1,12 +1,14 @@
 import type { Action } from "./Action";
 import type { InventoryState } from "./InventoryState";
+import { Modifier } from "./Modifier";
 import { Slot } from "./Slot";
 import { SlotSection } from "./SlotSection";
 
 const playerSlots = [...Slot.all(SlotSection.Hotbar).reverse(), ...Slot.all(SlotSection.Inventory).reverse()];
 
 export class ShiftClick implements Action {
-  readonly inputs = ["Shift", "Click"];
+  readonly modifier = Modifier.Shift;
+  readonly press = { device: "mouse" } as const;
 
   constructor(readonly slot: Slot) {}
 

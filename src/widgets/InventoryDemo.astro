@@ -16,7 +16,7 @@ interface Props {
   title?: string;
 }
 
-const { slots, actions: actionTexts, pace = 8, title } = Astro.props;
+const { slots, actions: actionTexts, pace = 2, title } = Astro.props;
 
 const actions = actionTexts.map((text) => ActionParser.parse(text));
 const states = [InventoryState.parse(slots)];
@@ -33,6 +33,20 @@ const rows = [SlotSection.Chest, SlotSection.Inventory, SlotSection.Offhand, Slo
   section,
   slots: Slot.all(section),
 }));
+const hotbarKeys = Slot.all(SlotSection.Hotbar).map((slot) => String(slot.index));
+
+const modifierHolds = actions.filter(
+  (action, index) => action.modifier !== null && action.modifier !== actions[index - 1]?.modifier,
+).length;
+const inputCount = actions.length + modifierHolds;
+const keys = [
+  ...new Set([
+    ...actions.flatMap((action) => (action.modifier === null ? [] : [action.modifier])),
+    ...actions.flatMap((action) =>
+      action.press.device === "keyboard" && !hotbarKeys.includes(action.press.key) ? [action.press.key] : [],
+    ),
+  ]),
+];
 
 const icons = IconRenderer.fromEnvironment();
 const iconKeys: string[] = [];
@@ -56,9 +70,11 @@ const frames = states.map((state) => ({
   ),
   cursor: encode(state.cursor),
 }));
-const demo = { pace, icons: iconSources, frames, steps: actions.map((action) => action.slot.key) };
+const steps = actions.map((action) => ({ slot: action.slot.key, modifier: action.modifier, press: action.press }));
+const demo = { pace, icons: iconSources, frames, steps };
 const initial = states[0]!;
-const speeds = [0.25, 0.5, 1];
+const speeds = [0.5, 1, 2];
+const defaultSpeed = 1;
 ---
 
 <figure class="inventory-demo" data-inventory-demo={JSON.stringify(demo)}>
@@ -80,32 +96,40 @@ const speeds = [0.25, 0.5, 1];
         </div>
       ))
     }
+    <div class="inventory-hotkeys">
+      {hotbarKeys.map((key) => <kbd data-key={key}>{key}</kbd>)}
+    </div>
+    <span class="inventory-pointer" aria-hidden="true">
+      <svg viewBox="0 0 16 24" width="16" height="24">
+        <path d="M1 1 L1 19 L5.5 14.5 L8.5 21.5 L11 20.5 L8 13.5 L14 13.5 Z" />
+      </svg>
+      <span class="inventory-held"></span>
+    </span>
   </div>
-  <ol class="inventory-steps">
-    {
-      actions.map((action, index) => (
-        <li data-step={index} title={actionTexts[index]}>
-          {action.inputs.map((input) => (
-            <kbd>{input}</kbd>
-          ))}
-        </li>
-      ))
-    }
-  </ol>
+  {
+    keys.length > 0 && (
+      <div class="inventory-keys">
+        {keys.map((key) => (
+          <kbd data-key={key}>{key}</kbd>
+        ))}
+      </div>
+    )
+  }
   <div class="inventory-controls">
     <button type="button" data-control="previous" aria-label="Previous input">‹</button>
     <button type="button" data-control="play">Play</button>
     <button type="button" data-control="next" aria-label="Next input">›</button>
+    <span class="inventory-progress" data-progress>Step 0 of {actions.length}</span>
     <div class="tabs-list" role="group" aria-label="Playback speed">
       {
         speeds.map((speed) => (
-          <button type="button" data-speed={speed} aria-pressed={speed === speeds[0] ? "true" : "false"}>
+          <button type="button" data-speed={speed} aria-pressed={speed === defaultSpeed ? "true" : "false"}>
             {speed}×
           </button>
         ))
       }
     </div>
-    <span class="inventory-input-count">{actions.length} inputs</span>
+    <span class="inventory-input-count">{inputCount} inputs</span>
   </div>
 </figure>
 
