@@ -91,4 +91,9 @@ Pages can also use the widgets in `src/widgets/`:
   series measures; series without one take the first four in that order.
 - `<Tabs>` holding `<Tab label="…">` panels, one shown at a time.
 
+Pages can start a blockquote with an alert marker to render it as a callout:
+
+- `> [!NOTE]`, a side fact that qualifies the point without changing it.
+- `> [!UNVERIFIED]`, a claim read from the game's code that has not been tested in game.
+
 Research notes behind the roadmap live in `research/`.

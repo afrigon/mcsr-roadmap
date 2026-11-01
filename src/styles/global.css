@@ -22,6 +22,8 @@
   --color-chart-yellow: #c98500;
   --color-chart-red: #e0443e;
   --color-chart-gray: #8f96a3;
+  --color-alert-note: #60a5fa;
+  --color-alert-unverified: #c084fc;
 }
 
 :root {
@@ -829,6 +831,44 @@
       padding-left: 12px;
       border-left: 3px solid var(--color-line);
       color: var(--color-muted);
+    }
+
+    & .alert {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-left: 3px solid var(--alert-color);
+      border-radius: 0 8px 8px 0;
+      background: var(--color-surface);
+
+      & > :last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    & .alert-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--alert-color);
+
+      & img {
+        width: 16px;
+        height: 16px;
+        image-rendering: pixelated;
+      }
+    }
+
+    & [data-alert="note"] {
+      --alert-color: var(--color-alert-note);
+    }
+
+    & [data-alert="unverified"] {
+      --alert-color: var(--color-alert-unverified);
     }
 
     & hr {
