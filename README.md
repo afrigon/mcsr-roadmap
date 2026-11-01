@@ -106,8 +106,9 @@ Pages can also use the widgets in `src/widgets/`:
   play as a single step, while every other input is its own step, 300 ms after the one before. The demo runs the 1.16.1 inventory screen and
   container logic, ported from the game, so two clicks on the same slot count as a double-click only
   within the game's 250 ms window: in practice, inside one burst. Shift-double-clicks, drags and
-  hotkey swaps behave as they do in game, and the playback shows a double ring wherever the game
-  registered a double-click. Playback is separate: `pace` is the replay rate in steps per second, 2 by default, and viewers replay at
+  hotkey swaps behave as they do in game. In the playback each click ripples once, blue for the
+  left button and orange for the right, with a thicker ring where the game registered a
+  double-click. Playback is separate: `pace` is the replay rate in steps per second, 2 by default, and viewers replay at
   0.1×, 0.5×, 1× or 2× of it. Playback loops, resting `endPause` seconds (1.5 by default) on the result.
 
 Pages can start a blockquote with an alert marker to render it as a callout:

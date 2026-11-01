@@ -16,6 +16,7 @@
   --color-mastered: #4ade80;
   --color-warning: #f87171;
   --color-link: #93c5fd;
+  --color-mouse-right: #fb923c;
   --color-chart-blue: #3987e5;
   --color-chart-orange: #d95926;
   --color-chart-aqua: #199e70;
@@ -1214,8 +1215,12 @@
         scale 80ms;
     }
 
-    &[data-held] svg {
+    &[data-held="left"] svg {
       fill: var(--color-link);
+    }
+
+    &[data-held="right"] svg {
+      fill: var(--color-mouse-right);
     }
 
     &[data-pressed] svg {
@@ -1252,6 +1257,14 @@
     pointer-events: none;
     translate: -50% -50%;
     animation: inventory-ripple 400ms ease-out forwards;
+
+    &[data-button="right"] {
+      border-color: var(--color-mouse-right);
+    }
+
+    &[data-double-click] {
+      border-width: 4px;
+    }
 
     .inventory-pointer > & {
       top: 0;

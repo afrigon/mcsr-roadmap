@@ -29,7 +29,7 @@ const glideShare = 0.5;
 
 const pressFlashDuration = 150;
 
-const doubleRingSpacing = 90;
+const pointerVariance = 8;
 
 const restingSlot = "inventory 1";
 
@@ -48,6 +48,7 @@ export class InventoryDemoController {
   private timer: number | undefined;
   private playing = false;
   private hoverTracking: number | undefined;
+  private readonly offsets: [number, number][];
 
   constructor(private readonly demo: HTMLElement) {
     this.data = JSON.parse(demo.dataset.inventoryDemo!) as DemoData;
@@ -62,6 +63,10 @@ export class InventoryDemoController {
     this.speedButtons = [...demo.querySelectorAll<HTMLButtonElement>("[data-speed]")];
     const pressed = this.speedButtons.find((button) => button.getAttribute("aria-pressed") === "true")!;
     this.speed = Number(pressed.dataset.speed);
+    this.offsets = this.data.inputs.map(() => [
+      (Math.random() * 2 - 1) * pointerVariance,
+      (Math.random() * 2 - 1) * pointerVariance,
+    ]);
   }
 
   private get lastStep(): number {
@@ -144,7 +149,7 @@ export class InventoryDemoController {
     const input = this.data.inputs[this.frame]!;
     const glide = duration * glideShare;
 
-    this.movePointer(glide, this.pointerSlot(this.frame + 1));
+    this.movePointer(glide, this.pointerTarget(this.frame + 1));
     this.timer = window.setTimeout(() => {
       this.show(this.frame + 1);
       this.ripple(input.ripple, input.doubleClick);
@@ -193,7 +198,7 @@ export class InventoryDemoController {
     this.frame = frame;
     const { slots, cursor, held } = this.data.frames[frame]!;
     const interacted = frame > 0 && this.data.inputs[frame - 1]!.ripple !== null;
-    const activeSlot = interacted ? this.slots.get(this.pointerSlot(frame)) : undefined;
+    const activeSlot = interacted ? this.slots.get(this.pointerTarget(frame).slot) : undefined;
 
     for (const [key, element] of this.slots) {
       this.fill(element, slots[key] ?? null);
@@ -204,26 +209,28 @@ export class InventoryDemoController {
       element.toggleAttribute("data-held", held.includes(key as Control));
     }
 
-    this.pointer.toggleAttribute(
-      "data-held",
-      held.some((control) => control === MouseButton.Left || control === MouseButton.Right),
-    );
+    const heldButton = [MouseButton.Left, MouseButton.Right].find((button) => held.includes(button));
+
+    if (heldButton === undefined) {
+      delete this.pointer.dataset.held;
+    } else {
+      this.pointer.dataset.held = heldButton;
+    }
     this.fill(this.held, cursor);
   }
 
-  private pointerSlot(frame: number): string {
-    return (
-      this.data.inputs
-        .slice(0, frame)
-        .map((input) => input.pointer)
-        .findLast((pointer) => pointer !== null) ?? restingSlot
-    );
+  private pointerTarget(frame: number): { slot: string; offset: [number, number] } {
+    const index = this.data.inputs.slice(0, frame).findLastIndex((input) => input.pointer !== null);
+
+    return index < 0
+      ? { slot: restingSlot, offset: [0, 0] }
+      : { slot: this.data.inputs[index]!.pointer!, offset: this.offsets[index]! };
   }
 
-  private movePointer(duration: number, slotKey = this.pointerSlot(this.frame)) {
-    const slot = this.slots.get(slotKey)!;
-    const x = slot.offsetLeft + slot.offsetWidth / 2;
-    const y = slot.offsetTop + slot.offsetHeight / 2;
+  private movePointer(duration: number, target = this.pointerTarget(this.frame)) {
+    const slot = this.slots.get(target.slot)!;
+    const x = slot.offsetLeft + slot.offsetWidth / 2 + target.offset[0];
+    const y = slot.offsetTop + slot.offsetHeight / 2 + target.offset[1];
 
     this.pointer.style.transitionDuration = `${duration}ms`;
     this.pointer.style.translate = `${x}px ${y}px`;
@@ -268,16 +275,16 @@ export class InventoryDemoController {
       return;
     }
 
-    const rings = doubleClick ? 2 : 1;
+    const ring = document.createElement("span");
+    ring.className = "inventory-ripple";
+    ring.toggleAttribute("data-double-click", doubleClick);
 
-    for (let ring = 0; ring < rings; ring++) {
-      window.setTimeout(() => {
-        const element = document.createElement("span");
-        element.className = "inventory-ripple";
-        element.addEventListener("animationend", () => element.remove());
-        target.append(element);
-      }, (ring * doubleRingSpacing) / this.speed);
+    if (ripple.target === "pointer") {
+      ring.dataset.button = ripple.button;
     }
+
+    ring.addEventListener("animationend", () => ring.remove());
+    target.append(ring);
 
     if (ripple.target === "pointer") {
       this.pointer.toggleAttribute("data-double-click", doubleClick);
