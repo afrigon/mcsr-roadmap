@@ -208,19 +208,25 @@ export class InventoryDemoController {
   private show(frame: number) {
     this.frame = frame;
     const { slots, cursor, held, hovered } = this.data.frames[frame]!;
-    const interacted = frame > 0 && this.data.inputs[frame - 1]!.ripple !== null;
-    const activeSlot = interacted && hovered !== null ? this.slots.get(hovered) : undefined;
+    const ripple = frame > 0 ? this.data.inputs[frame - 1]!.ripple : null;
+    const activeSlot = ripple !== null && hovered !== null ? this.slots.get(hovered) : undefined;
+    const heldButton = [MouseButton.Left, MouseButton.Right].find((button) => held.includes(button));
+    const activeButton = ripple?.target === "pointer" ? ripple.button : heldButton;
 
     for (const [key, element] of this.slots) {
       this.fill(element, slots[key] ?? null);
       element.toggleAttribute("data-active", element === activeSlot);
+
+      if (element === activeSlot && activeButton !== undefined) {
+        element.dataset.button = activeButton;
+      } else {
+        delete element.dataset.button;
+      }
     }
 
     for (const [key, element] of this.keys) {
       element.toggleAttribute("data-held", held.includes(key as Control));
     }
-
-    const heldButton = [MouseButton.Left, MouseButton.Right].find((button) => held.includes(button));
 
     if (heldButton === undefined) {
       delete this.pointer.dataset.held;

@@ -1133,6 +1133,10 @@
       outline-offset: -1px;
     }
 
+    &[data-active][data-button="right"] {
+      outline-color: var(--color-mouse-right);
+    }
+
     & img {
       width: 32px;
       height: 32px;
