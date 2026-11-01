@@ -1198,6 +1198,11 @@
       stroke: var(--color-background);
       stroke-width: 1.2;
       filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.6));
+      transition: fill 120ms;
+    }
+
+    &[data-held] svg {
+      fill: var(--color-link);
     }
   }
 

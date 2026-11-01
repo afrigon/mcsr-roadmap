@@ -1,5 +1,6 @@
 ---
-import { ActionParser } from "../inventory/ActionParser";
+import { InputSequence } from "../inventory/InputSequence";
+import { InventoryScreen } from "../inventory/InventoryScreen";
 import { InventoryState } from "../inventory/InventoryState";
 import type { ItemStack } from "../inventory/ItemStack";
 import { Modifier } from "../inventory/Modifier";
@@ -12,23 +13,28 @@ type Container = "chest";
 interface Props {
   container: Container;
   slots: Readonly<Record<string, string>>;
-  actions: readonly string[];
+  inputs: readonly string[];
   pace?: number;
   endPause?: number;
   title?: string;
 }
 
-const { slots, actions: actionTexts, pace = 2, endPause = 1.5, title } = Astro.props;
+const { slots, inputs: inputTexts, pace = 2, endPause = 1.5, title } = Astro.props;
 
-const actions = actionTexts.map((text) => ActionParser.parse(text));
-const states = [InventoryState.parse(slots)];
+const inputs = InputSequence.parse(inputTexts);
+const initial = InventoryState.parse(slots);
+const screen = new InventoryScreen(initial);
+const snapshots = [{ state: initial, held: screen.heldControls }];
 
-for (const [index, action] of actions.entries()) {
+for (const [index, { text, input, delay }] of inputs.entries()) {
   try {
-    states.push(action.apply(states.at(-1)!));
+    screen.advance(delay);
+    input.perform(screen);
   } catch (error) {
-    throw new Error(`InventoryDemo step ${index + 1} "${actionTexts[index]}": ${(error as Error).message}`);
+    throw new Error(`InventoryDemo input ${index + 1} "${text}": ${(error as Error).message}`);
   }
+
+  snapshots.push({ state: screen.state, held: screen.heldControls });
 }
 
 const rows = [SlotSection.Chest, SlotSection.Inventory, SlotSection.Offhand, SlotSection.Hotbar].map((section) => ({
@@ -51,7 +57,7 @@ const iconIndex = (stack: ItemStack) => {
   return iconPaths.indexOf(path);
 };
 const encode = (stack: ItemStack | null) => (stack === null ? null : [iconIndex(stack), stack.count]);
-const frames = states.map((state) => ({
+const frames = snapshots.map(({ state, held }) => ({
   slots: Object.fromEntries(
     rows.flatMap((row) => row.slots).flatMap((slot) => {
       const stack = state.get(slot);
@@ -60,10 +66,10 @@ const frames = states.map((state) => ({
     }),
   ),
   cursor: encode(state.cursor),
+  held,
 }));
-const steps = actions.map((action) => ({ slot: action.slot.key, modifier: action.modifier, press: action.press }));
+const steps = inputs.map(({ input }) => ({ pointer: input.pointer?.key ?? null, ripple: input.ripple }));
 const demo = { pace, endPause, icons: iconPaths, frames, steps };
-const initial = states[0]!;
 const speeds = [0.5, 1, 2];
 const defaultSpeed = 1;
 ---
@@ -123,7 +129,7 @@ const defaultSpeed = 1;
       </button>
       <button type="button" data-control="next" aria-label="Next input">›</button>
     </div>
-    <span class="inventory-progress" data-progress>0 / {actions.length}</span>
+    <span class="inventory-progress" data-progress>0 / {inputs.length}</span>
     <div class="tabs-list" role="group" aria-label="Playback speed">
       {
         speeds.map((speed) => (

@@ -93,14 +93,21 @@ Pages can also use the widgets in `src/widgets/`:
   units. `color` is `blue`, `orange`, `aqua`, `yellow`, `red` or `gray`, picked to match what the
   series measures; series without one take the first four in that order.
 - `<Tabs>` holding `<Tab label="…">` panels, one shown at a time.
-- `<InventoryDemo title="…" container="chest" slots={{ "chest 4": "item/obsidian 7" }} actions={["shift-click chest 4"]} pace={2} />`,
-  an inventory screen that plays a sequence of inputs. Slots are `chest 1–27` and `inventory 1–27`
-  (row by row from the top left), `hotbar 1–9` and `offhand`; items are an icon and an optional
-  count. Actions are `shift-click <slot>`, `hotkey <1–9> <slot>`, `offhand <slot>`, `drop <slot>`,
-  `drop-stack <slot>`, `pick-up <slot>` and `place <slot>`, and each state is computed from the
-  game's rules, so a slot that ends up wrong in the demo is wrong in the sequence. A pointer glides
-  to each slot, and clicks, keys and held modifiers light up as they are pressed. `pace` is the
-  input rate per second, 2 by default, a teaching pace rather than full speed; viewers replay at
+- `<InventoryDemo title="…" container="chest" slots={{ "chest 4": "item/obsidian 7" }} inputs={["hold shift", "click chest 4", "release shift"]} pace={2} />`,
+  an inventory screen that plays the player's physical inputs. Slots are `chest 1–27` and
+  `inventory 1–27` (row by row from the top left), `hotbar 1–9` and `offhand`; items are an icon
+  and an optional count. Inputs are:
+  - `hover <slot>`: moves the pointer; with a mouse button held, this drags across slots.
+  - `click [<slot>]` and `right-click [<slot>]`: press and release, after hovering the slot if one is given.
+  - `hold <shift|ctrl|left|right>` and `release <…>`: hold or let go of a modifier or mouse button.
+  - `key <1–9|f|q>`: press a key over the hovered slot.
+  - `wait <ms>`: pause before the next input.
+
+  The demo runs the 1.16.1 inventory screen and container logic, ported from the game, so
+  double-clicks, shift-double-clicks, drags and hotkey swaps behave as they do in game. Inputs
+  happen 100 ms apart by default; that real-time clock is what the game's 250 ms double-click
+  window sees, so a pause before a second click on the same slot needs a `wait`. Playback is
+  separate: `pace` is the replay rate in inputs per second, 2 by default, and viewers replay at
   0.5×, 1× or 2× of it. Playback loops, resting `endPause` seconds (1.5 by default) on the result.
 
 Pages can start a blockquote with an alert marker to render it as a callout:

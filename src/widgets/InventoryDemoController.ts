@@ -1,17 +1,18 @@
-import type { Modifier } from "../inventory/Modifier";
-import type { Press } from "../inventory/Press";
+import type { Control } from "../inventory/Control";
+import { MouseButton } from "../inventory/MouseButton";
+import type { Ripple } from "../inventory/Ripple";
 
 type EncodedStack = [icon: number, count: number];
 
 interface Frame {
   slots: Record<string, EncodedStack>;
   cursor: EncodedStack | null;
+  held: Control[];
 }
 
 interface Step {
-  slot: string;
-  modifier: Modifier | null;
-  press: Press;
+  pointer: string | null;
+  ripple: Ripple | null;
 }
 
 interface DemoData {
@@ -124,11 +125,10 @@ export class InventoryDemoController {
     const step = this.data.steps[this.frame]!;
     const glide = this.stepDuration * glideShare;
 
-    this.hold(step.modifier);
-    this.movePointer(glide, step.slot);
+    this.movePointer(glide, this.pointerSlot(this.frame + 1));
     this.timer = window.setTimeout(() => {
       this.show(this.frame + 1);
-      this.ripple(step.press);
+      this.ripple(step.ripple);
 
       if (!continuing) {
         return;
@@ -152,33 +152,37 @@ export class InventoryDemoController {
 
   private show(frame: number) {
     this.frame = frame;
-    const { slots, cursor } = this.data.frames[frame]!;
-    const activeSlot = this.slots.get(this.data.steps[frame - 1]?.slot ?? "");
+    const { slots, cursor, held } = this.data.frames[frame]!;
+    const interacted = this.data.steps[frame - 1]?.ripple !== null && frame > 0;
+    const activeSlot = interacted ? this.slots.get(this.pointerSlot(frame)) : undefined;
 
     for (const [key, element] of this.slots) {
       this.fill(element, slots[key] ?? null);
       element.toggleAttribute("data-active", element === activeSlot);
     }
 
+    for (const [key, element] of this.keys) {
+      element.toggleAttribute("data-held", held.includes(key as Control));
+    }
+
+    this.pointer.toggleAttribute(
+      "data-held",
+      held.some((control) => control === MouseButton.Left || control === MouseButton.Right),
+    );
     this.fill(this.held, cursor);
-    this.hold(this.restingModifier(frame));
     this.progress.textContent = `${frame} / ${this.lastFrame}`;
   }
 
-  private restingModifier(frame: number): Modifier | null {
-    const previous = this.data.steps[frame - 1];
-    const next = this.data.steps[frame];
-
-    return previous !== undefined && next !== undefined && previous.modifier === next.modifier ? previous.modifier : null;
+  private pointerSlot(frame: number): string {
+    return (
+      this.data.steps
+        .slice(0, frame)
+        .map((step) => step.pointer)
+        .findLast((pointer) => pointer !== null) ?? restingSlot
+    );
   }
 
-  private hold(modifier: Modifier | null) {
-    for (const [key, element] of this.keys) {
-      element.toggleAttribute("data-held", key === modifier);
-    }
-  }
-
-  private movePointer(duration: number, slotKey = this.data.steps[this.frame - 1]?.slot ?? restingSlot) {
+  private movePointer(duration: number, slotKey = this.pointerSlot(this.frame)) {
     const slot = this.slots.get(slotKey)!;
     const x = slot.offsetLeft + slot.offsetWidth / 2;
     const y = slot.offsetTop + slot.offsetHeight / 2;
@@ -187,19 +191,23 @@ export class InventoryDemoController {
     this.pointer.style.translate = `${x}px ${y}px`;
   }
 
-  private ripple(press: Press) {
-    const target = press.device === "mouse" ? this.pointer : this.keys.get(press.key);
+  private ripple(ripple: Ripple | null) {
+    if (ripple === null) {
+      return;
+    }
+
+    const target = ripple.target === "pointer" ? this.pointer : this.keys.get(ripple.key);
 
     if (target === undefined) {
       return;
     }
 
-    const ripple = document.createElement("span");
-    ripple.className = "inventory-ripple";
-    ripple.addEventListener("animationend", () => ripple.remove());
-    target.append(ripple);
+    const ring = document.createElement("span");
+    ring.className = "inventory-ripple";
+    ring.addEventListener("animationend", () => ring.remove());
+    target.append(ring);
 
-    if (press.device === "keyboard") {
+    if (ripple.target === "key") {
       target.toggleAttribute("data-pressed", true);
       window.setTimeout(() => target.toggleAttribute("data-pressed", false), pressFlashDuration);
     }
