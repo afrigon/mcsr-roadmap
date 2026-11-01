@@ -1149,19 +1149,19 @@
     justify-items: center;
     width: 36px;
 
-    & kbd {
-      display: grid;
-      place-items: center;
-      width: 18px;
-      height: 18px;
-      padding: 0;
-      line-height: 1;
-    }
-
     &:first-child {
       justify-self: end;
       margin-right: 6px;
     }
+  }
+
+  .inventory-demo kbd[data-letter] {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    line-height: 1;
   }
 
   .inventory-keys {
@@ -1176,6 +1176,10 @@
 
     & kbd {
       text-align: center;
+    }
+
+    & kbd[data-letter] {
+      align-self: center;
     }
   }
 

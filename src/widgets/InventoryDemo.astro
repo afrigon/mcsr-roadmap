@@ -37,6 +37,7 @@ const rows = [SlotSection.Chest, SlotSection.Inventory, SlotSection.Offhand, Slo
 }));
 const slotKeys = ["F", ...Slot.all(SlotSection.Hotbar).map((slot) => String(slot.index))];
 const keys = ["Q", Modifier.Shift, Modifier.Ctrl];
+const modifiers: readonly string[] = Object.values(Modifier);
 
 const icons = IconRenderer.fromEnvironment();
 const iconKeys: string[] = [];
@@ -90,13 +91,21 @@ const defaultSpeed = 1;
       {
         slotKeys.map((key) => (
           <span class="inventory-slot-key">
-            <kbd data-key={key}>{key}</kbd>
+            <kbd data-key={key} data-letter>
+              {key}
+            </kbd>
           </span>
         ))
       }
     </div>
     <div class="inventory-keys">
-      {keys.map((key) => <kbd data-key={key}>{key}</kbd>)}
+      {
+        keys.map((key) => (
+          <kbd data-key={key} data-letter={modifiers.includes(key) ? undefined : true}>
+            {key}
+          </kbd>
+        ))
+      }
     </div>
     <span class="inventory-pointer" aria-hidden="true">
       <svg viewBox="0 0 16 24" width="16" height="24">
