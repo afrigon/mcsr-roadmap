@@ -83,14 +83,18 @@ export class InventoryDemoController {
 
     this.show(0);
     this.setStep(0);
+    this.demo.closest("[popover]")?.addEventListener("toggle", (event) => {
+      if ((event as ToggleEvent).newState === "closed") {
+        this.pause();
+        this.reset();
+      }
+    });
     new ResizeObserver(() => this.movePointer(0)).observe(this.demo.querySelector(".inventory-panel")!);
   }
 
   private play() {
     if (this.step === this.lastStep) {
-      this.show(0);
-      this.setStep(0);
-      this.movePointer(0);
+      this.reset();
     }
 
     this.playing = true;
@@ -165,6 +169,12 @@ export class InventoryDemoController {
 
       this.timer = window.setTimeout(() => this.advance(true), duration - glide);
     }, glide);
+  }
+
+  private reset() {
+    this.show(0);
+    this.setStep(0);
+    this.movePointer(0);
   }
 
   private setStep(step: number) {
