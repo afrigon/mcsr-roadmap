@@ -4,6 +4,7 @@ import { ClickType } from "./ClickType";
 import { ContainerType } from "./ContainerType";
 import type { Control } from "./Control";
 import { CraftingMenu } from "./CraftingMenu";
+import type { DemoScreen } from "./DemoScreen";
 import { InventoryMenu } from "./InventoryMenu";
 import type { InventoryState } from "./InventoryState";
 import type { ItemStack } from "./ItemStack";
@@ -47,7 +48,9 @@ enum QuickCraftType {
   Single = 1,
 }
 
-export class ContainerScreen {
+export type MenuType = Exclude<ContainerType, ContainerType.Hotbar>;
+
+export class ContainerScreen implements DemoScreen {
   readonly menu: AbstractContainerMenu;
   readonly topPos = 0;
 
@@ -72,7 +75,7 @@ export class ContainerScreen {
   private readonly presses: boolean[] = [];
 
   constructor(
-    readonly type: ContainerType,
+    readonly type: MenuType,
     state: InventoryState,
     book: RecipeBookState,
   ) {
@@ -85,6 +88,28 @@ export class ContainerScreen {
     }
 
     this.pointerPosition = this.centre(this.menu.require(restingSlot));
+  }
+
+  get slots(): readonly MenuSlot[] {
+    return this.menu.slots;
+  }
+
+  get windowWidth(): number {
+    return this.menu.imageWidth;
+  }
+
+  get windowHeight(): number {
+    return this.menu.imageHeight;
+  }
+
+  get selectedSlot(): MenuSlot | null {
+    return null;
+  }
+
+  checkStartingSlot(slot: Slot) {
+    if (slot.section !== SlotSection.Offhand) {
+      this.menu.require(slot);
+    }
   }
 
   get book(): RecipeBookState {
@@ -264,7 +289,7 @@ export class ContainerScreen {
     }
   }
 
-  private static createMenu(type: ContainerType, state: InventoryState): AbstractContainerMenu {
+  private static createMenu(type: MenuType, state: InventoryState): AbstractContainerMenu {
     switch (type) {
       case ContainerType.Chest:
         return new ChestMenu(state);

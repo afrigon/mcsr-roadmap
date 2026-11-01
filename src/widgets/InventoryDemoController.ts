@@ -10,8 +10,9 @@ interface Frame {
   slots: Record<string, EncodedStack>;
   cursor: EncodedStack | null;
   held: Control[];
-  pointer: [x: number, y: number];
+  pointer: [x: number, y: number] | null;
   hovered: string | null;
+  selected: string | null;
   book: string;
   bookButtonFocused: boolean;
 }
@@ -83,7 +84,8 @@ export class InventoryDemoController {
 
     for (const [index, frame] of this.data.frames.entries()) {
       const previous = this.data.frames[index - 1];
-      const moved = previous !== undefined && frame.pointer.some((value, axis) => value !== previous.pointer[axis]);
+      const moved =
+        previous !== undefined && frame.pointer?.some((value, axis) => value !== previous.pointer?.[axis]) === true;
       this.offsets[index] = moved
         ? [(Math.random() * 2 - 1) * pointerVariance, (Math.random() * 2 - 1) * pointerVariance]
         : (this.offsets[index - 1] ?? [0, 0]);
@@ -217,7 +219,7 @@ export class InventoryDemoController {
 
   private show(frame: number) {
     this.frame = frame;
-    const { slots, cursor, held, hovered, book, bookButtonFocused } = this.data.frames[frame]!;
+    const { slots, cursor, held, hovered, selected, book, bookButtonFocused } = this.data.frames[frame]!;
     const [guiX, guiY] = this.data.guiPositions[book]!;
     this.gui.style.left = `${guiX}px`;
     this.gui.style.top = `${guiY}px`;
@@ -233,6 +235,7 @@ export class InventoryDemoController {
     for (const [key, element] of this.slots) {
       this.fill(element, slots[key] ?? null);
       element.toggleAttribute("data-active", element === activeSlot);
+      element.toggleAttribute("data-selected", key === selected);
 
       if (element === activeSlot && activeButton !== undefined) {
         element.dataset.button = activeButton;
@@ -254,7 +257,13 @@ export class InventoryDemoController {
   }
 
   private movePointer(duration: number, frame = this.frame) {
-    const [pointerX, pointerY] = this.data.frames[frame]!.pointer;
+    const target = this.data.frames[frame]!.pointer;
+
+    if (target === null) {
+      return;
+    }
+
+    const [pointerX, pointerY] = target;
     const [offsetX, offsetY] = this.offsets[frame]!;
     const x = pointerX + offsetX;
     const y = pointerY + offsetY;
@@ -279,6 +288,10 @@ export class InventoryDemoController {
   }
 
   private highlightUnderPointer() {
+    if (this.pointer.hidden) {
+      return;
+    }
+
     const [x = 0, y = 0] = getComputedStyle(this.pointer).translate.split(" ").map((value) => parseFloat(value));
     const screen = this.screen.getBoundingClientRect();
 

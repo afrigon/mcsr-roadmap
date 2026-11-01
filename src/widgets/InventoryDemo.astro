@@ -1,7 +1,7 @@
 ---
 import { ContainerType } from "../inventory/ContainerType";
 import { type InputEntry, InputSequence } from "../inventory/InputSequence";
-import { ContainerScreen } from "../inventory/ContainerScreen";
+import { DemoScreenFactory } from "../inventory/DemoScreenFactory";
 import { InventoryState } from "../inventory/InventoryState";
 import type { ItemStack } from "../inventory/ItemStack";
 import { Modifier } from "../inventory/Modifier";
@@ -11,7 +11,6 @@ import { RecipeBookState } from "../inventory/RecipeBookState";
 import { ScreenKeys } from "../inventory/ScreenKeys";
 import type { ScreenRectangle } from "../inventory/ScreenRectangle";
 import { Slot } from "../inventory/Slot";
-import { SlotSection } from "../inventory/SlotSection";
 import { CountGlyphs } from "../textures/CountGlyphs";
 import { IconRenderer } from "../textures/IconRenderer";
 import { ItemCountFont } from "../textures/ItemCountFont";
@@ -23,6 +22,7 @@ interface Props {
   inputs: readonly InputEntry[];
   book?: `${RecipeBookState}`;
   align?: `${DemoAlignment}`;
+  selected?: number;
   pace?: number;
   endPause?: number;
   title?: string;
@@ -34,6 +34,7 @@ const {
   inputs: inputTexts,
   book = RecipeBookState.Closed,
   align = DemoAlignment.Leading,
+  selected,
   pace = 2,
   endPause = 1.5,
   title,
@@ -41,8 +42,8 @@ const {
 
 const guiScale = 2;
 const slotBox = 18;
-const offhand = Slot.of(SlotSection.Offhand, 1);
 const decorations: Record<ContainerType, { kind: string; area: ScreenRectangle }[]> = {
+  [ContainerType.Hotbar]: [{ kind: "panel", area: { x: -29, y: -1, width: 29, height: 24 } }],
   [ContainerType.Chest]: [],
   [ContainerType.Inventory]: [
     { kind: "player", area: { x: 26, y: 8, width: 49, height: 70 } },
@@ -69,15 +70,10 @@ if (alignment === undefined) {
 
 const inputs = InputSequence.parse(inputTexts);
 const initial = InventoryState.parse(slots);
-const screen = new ContainerScreen(containerType, initial, bookState);
-const { menu } = screen;
+const screen = DemoScreenFactory.create(containerType, initial, bookState, selected);
 
 for (const slotName of Object.keys(slots)) {
-  const slot = Slot.parse(slotName);
-
-  if (slot.key !== offhand.key) {
-    menu.require(slot);
-  }
+  screen.checkStartingSlot(Slot.parse(slotName));
 }
 
 const snapshot = () => ({
@@ -85,6 +81,7 @@ const snapshot = () => ({
   held: screen.heldControls,
   pointer: screen.pointer,
   hovered: screen.hoveredSlot,
+  selected: screen.selectedSlot,
   book: screen.book,
   bookButtonFocused: screen.bookButtonHighlighted,
 });
@@ -117,10 +114,10 @@ const { leftPos, topPos, bookButton: screenBookButton } = screen.layoutFor(snaps
 const bookPanel = [...layouts.values()].find((layout) => layout.bookPanel !== null)?.bookPanel ?? null;
 const bookButton =
   screenBookButton === null ? null : { ...screenBookButton, x: screenBookButton.x - leftPos, y: screenBookButton.y - topPos };
-const guiWindow = { x: 0, y: 0, width: menu.imageWidth, height: menu.imageHeight };
+const guiWindow = { x: 0, y: 0, width: screen.windowWidth, height: screen.windowHeight };
 const guiAreas: ScreenRectangle[] = [
   guiWindow,
-  ...menu.slots.map((slot) => ({ x: slot.x - 1, y: slot.y - 1, width: slotBox, height: slotBox })),
+  ...screen.slots.map((slot) => ({ x: slot.x - 1, y: slot.y - 1, width: slotBox, height: slotBox })),
   ...decorations[containerType].map((decoration) => decoration.area),
   ...(bookButton === null ? [] : [bookButton]),
 ];
@@ -142,7 +139,7 @@ const place = (area: Point, base: Point = { x: 0, y: 0 }) =>
   `left: ${(area.x - base.x) * guiScale}px; top: ${(area.y - base.y) * guiScale}px;`;
 const size = (area: { width: number; height: number }) =>
   `width: ${area.width * guiScale}px; height: ${area.height * guiScale}px;`;
-const toScreen = (point: Point) => [(point.x - origin.x) * guiScale, (point.y - origin.y) * guiScale];
+const toScreen = (point: Point): [number, number] => [(point.x - origin.x) * guiScale, (point.y - origin.y) * guiScale];
 const guiPositions = Object.fromEntries(
   [...layouts].map(([state, layout]) => [state, toScreen({ x: layout.leftPos, y: layout.topPos })]),
 );
@@ -159,9 +156,9 @@ const iconIndex = (stack: ItemStack) => {
   return iconPaths.indexOf(path);
 };
 const encode = (stack: ItemStack | null) => (stack === null ? null : [iconIndex(stack), stack.count]);
-const frames = snapshots.map(({ state, held, pointer, hovered, book, bookButtonFocused }) => ({
+const frames = snapshots.map(({ state, held, pointer, hovered, selected, book, bookButtonFocused }) => ({
   slots: Object.fromEntries(
-    menu.slots.flatMap((slot) => {
+    screen.slots.flatMap((slot) => {
       const stack = state.get(slot.slot);
 
       return stack === null ? [] : [[slot.key, encode(stack)]];
@@ -169,8 +166,9 @@ const frames = snapshots.map(({ state, held, pointer, hovered, book, bookButtonF
   ),
   cursor: encode(state.cursor),
   held,
-  pointer: toScreen(pointer),
+  pointer: pointer === null ? null : toScreen(pointer),
   hovered: hovered?.key ?? null,
+  selected: selected?.key ?? null,
   book,
   bookButtonFocused,
 }));
@@ -220,7 +218,7 @@ const defaultSpeed = 1;
           )
         }
         {
-          menu.slots.map((slot) => {
+          screen.slots.map((slot) => {
             const shown = snapshots[0]!.state.get(slot.slot);
 
             return (
@@ -245,7 +243,7 @@ const defaultSpeed = 1;
           })
         }
       </div>
-      <span class="inventory-pointer" aria-hidden="true">
+      <span class="inventory-pointer" aria-hidden="true" hidden={screen.pointer === null}>
         <span class="inventory-held"></span>
         <svg viewBox="0 0 16 24" width="16" height="24">
           <path d="M1 1 L1 19 L5.5 14.5 L8.5 21.5 L11 20.5 L8 13.5 L14 13.5 Z" />

@@ -1,5 +1,5 @@
 import type { Input } from "./Input";
-import type { ContainerScreen } from "./ContainerScreen";
+import type { DemoScreen } from "./DemoScreen";
 import type { PointerTarget } from "./PointerTarget";
 
 export class Hover implements Input {
@@ -7,7 +7,7 @@ export class Hover implements Input {
 
   constructor(private readonly target: PointerTarget) {}
 
-  perform(screen: ContainerScreen) {
+  perform(screen: DemoScreen) {
     screen.hover(this.target);
   }
 }

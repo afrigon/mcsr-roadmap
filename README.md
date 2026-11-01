@@ -94,8 +94,11 @@ Pages can also use the widgets in `src/widgets/`:
   series measures; series without one take the first four in that order.
 - `<Tabs>` holding `<Tab label="…">` panels, one shown at a time.
 - `<InventoryDemo title="…" container="chest" slots={{ "chest 4": "item/obsidian 7" }} inputs={["hold shift", "click chest 4", "release shift"]} pace={2} />`,
-  an inventory screen that plays the player's physical inputs. `container` is `chest`,
-  `inventory` or `crafting-table`, and each screen uses the game's slot positions. Slots are
+  an inventory screen that plays the player's physical inputs. `container` is `hotbar`, `chest`,
+  `inventory` or `crafting-table`, and each screen uses the game's slot positions. `hotbar` is the
+  in-game hotbar and offhand with no screen open: there is no pointer, so only keys apply (1–9
+  select a slot, F swaps the selected stack with the offhand, Q drops one item or, with Ctrl, the
+  stack), and `selected` (1–9, 1 by default) is the slot selected at the start. Slots are
   `inventory 1–27` (row by row from the top left), `hotbar 1–9` and `offhand` on every screen,
   plus the screen's own: `chest 1–27` in a chest; `crafting 1–4`, `armor 1–4` (top to bottom)
   and `result` in the inventory; `crafting 1–9` and `result` at a crafting table. Items are an
