@@ -41,7 +41,6 @@ const {
 
 const guiScale = 2;
 const slotBox = 18;
-const slotGap = 4;
 const offhand = Slot.of(SlotSection.Offhand, 1);
 const decorations: Record<ContainerType, { kind: string; area: ScreenRectangle }[]> = {
   [ContainerType.Chest]: [],
@@ -106,10 +105,6 @@ for (const [index, { text, input, delay }] of inputs.entries()) {
   doubleClicks.push(screen.doubleClickPresses.slice(pressesBefore).includes(true));
 }
 
-const hotbar = menu.require(Slot.of(SlotSection.Hotbar, 1));
-const offhandSlot = menu.slot(offhand);
-const offhandSpot = offhandSlot ?? { slot: offhand, key: offhand.key, x: 1 - slotBox - slotGap, y: hotbar.y };
-const displaySlots = offhandSlot === undefined ? [...menu.slots, offhandSpot] : menu.slots;
 const slotKeys = ["F", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 const stackedKeyGroups = [
   ["Q", Modifier.Shift, Modifier.Ctrl],
@@ -125,7 +120,7 @@ const bookButton =
 const guiWindow = { x: 0, y: 0, width: menu.imageWidth, height: menu.imageHeight };
 const guiAreas: ScreenRectangle[] = [
   guiWindow,
-  ...displaySlots.map((slot) => ({ x: slot.x - 1, y: slot.y - 1, width: slotBox, height: slotBox })),
+  ...menu.slots.map((slot) => ({ x: slot.x - 1, y: slot.y - 1, width: slotBox, height: slotBox })),
   ...decorations[containerType].map((decoration) => decoration.area),
   ...(bookButton === null ? [] : [bookButton]),
 ];
@@ -166,7 +161,7 @@ const iconIndex = (stack: ItemStack) => {
 const encode = (stack: ItemStack | null) => (stack === null ? null : [iconIndex(stack), stack.count]);
 const frames = snapshots.map(({ state, held, pointer, hovered, book, bookButtonFocused }) => ({
   slots: Object.fromEntries(
-    displaySlots.flatMap((slot) => {
+    menu.slots.flatMap((slot) => {
       const stack = state.get(slot.slot);
 
       return stack === null ? [] : [[slot.key, encode(stack)]];
@@ -225,7 +220,7 @@ const defaultSpeed = 1;
           )
         }
         {
-          displaySlots.map((slot) => {
+          menu.slots.map((slot) => {
             const shown = snapshots[0]!.state.get(slot.slot);
 
             return (
