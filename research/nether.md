@@ -187,6 +187,6 @@ Mikeyboie still crafts during trades, so this is contested.
 
 ## Open questions
 
-- Nether region size in 1.16.1 (about 400 blocks per Mikeyboie) is unverified against game code.
+- Nether region size in 1.16.1 (about 400 blocks per Mikeyboie) is unverified.
 - Route chapters without captions (TwagZ, Safe No Armor, Item Elevator, Split Double Triple) are
   unconfirmed.

@@ -9,8 +9,7 @@ Conventions:
 
 - "Frames" means the claim comes from reading video frames of a video without subtitles; small
   block-placement details read from frames are approximate.
-- "Game code (from memory)" means vanilla 1.16 behaviour I am confident of but did not verify
-  against decompiled source in this session.
+- "From memory" means vanilla 1.16 behaviour I am confident of but did not test in game.
 - **Unconfirmed** marks anything no source in this session states.
 
 ## Key sources
@@ -194,7 +193,7 @@ as early (Gold/Emerald), 3/4 TNT order-dependent setups as Emerald+ (**unconfirm
 
 Sources found are thin; most of this is game mechanics plus scattered pro observations.
 
-- **Spawner mechanics (game code, from memory)**: a spawner only ticks while a player is within
+- **Spawner mechanics (from memory)**: a spawner only ticks while a player is within
   16 blocks; it spawns up to 4 mobs per wave in a box 4 blocks around it, waits 10–40 s between
   waves (200–799 ticks), and its very first wave after generation comes 20 ticks (1 s) after a
   player first gets in range. A wave is skipped if 6 blazes are already within the check volume.
@@ -286,7 +285,7 @@ to intermediate skill; the trap/block-off variants are standard at all levels.
   hit, weak axe swing; or full axe crit then two gold-sword crits (18:47–19:18
   https://youtu.be/71ABl45UyAE?t=1127). The final blow must be the looting sword.
 - **Never blaze bed with a looting sword**: it is unnecessary (Calisthenicuber 18:51); explosion
-  kills don't benefit from Looting (game code, from memory: Looting only applies to the killing
+  kills don't benefit from Looting (from memory: Looting only applies to the killing
   weapon).
 - **Where they come from**: ruined portal chests (golden swords can carry Looting; Mikeyboie Part 1),
   the bottom of treasure (enchanted diamond swords sometimes; Calisthenicuber 19:51), and bastion
@@ -361,7 +360,7 @@ Not Ranked-specific. Intermediate skill.
 
 ## 8. Pick block (middle click)
 
-What it does in survival (game code, from memory): if the targeted block's item is in your
+What it does in survival (from memory): if the targeted block's item is in your
 inventory, pick block moves it into the hotbar (or selects it if already there). It is a fast way to
 refill a hotbar slot without opening the inventory.
 
@@ -439,8 +438,8 @@ Key interactions:
   with an iron pick.
 - **Position matters**: aggro range is centered on you, so break the first gold blocks from far back
   to avoid aggroing piglins below that would drop on you (Daniel 0:00).
-- **Game-code reading (from memory, unverified)**: tier 1 is attack-target selection
-  (nearest visible player not wearing gold); tier 2 is the `angerNearbyPiglins` call, which only
+- **Piglin anger (from memory, unverified)**: tier 1 is attack-target selection
+  (nearest visible player not wearing gold); tier 2 is the anger spread to nearby piglins, which only
   affects piglins that are idle (not fighting, not admiring) and, for chest opening, only those that
   can see you; tier 3 is the hurt reaction, which disables admiring for 400 ticks (20 s) and
   broadcasts anger to nearby adults. This explains the no-upgrade rule.
@@ -569,4 +568,4 @@ Exists as a combination, not a named technique:
 - Double spawner portal placement guide; pick block for nether brick and obsidian; gravity-block
   walk-through; boat climbing inside bastions; crafting explosives and bow while pearling.
 - Whether Ranked's blaze rod standardization interacts with Looting.
-- Game-code claims (spawner timing, piglin AI, pick block) are from memory.
+- The spawner timing, piglin anger and pick block claims are from memory.
