@@ -1,5 +1,4 @@
 ---
-import { IconReference } from "../roadmap/IconReference";
 import { IconRenderer } from "../textures/IconRenderer";
 
 interface Category {
@@ -57,11 +56,6 @@ const panels = layout === "panels" ? stacks.map((stack) => [stack]) : [stacks];
 const panelMaxes = panels.map((panel) => Math.max(...panel.map(stackMax)));
 
 const icons = IconRenderer.fromEnvironment();
-const iconSource = (icon: string) => {
-  const png = icons.render(IconReference.parse(icon) ?? IconRenderer.missing).encode();
-
-  return `data:image/png;base64,${png.toString("base64")}`;
-};
 const format = (value: number) => String(Number(value.toFixed(2)));
 const unitSuffix = unit === undefined ? "" : ` ${unit}`;
 const rows = categories.map((category, categoryIndex) => ({
@@ -97,7 +91,7 @@ const rows = categories.map((category, categoryIndex) => ({
       rows.map(({ category, cells }) => (
         <div class="bar-chart-row">
           <span class="bar-chart-label">
-            {category.icon !== undefined && <img src={iconSource(category.icon)} alt="" width="16" height="16" />}
+            {category.icon !== undefined && <img src={icons.resolve(category.icon).path} alt="" width="16" height="16" />}
             {category.label}
           </span>
           {cells.map((lines) => (

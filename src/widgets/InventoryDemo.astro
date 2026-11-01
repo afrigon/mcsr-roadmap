@@ -40,15 +40,15 @@ const keys = ["Q", Modifier.Shift, Modifier.Ctrl];
 const modifiers: readonly string[] = Object.values(Modifier);
 
 const icons = IconRenderer.fromEnvironment();
-const iconKeys: string[] = [];
-const iconSources: string[] = [];
+const iconPaths: string[] = [];
 const iconIndex = (stack: ItemStack) => {
-  if (!iconKeys.includes(stack.icon.key)) {
-    iconKeys.push(stack.icon.key);
-    iconSources.push(`data:image/png;base64,${icons.render(stack.icon).encode().toString("base64")}`);
+  const path = icons.resolve(stack.icon.key).path;
+
+  if (!iconPaths.includes(path)) {
+    iconPaths.push(path);
   }
 
-  return iconKeys.indexOf(stack.icon.key);
+  return iconPaths.indexOf(path);
 };
 const encode = (stack: ItemStack | null) => (stack === null ? null : [iconIndex(stack), stack.count]);
 const frames = states.map((state) => ({
@@ -62,7 +62,7 @@ const frames = states.map((state) => ({
   cursor: encode(state.cursor),
 }));
 const steps = actions.map((action) => ({ slot: action.slot.key, modifier: action.modifier, press: action.press }));
-const demo = { pace, endPause, icons: iconSources, frames, steps };
+const demo = { pace, endPause, icons: iconPaths, frames, steps };
 const initial = states[0]!;
 const speeds = [0.5, 1, 2];
 const defaultSpeed = 1;
@@ -79,7 +79,7 @@ const defaultSpeed = 1;
 
             return (
               <span class="inventory-slot" data-slot={slot.key}>
-                {stack !== null && <img src={iconSources[iconIndex(stack)]} alt="" width="32" height="32" />}
+                {stack !== null && <img src={iconPaths[iconIndex(stack)]} alt="" width="32" height="32" />}
                 {stack !== null && stack.count > 1 && <span class="inventory-count">{stack.count}</span>}
               </span>
             );

@@ -26,6 +26,14 @@ export class TextureLibrary {
     return TextureLibrary.shared;
   }
 
+  sources(directory: string): string[] {
+    const prefix = `${texturesRoot}/${directory}/`;
+
+    return Object.keys(this.load())
+      .filter((name) => name.startsWith(prefix) && !name.slice(prefix.length).includes("/"))
+      .map((name) => name.slice(`${texturesRoot}/`.length, -".png".length));
+  }
+
   has(source: string): boolean {
     return this.load()[this.entryName(source)] !== undefined;
   }

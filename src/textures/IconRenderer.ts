@@ -14,6 +14,28 @@ export class IconRenderer {
     return new IconRenderer(TextureLibrary.fromEnvironment());
   }
 
+  all(): IconReference[] {
+    const textures = [IconSource.Item, IconSource.Block].flatMap((source) =>
+      this.library.sources(source).map((key) => IconReference.parse(key)!),
+    );
+    const composites = compositeIcons.map((composite) => new IconReference(IconSource.Composite, composite.name));
+
+    return [...textures, ...composites];
+  }
+
+  resolve(value: string): IconReference {
+    const icon = IconReference.parse(value);
+    const problems = icon === null ? [`invalid icon "${value}"`] : this.problemsWith(icon);
+
+    if (problems.length > 0) {
+      console.warn(problems.join("; "));
+
+      return IconRenderer.missing;
+    }
+
+    return icon!;
+  }
+
   problemsWith(icon: IconReference): string[] {
     if (icon.source === IconSource.Composite && this.composite(icon) === undefined) {
       return [`unknown composite icon "${icon.name}"`];
