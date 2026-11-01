@@ -1083,7 +1083,7 @@
       position: absolute;
       inset: 0;
       border-radius: 3px;
-      background: rgb(255 255 255 / 0.5);
+      background: rgb(255 255 255 / 0.2);
       content: "";
       pointer-events: none;
     }
