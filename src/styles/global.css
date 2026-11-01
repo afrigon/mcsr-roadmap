@@ -1120,10 +1120,19 @@
       box-shadow 120ms,
       translate 120ms;
 
+    &[data-pressed],
     &[data-held] {
-      color: var(--color-text);
+      color: var(--color-background);
       border-color: var(--color-link);
-      background: var(--color-surface-raised);
+      background: var(--color-link);
+      box-shadow: none;
+      translate: 0 1px;
+    }
+
+    &[data-held] {
+      box-shadow:
+        0 0 0 2px rgb(147 197 253 / 0.25),
+        0 0 10px rgb(147 197 253 / 0.6);
     }
   }
 

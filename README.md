@@ -98,7 +98,7 @@ Pages can also use the widgets in `src/widgets/`:
   game's rules, so a slot that ends up wrong in the demo is wrong in the sequence. A pointer glides
   to each slot, and clicks, keys and held modifiers light up as they are pressed. `pace` is the
   input rate per second, 2 by default, a teaching pace rather than full speed; viewers replay at
-  0.5×, 1× or 2× of it.
+  0.5×, 1× or 2× of it. Playback loops, resting `endPause` seconds (1.5 by default) on the result.
 
 Pages can start a blockquote with an alert marker to render it as a callout:
 

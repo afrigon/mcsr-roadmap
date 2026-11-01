@@ -16,12 +16,15 @@ interface Step {
 
 interface DemoData {
   pace: number;
+  endPause: number;
   icons: string[];
   frames: Frame[];
   steps: Step[];
 }
 
 const glideShare = 0.5;
+
+const pressFlashDuration = 150;
 
 const restingSlot = "inventory 1";
 
@@ -132,13 +135,19 @@ export class InventoryDemoController {
       }
 
       if (this.frame === this.lastFrame) {
-        this.pause();
+        this.timer = window.setTimeout(() => this.restart(), (this.data.endPause * 1000) / this.speed);
 
         return;
       }
 
       this.timer = window.setTimeout(() => this.advance(true), this.stepDuration - glide);
     }, glide);
+  }
+
+  private restart() {
+    this.show(0);
+    this.movePointer(this.stepDuration * glideShare);
+    this.timer = window.setTimeout(() => this.advance(true), this.stepDuration);
   }
 
   private show(frame: number) {
@@ -189,6 +198,11 @@ export class InventoryDemoController {
     ripple.className = "inventory-ripple";
     ripple.addEventListener("animationend", () => ripple.remove());
     target.append(ripple);
+
+    if (press.device === "keyboard") {
+      target.toggleAttribute("data-pressed", true);
+      window.setTimeout(() => target.toggleAttribute("data-pressed", false), pressFlashDuration);
+    }
   }
 
   private fill(element: HTMLElement, stack: EncodedStack | null) {

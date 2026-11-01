@@ -14,10 +14,11 @@ interface Props {
   slots: Readonly<Record<string, string>>;
   actions: readonly string[];
   pace?: number;
+  endPause?: number;
   title?: string;
 }
 
-const { slots, actions: actionTexts, pace = 2, title } = Astro.props;
+const { slots, actions: actionTexts, pace = 2, endPause = 1.5, title } = Astro.props;
 
 const actions = actionTexts.map((text) => ActionParser.parse(text));
 const states = [InventoryState.parse(slots)];
@@ -60,7 +61,7 @@ const frames = states.map((state) => ({
   cursor: encode(state.cursor),
 }));
 const steps = actions.map((action) => ({ slot: action.slot.key, modifier: action.modifier, press: action.press }));
-const demo = { pace, icons: iconSources, frames, steps };
+const demo = { pace, endPause, icons: iconSources, frames, steps };
 const initial = states[0]!;
 const speeds = [0.5, 1, 2];
 const defaultSpeed = 1;
