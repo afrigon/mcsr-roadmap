@@ -16,7 +16,7 @@ export class ModelFace {
     readonly texture: string,
     private readonly uv: readonly number[],
     private readonly rotation: number,
-    readonly tinted: boolean,
+    readonly tintIndex: number | null,
   ) {}
 
   static parse(direction: FaceDirection, json: FaceJson, texture: string, from: Vector3, to: Vector3): ModelFace {
@@ -25,7 +25,7 @@ export class ModelFace {
       texture,
       json.uv ?? ModelFace.defaultUv(direction, from, to),
       json.rotation ?? 0,
-      json.tintindex !== undefined,
+      json.tintindex ?? null,
     );
   }
 

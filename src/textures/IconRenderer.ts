@@ -3,7 +3,7 @@ import { IconSource } from "../roadmap/IconSource";
 import { ClientJar } from "./ClientJar";
 import type { CompositeIcon } from "./CompositeIcon";
 import { compositeIcons, missingIconName } from "./compositeIcons";
-import { itemTints } from "./models/itemTints";
+import { itemTints, type TintColors } from "./models/itemTints";
 import type { ItemModel } from "./models/ItemModel";
 import { ModelLibrary } from "./models/ModelLibrary";
 import { ModelRasterizer } from "./models/ModelRasterizer";
@@ -119,7 +119,10 @@ export class IconRenderer {
         return missingTextures(model.layers);
       case "elements": {
         const faces = model.elements.flatMap((element) => element.faces);
-        const untinted = faces.some((face) => face.tinted) && itemTints[icon.name] === undefined ? [`item "${icon.name}" has tinted faces but no inventory tint colour`] : [];
+        const tints = this.tints(icon);
+        const untinted = faces.some((face) => face.tintIndex !== null && tints[face.tintIndex] === undefined)
+          ? [`item "${icon.name}" has tinted faces but no inventory tint colour`]
+          : [];
 
         return [...missingTextures(faces.map((face) => face.texture)), ...untinted];
       }
@@ -136,14 +139,23 @@ export class IconRenderer {
       case "empty":
         return this.render(IconRenderer.missing);
       case "layers":
-        return this.flat(model.layers);
+        return this.flat(model.layers, this.tints(icon));
       case "elements":
-        return this.rasterizer.render(model, itemTints[icon.name]?.(this.library) ?? null);
+        return this.rasterizer.render(model, this.tints(icon));
     }
   }
 
-  private flat(layers: readonly string[]): Texture {
-    const [first, ...rest] = layers.map((source) => this.library.texture(source).firstFrame());
+  private tints(icon: IconReference): TintColors {
+    return itemTints[icon.name]?.(this.library) ?? {};
+  }
+
+  private flat(layers: readonly string[], tints: TintColors = {}): Texture {
+    const [first, ...rest] = layers.map((source, index) => {
+      const texture = this.library.texture(source).firstFrame();
+      const tint = tints[index];
+
+      return tint === undefined ? texture : texture.tinted(tint);
+    });
     const result = Texture.blank(first!.width, first!.height);
     result.paste(first!, 0, 0);
 

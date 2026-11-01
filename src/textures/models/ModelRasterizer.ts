@@ -1,6 +1,7 @@
 import { Texture } from "../Texture";
 import type { TextureLibrary } from "../TextureLibrary";
 import type { ItemModel } from "./ItemModel";
+import type { TintColors } from "./itemTints";
 
 type ElementsModel = Extract<ItemModel, { kind: "elements" }>;
 
@@ -13,7 +14,7 @@ export class ModelRasterizer {
     private readonly size: number,
   ) {}
 
-  render(model: ElementsModel, tint: readonly number[] | null): Texture {
+  render(model: ElementsModel, tints: TintColors): Texture {
     const result = Texture.blank(this.size, this.size);
     const depth = new Float64Array(this.size * this.size).fill(-Infinity);
     const { projection } = model;
@@ -37,7 +38,8 @@ export class ModelRasterizer {
 
         const texture = this.textures.texture(face.texture).firstFrame();
         const shading = element.shading(face);
-        const color = face.tinted && tint !== null ? tint.map((channel) => channel / 255) : [1, 1, 1];
+        const tint = face.tintIndex === null ? undefined : tints[face.tintIndex];
+        const color = tint === undefined ? [1, 1, 1] : tint.map((channel) => channel / 255);
         const corners = [origin, origin.plus(across), origin.plus(down), origin.plus(across).plus(down)];
         const left = Math.max(0, Math.floor(Math.min(...corners.map((corner) => corner.x))));
         const right = Math.min(this.size, Math.ceil(Math.max(...corners.map((corner) => corner.x))));
