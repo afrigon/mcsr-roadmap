@@ -1,5 +1,5 @@
 import type { Input } from "./Input";
-import type { InventoryScreen } from "./InventoryScreen";
+import type { ContainerScreen } from "./ContainerScreen";
 import type { Ripple } from "./Ripple";
 
 export class KeyPress implements Input {
@@ -9,7 +9,7 @@ export class KeyPress implements Input {
     this.ripple = { target: "key", key };
   }
 
-  perform(screen: InventoryScreen) {
+  perform(screen: ContainerScreen) {
     screen.press(this.key);
   }
 }

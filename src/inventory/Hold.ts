@@ -1,6 +1,6 @@
 import type { Control } from "./Control";
 import type { Input } from "./Input";
-import type { InventoryScreen } from "./InventoryScreen";
+import type { ContainerScreen } from "./ContainerScreen";
 import { MouseButton } from "./MouseButton";
 import type { Ripple } from "./Ripple";
 
@@ -13,7 +13,7 @@ export class Hold implements Input {
       : null;
   }
 
-  perform(screen: InventoryScreen) {
+  perform(screen: ContainerScreen) {
     screen.hold(this.control);
   }
 }

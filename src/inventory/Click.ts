@@ -1,5 +1,5 @@
 import type { Input } from "./Input";
-import type { InventoryScreen } from "./InventoryScreen";
+import type { ContainerScreen } from "./ContainerScreen";
 import type { MouseButton } from "./MouseButton";
 import type { Ripple } from "./Ripple";
 import type { Slot } from "./Slot";
@@ -14,7 +14,7 @@ export class Click implements Input {
     this.ripple = { target: "pointer", button };
   }
 
-  perform(screen: InventoryScreen) {
+  perform(screen: ContainerScreen) {
     if (this.slot !== null) {
       screen.hover(this.slot);
     }

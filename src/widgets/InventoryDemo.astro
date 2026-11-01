@@ -1,7 +1,7 @@
 ---
 import { ContainerType } from "../inventory/ContainerType";
 import { type InputEntry, InputSequence } from "../inventory/InputSequence";
-import { InventoryScreen } from "../inventory/InventoryScreen";
+import { ContainerScreen } from "../inventory/ContainerScreen";
 import { InventoryState } from "../inventory/InventoryState";
 import type { ItemStack } from "../inventory/ItemStack";
 import { Modifier } from "../inventory/Modifier";
@@ -61,7 +61,7 @@ if (bookState === undefined) {
 
 const inputs = InputSequence.parse(inputTexts);
 const initial = InventoryState.parse(slots);
-const screen = new InventoryScreen(containerType, initial, bookState);
+const screen = new ContainerScreen(containerType, initial, bookState);
 const { menu } = screen;
 
 for (const slotName of Object.keys(slots)) {

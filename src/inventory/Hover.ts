@@ -1,5 +1,5 @@
 import type { Input } from "./Input";
-import type { InventoryScreen } from "./InventoryScreen";
+import type { ContainerScreen } from "./ContainerScreen";
 import type { Slot } from "./Slot";
 
 export class Hover implements Input {
@@ -7,7 +7,7 @@ export class Hover implements Input {
 
   constructor(private readonly slot: Slot) {}
 
-  perform(screen: InventoryScreen) {
+  perform(screen: ContainerScreen) {
     screen.hover(this.slot);
   }
 }

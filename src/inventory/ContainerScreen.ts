@@ -42,7 +42,7 @@ enum QuickCraftType {
   Single = 1,
 }
 
-export class InventoryScreen {
+export class ContainerScreen {
   readonly keys: readonly string[] = [...hotbarKeys, offhandKey, dropKey];
   readonly menu: AbstractContainerMenu;
   readonly topPos = 0;
@@ -68,7 +68,7 @@ export class InventoryScreen {
     state: InventoryState,
     readonly book: RecipeBookState,
   ) {
-    this.menu = InventoryScreen.createMenu(type, state);
+    this.menu = ContainerScreen.createMenu(type, state);
 
     if (book === RecipeBookState.Open && !(this.menu instanceof RecipeBookMenu)) {
       throw new Error(`The ${type} screen has no recipe book to open`);
