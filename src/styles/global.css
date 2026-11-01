@@ -16,10 +16,10 @@
   --color-mastered: #4ade80;
   --color-warning: #f87171;
   --color-link: #93c5fd;
-  --color-series-1: #3987e5;
-  --color-series-2: #d95926;
-  --color-series-3: #199e70;
-  --color-series-4: #c98500;
+  --color-chart-blue: #3987e5;
+  --color-chart-orange: #d95926;
+  --color-chart-aqua: #199e70;
+  --color-chart-yellow: #c98500;
 }
 
 :root {
@@ -953,10 +953,10 @@
     color: var(--color-text-soft);
   }
 
-  [data-series="1"] { background: var(--color-series-1); }
-  [data-series="2"] { background: var(--color-series-2); }
-  [data-series="3"] { background: var(--color-series-3); }
-  [data-series="4"] { background: var(--color-series-4); }
+  [data-color="blue"] { background: var(--color-chart-blue); }
+  [data-color="orange"] { background: var(--color-chart-orange); }
+  [data-color="aqua"] { background: var(--color-chart-aqua); }
+  [data-color="yellow"] { background: var(--color-chart-yellow); }
 
   .tabs-list {
     display: inline-flex;
