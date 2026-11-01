@@ -7,12 +7,15 @@ interface Category {
   icon?: string;
 }
 
-type ChartColor = "blue" | "orange" | "aqua" | "yellow";
+type ChartColor = "blue" | "orange" | "aqua" | "yellow" | "red" | "gray";
+
+type Layout = "grouped" | "panels";
 
 interface Series {
   name: string;
   values: readonly number[];
   color?: ChartColor;
+  stack?: string;
 }
 
 interface Props {
@@ -20,17 +23,22 @@ interface Props {
   series: readonly Series[];
   title?: string;
   unit?: string;
+  layout?: Layout;
 }
 
-const { categories, series, title, unit } = Astro.props;
+const { categories, series, title, unit, layout = "grouped" } = Astro.props;
 
 const paletteOrder: readonly ChartColor[] = ["blue", "orange", "aqua", "yellow"];
 
-if (series.length > paletteOrder.length) {
-  throw new Error(`BarChart has ${series.length} series, more than its ${paletteOrder.length} colours`);
-}
+const colors = series.map(({ name, color }, index) => {
+  const resolved = color ?? paletteOrder[index];
 
-const colors = series.map((entry, index) => entry.color ?? paletteOrder[index]!);
+  if (resolved === undefined) {
+    throw new Error(`BarChart series "${name}" needs a colour: only the first ${paletteOrder.length} have one by default`);
+  }
+
+  return resolved;
+});
 
 for (const { name, values } of series) {
   if (values.length !== categories.length) {
@@ -38,28 +46,46 @@ for (const { name, values } of series) {
   }
 }
 
-const max = Math.max(...series.flatMap(({ values }) => values));
+const stacks = [
+  ...Map.groupBy(series.entries(), ([index, { stack }]) => stack ?? `series ${index}`).values(),
+].map((members) => members.map(([index]) => index));
+const stackTotal = (stack: readonly number[], categoryIndex: number) =>
+  stack.reduce((total, index) => total + series[index]!.values[categoryIndex]!, 0);
+const stackMax = (stack: readonly number[]) =>
+  Math.max(...categories.map((_, categoryIndex) => stackTotal(stack, categoryIndex)));
+const panels = layout === "panels" ? stacks.map((stack) => [stack]) : [stacks];
+const panelMaxes = panels.map((panel) => Math.max(...panel.map(stackMax)));
+
 const icons = IconRenderer.fromEnvironment();
 const iconSource = (icon: string) => {
   const png = icons.render(IconReference.parse(icon) ?? IconRenderer.missing).encode();
 
   return `data:image/png;base64,${png.toString("base64")}`;
 };
-const format = (value: number) => (Number.isInteger(value) ? String(value) : value.toFixed(1));
+const format = (value: number) => String(Number(value.toFixed(2)));
+const unitSuffix = unit === undefined ? "" : ` ${unit}`;
 const rows = categories.map((category, categoryIndex) => ({
   category,
-  bars: series.map(({ name, values }, index) => {
-    const value = values[categoryIndex]!;
-    const seriesName = series.length > 1 ? ` · ${name}` : "";
-    const unitSuffix = unit === undefined ? "" : ` ${unit}`;
+  cells: panels.map((panel, panelIndex) =>
+    panel.map((stack) => {
+      const total = stackTotal(stack, categoryIndex);
 
-    return {
-      color: colors[index]!,
-      value: format(value),
-      ratio: value / max,
-      description: `${category.label}${seriesName}: ${format(value)}${unitSuffix}`,
-    };
-  }),
+      return {
+        total: format(total),
+        ratio: total / panelMaxes[panelIndex]!,
+        segments: stack.map((index) => {
+          const { name, values } = series[index]!;
+          const value = values[categoryIndex]!;
+
+          return {
+            color: colors[index]!,
+            share: value / total,
+            description: `${category.label} · ${name}: ${format(value)}${unitSuffix}`,
+          };
+        }),
+      };
+    }),
+  ),
 }));
 ---
 
@@ -77,22 +103,33 @@ const rows = categories.map((category, categoryIndex) => ({
       </ul>
     )
   }
-  <div class="bar-chart-rows">
+  <div class="bar-chart-rows" style={`--panels: ${panels.length};`}>
     {
-      rows.map(({ category, bars }) => (
+      rows.map(({ category, cells }) => (
         <div class="bar-chart-row">
           <span class="bar-chart-label">
             {category.icon !== undefined && <img src={iconSource(category.icon)} alt="" width="16" height="16" />}
             {category.label}
           </span>
-          <span class="bar-chart-bars">
-            {bars.map((bar) => (
-              <span class="bar-chart-line" title={bar.description}>
-                <span class="bar-chart-bar" data-color={bar.color} style={`--ratio: ${bar.ratio};`} />
-                <span class="bar-chart-value">{bar.value}</span>
-              </span>
-            ))}
-          </span>
+          {cells.map((lines) => (
+            <span class="bar-chart-bars">
+              {lines.map((line) => (
+                <span class="bar-chart-line">
+                  <span class="bar-chart-bar" style={`--ratio: ${line.ratio};`}>
+                    {line.segments.map((segment) => (
+                      <span
+                        class="bar-chart-segment"
+                        data-color={segment.color}
+                        style={`flex-grow: ${segment.share};`}
+                        title={segment.description}
+                      />
+                    ))}
+                  </span>
+                  <span class="bar-chart-value">{line.total}</span>
+                </span>
+              ))}
+            </span>
+          ))}
         </div>
       ))
     }

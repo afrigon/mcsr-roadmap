@@ -20,6 +20,8 @@
   --color-chart-orange: #d95926;
   --color-chart-aqua: #199e70;
   --color-chart-yellow: #c98500;
+  --color-chart-red: #e0443e;
+  --color-chart-gray: #8f96a3;
 }
 
 :root {
@@ -910,7 +912,7 @@
 
   .bar-chart-rows {
     display: grid;
-    grid-template-columns: max-content 1fr;
+    grid-template-columns: max-content repeat(var(--panels), minmax(0, 1fr));
     gap: 6px 12px;
   }
 
@@ -936,15 +938,24 @@
     align-items: center;
     gap: 6px;
 
-    &:hover .bar-chart-bar {
-      filter: brightness(1.2);
-    }
   }
 
   .bar-chart-bar {
+    display: flex;
+    gap: 2px;
     height: 16px;
     width: calc(var(--ratio) * (100% - 3.5em));
     border-radius: 0 4px 4px 0;
+    overflow: hidden;
+  }
+
+  .bar-chart-segment {
+    flex-basis: 0;
+    min-width: 0;
+
+    &:hover {
+      filter: brightness(1.2);
+    }
   }
 
   .bar-chart-value {
@@ -957,6 +968,8 @@
   [data-color="orange"] { background: var(--color-chart-orange); }
   [data-color="aqua"] { background: var(--color-chart-aqua); }
   [data-color="yellow"] { background: var(--color-chart-yellow); }
+  [data-color="red"] { background: var(--color-chart-red); }
+  [data-color="gray"] { background: var(--color-chart-gray); }
 
   .tabs-list {
     display: inline-flex;

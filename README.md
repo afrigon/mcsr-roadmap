@@ -82,10 +82,13 @@ later goal, parent cycles, an index used twice in a category, and icons missing 
 
 Pages can also use the widgets in `src/widgets/`:
 
-- `<BarChart title="…" categories={[{ label, icon? }]} series={[{ name, values, color? }]} unit="…" />`,
-  a horizontal bar chart; one measure per chart, with a legend once there are two series or more.
-  `color` is `blue`, `orange`, `aqua` or `yellow`, picked to match what the series measures; series
-  without one take those colours in that order.
+- `<BarChart title="…" categories={[{ label, icon? }]} series={[{ name, values, color?, stack? }]} unit="…" layout="…" />`,
+  a horizontal bar chart, with a legend once there are two series or more. Series sharing a `stack`
+  name draw as one stacked bar labelled with its total; a series without one is a bar of its own.
+  `layout="grouped"` (the default) draws every bar on one shared scale, so the series must share a
+  unit; `layout="panels"` gives each stack its own column and scale, for measures in different
+  units. `color` is `blue`, `orange`, `aqua`, `yellow`, `red` or `gray`, picked to match what the
+  series measures; series without one take the first four in that order.
 - `<Tabs>` holding `<Tab label="…">` panels, one shown at a time.
 
 Research notes behind the roadmap live in `research/`.
