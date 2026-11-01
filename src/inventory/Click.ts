@@ -4,7 +4,7 @@ import type { MouseButton } from "./MouseButton";
 import type { Slot } from "./Slot";
 
 export class Click implements Input {
-  readonly ripple = { target: "pointer", clicks: 1 } as const;
+  readonly ripple = { target: "pointer" } as const;
 
   constructor(
     private readonly button: MouseButton,

@@ -1208,11 +1208,22 @@
       stroke: var(--color-background);
       stroke-width: 1.2;
       filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.6));
-      transition: fill 120ms;
+      transform-origin: 1px 1px;
+      transition:
+        fill 120ms,
+        scale 80ms;
     }
 
     &[data-held] svg {
       fill: var(--color-link);
+    }
+
+    &[data-pressed] svg {
+      scale: 0.85;
+    }
+
+    &[data-pressed][data-double-click] svg {
+      scale: 0.7;
     }
   }
 

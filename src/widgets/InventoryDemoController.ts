@@ -13,6 +13,7 @@ interface Frame {
 interface Step {
   pointer: string | null;
   ripple: Ripple | null;
+  doubleClick: boolean;
 }
 
 interface DemoData {
@@ -27,7 +28,7 @@ const glideShare = 0.5;
 
 const pressFlashDuration = 150;
 
-const rippleSpacing = 120;
+const doubleRingSpacing = 90;
 
 const restingSlot = "inventory 1";
 
@@ -131,7 +132,7 @@ export class InventoryDemoController {
     this.movePointer(glide, this.pointerSlot(this.frame + 1));
     this.timer = window.setTimeout(() => {
       this.show(this.frame + 1);
-      this.ripple(step.ripple);
+      this.ripple(step.ripple, step.doubleClick);
 
       if (!continuing) {
         return;
@@ -222,7 +223,7 @@ export class InventoryDemoController {
     }
   }
 
-  private ripple(ripple: Ripple | null) {
+  private ripple(ripple: Ripple | null, doubleClick: boolean) {
     if (ripple === null) {
       return;
     }
@@ -233,21 +234,23 @@ export class InventoryDemoController {
       return;
     }
 
-    const clicks = ripple.target === "pointer" ? ripple.clicks : 1;
+    const rings = doubleClick ? 2 : 1;
 
-    for (let click = 0; click < clicks; click++) {
+    for (let ring = 0; ring < rings; ring++) {
       window.setTimeout(() => {
-        const ring = document.createElement("span");
-        ring.className = "inventory-ripple";
-        ring.addEventListener("animationend", () => ring.remove());
-        target.append(ring);
-      }, (click * rippleSpacing) / this.speed);
+        const element = document.createElement("span");
+        element.className = "inventory-ripple";
+        element.addEventListener("animationend", () => element.remove());
+        target.append(element);
+      }, (ring * doubleRingSpacing) / this.speed);
     }
 
-    if (ripple.target === "key") {
-      target.toggleAttribute("data-pressed", true);
-      window.setTimeout(() => target.toggleAttribute("data-pressed", false), pressFlashDuration);
+    if (ripple.target === "pointer") {
+      this.pointer.toggleAttribute("data-double-click", doubleClick);
     }
+
+    target.toggleAttribute("data-pressed", true);
+    window.setTimeout(() => target.toggleAttribute("data-pressed", false), pressFlashDuration);
   }
 
   private fill(element: HTMLElement, stack: EncodedStack | null) {

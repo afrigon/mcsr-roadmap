@@ -1,5 +1,4 @@
 import { Click } from "./Click";
-import { DoubleClick } from "./DoubleClick";
 import type { Control } from "./Control";
 import { Hold } from "./Hold";
 import { Hover } from "./Hover";
@@ -10,56 +9,48 @@ import { MouseButton } from "./MouseButton";
 import { Release } from "./Release";
 import { Slot } from "./Slot";
 
+export type InputEntry = string | readonly string[];
+
 export interface TimedInput {
   readonly text: string;
   readonly input: Input;
   readonly delay: number;
 }
 
-const defaultGap = 100;
+const separateGap = 300;
+const burstGap = 100;
 const controls: Record<string, Control> = {
   shift: Modifier.Shift,
   ctrl: Modifier.Ctrl,
   left: MouseButton.Left,
   right: MouseButton.Right,
 };
-const verbs = ["hover", "click", "double-click", "right-click", "hold", "release", "key", "wait"];
+const verbs = ["hover", "click", "right-click", "hold", "release", "key"];
 
 export class InputSequence {
-  static parse(lines: readonly string[]): TimedInput[] {
-    const inputs: TimedInput[] = [];
-    let pause = 0;
+  static parse(entries: readonly InputEntry[]): TimedInput[] {
+    return entries.flatMap((entry) => {
+      const burst = typeof entry === "string" ? [entry] : entry;
 
-    for (const line of lines) {
-      const [verb = "", ...rest] = line.trim().split(/\s+/);
-      const argument = rest.join(" ");
-
-      if (verb === "wait") {
-        const milliseconds = Number(argument);
-
-        if (!Number.isFinite(milliseconds) || milliseconds < 0) {
-          throw new Error(`"${line}" needs a number of milliseconds`);
+      return burst.map((text, index) => {
+        if (typeof text !== "string") {
+          throw new Error("A burst is a flat list of inputs; bursts cannot nest");
         }
 
-        pause += milliseconds;
-        continue;
-      }
-
-      inputs.push({ text: line, input: InputSequence.input(verb, argument, line), delay: defaultGap + pause });
-      pause = 0;
-    }
-
-    return inputs;
+        return { text, input: InputSequence.input(text), delay: index === 0 ? separateGap : burstGap };
+      });
+    });
   }
 
-  private static input(verb: string, argument: string, line: string): Input {
+  private static input(line: string): Input {
+    const [verb = "", ...rest] = line.trim().split(/\s+/);
+    const argument = rest.join(" ");
+
     switch (verb) {
       case "hover":
         return new Hover(Slot.parse(argument));
       case "click":
         return new Click(MouseButton.Left, argument === "" ? null : Slot.parse(argument));
-      case "double-click":
-        return new DoubleClick(argument === "" ? null : Slot.parse(argument));
       case "right-click":
         return new Click(MouseButton.Right, argument === "" ? null : Slot.parse(argument));
       case "hold":

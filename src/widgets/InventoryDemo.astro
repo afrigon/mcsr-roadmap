@@ -1,5 +1,5 @@
 ---
-import { InputSequence } from "../inventory/InputSequence";
+import { type InputEntry, InputSequence } from "../inventory/InputSequence";
 import { InventoryScreen } from "../inventory/InventoryScreen";
 import { InventoryState } from "../inventory/InventoryState";
 import type { ItemStack } from "../inventory/ItemStack";
@@ -13,7 +13,7 @@ type Container = "chest";
 interface Props {
   container: Container;
   slots: Readonly<Record<string, string>>;
-  inputs: readonly string[];
+  inputs: readonly InputEntry[];
   pace?: number;
   endPause?: number;
   title?: string;
@@ -25,8 +25,11 @@ const inputs = InputSequence.parse(inputTexts);
 const initial = InventoryState.parse(slots);
 const screen = new InventoryScreen(initial);
 const snapshots = [{ state: initial, held: screen.heldControls }];
+const doubleClicks: boolean[] = [];
 
 for (const [index, { text, input, delay }] of inputs.entries()) {
+  const pressesBefore = screen.doubleClickPresses.length;
+
   try {
     screen.advance(delay);
     input.perform(screen);
@@ -35,6 +38,7 @@ for (const [index, { text, input, delay }] of inputs.entries()) {
   }
 
   snapshots.push({ state: screen.state, held: screen.heldControls });
+  doubleClicks.push(screen.doubleClickPresses.slice(pressesBefore).includes(true));
 }
 
 const rows = [SlotSection.Chest, SlotSection.Inventory, SlotSection.Offhand, SlotSection.Hotbar].map((section) => ({
@@ -68,7 +72,11 @@ const frames = snapshots.map(({ state, held }) => ({
   cursor: encode(state.cursor),
   held,
 }));
-const steps = inputs.map(({ input }) => ({ pointer: input.pointer?.key ?? null, ripple: input.ripple }));
+const steps = inputs.map(({ input }, index) => ({
+  pointer: input.pointer?.key ?? null,
+  ripple: input.ripple,
+  doubleClick: doubleClicks[index]!,
+}));
 const demo = { pace, endPause, icons: iconPaths, frames, steps };
 const speeds = [0.5, 1, 2];
 const defaultSpeed = 1;

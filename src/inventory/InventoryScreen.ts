@@ -41,6 +41,7 @@ export class InventoryScreen {
   private readonly quickCraftSlots: Slot[] = [];
   private movedSincePress = false;
   private lastQuickMoved: ItemStack | null = null;
+  private readonly presses: boolean[] = [];
 
   constructor(state: InventoryState) {
     this.menu = new ContainerMenu(state);
@@ -52,6 +53,10 @@ export class InventoryScreen {
 
   get heldControls(): Control[] {
     return [...this.held];
+  }
+
+  get doubleClickPresses(): readonly boolean[] {
+    return this.presses;
   }
 
   advance(milliseconds: number) {
@@ -141,6 +146,7 @@ export class InventoryScreen {
       this.lastClickSlot?.key === slot.key &&
       this.time - this.lastClickTime < doubleClickWindow &&
       this.lastClickButton === button;
+    this.presses.push(this.doubleClick);
     this.skipNextRelease = false;
 
     if (slot !== null && !this.isQuickCrafting) {

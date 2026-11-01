@@ -99,16 +99,15 @@ Pages can also use the widgets in `src/widgets/`:
   and an optional count. Inputs are:
   - `hover <slot>`: moves the pointer; with a mouse button held, this drags across slots.
   - `click [<slot>]` and `right-click [<slot>]`: press and release, after hovering the slot if one is given.
-  - `double-click [<slot>]`: two left clicks 80 ms apart, played and timed as one input.
   - `hold <shift|ctrl|left|right>` and `release <…>`: hold or let go of a modifier or mouse button.
   - `key <1–9|f|q>`: press a key over the hovered slot.
-  - `wait <ms>`: pause before the next input.
 
-  The demo runs the 1.16.1 inventory screen and container logic, ported from the game, so
-  double-clicks, shift-double-clicks, drags and hotkey swaps behave as they do in game. Inputs
-  happen 100 ms apart by default; that real-time clock is what the game's 250 ms double-click
-  window sees, so a pause before a second click on the same slot needs a `wait`. Playback is
-  separate: `pace` is the replay rate in inputs per second, 2 by default, and viewers replay at
+  A nested list is a burst, such as `["click", "key 9", "click"]`: its inputs are 100 ms apart, while
+  every other input comes 300 ms after the one before. The demo runs the 1.16.1 inventory screen and
+  container logic, ported from the game, so two clicks on the same slot count as a double-click only
+  within the game's 250 ms window: in practice, inside one burst. Shift-double-clicks, drags and
+  hotkey swaps behave as they do in game, and the playback shows a double ring wherever the game
+  registered a double-click. Playback is separate: `pace` is the replay rate in inputs per second, 2 by default, and viewers replay at
   0.5×, 1× or 2× of it. Playback loops, resting `endPause` seconds (1.5 by default) on the result.
 
 Pages can start a blockquote with an alert marker to render it as a callout:
