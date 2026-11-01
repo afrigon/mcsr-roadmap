@@ -94,9 +94,16 @@ Pages can also use the widgets in `src/widgets/`:
   series measures; series without one take the first four in that order.
 - `<Tabs>` holding `<Tab label="…">` panels, one shown at a time.
 - `<InventoryDemo title="…" container="chest" slots={{ "chest 4": "item/obsidian 7" }} inputs={["hold shift", "click chest 4", "release shift"]} pace={2} />`,
-  an inventory screen that plays the player's physical inputs. Slots are `chest 1–27` and
-  `inventory 1–27` (row by row from the top left), `hotbar 1–9` and `offhand`; items are an icon
-  and an optional count. Inputs are:
+  an inventory screen that plays the player's physical inputs. `container` is `chest`,
+  `inventory` or `crafting-table`, and each screen uses the game's slot positions. Slots are
+  `inventory 1–27` (row by row from the top left), `hotbar 1–9` and `offhand` on every screen,
+  plus the screen's own: `chest 1–27` in a chest; `crafting 1–4`, `armor 1–4` (top to bottom)
+  and `result` in the inventory; `crafting 1–9` and `result` at a crafting table. Items are an
+  icon and an optional count. `result` is never filled by hand: it shows what the grid crafts,
+  matched against the shaped and shapeless recipes in the client jar's data pack (the special
+  recipes, such as fireworks and armour dyeing, are not modelled). `book="open"` starts the
+  inventory or crafting table with the recipe book open, which moves the screen right as in game.
+  Inputs are:
   - `hover <slot>`: moves the pointer; with a mouse button held, this drags across slots.
   - `click [<slot>]` and `right-click [<slot>]`: press and release, after hovering the slot if one is given.
   - `hold <shift|ctrl|left|right>` and `release <…>`: hold or let go of a modifier or mouse button.

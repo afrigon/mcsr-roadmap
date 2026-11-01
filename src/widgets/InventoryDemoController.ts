@@ -10,10 +10,11 @@ interface Frame {
   slots: Record<string, EncodedStack>;
   cursor: EncodedStack | null;
   held: Control[];
+  pointer: [x: number, y: number];
+  hovered: string | null;
 }
 
 interface InputView {
-  pointer: string | null;
   ripple: Ripple | null;
   doubleClick: boolean;
 }
@@ -34,14 +35,13 @@ const pressFlashDuration = 150;
 
 const pointerVariance = 8;
 
-const restingSlot = "inventory 1";
-
 export class InventoryDemoController {
   private readonly data: DemoData;
   private readonly slots: Map<string, HTMLElement>;
   private readonly keys: Map<string, HTMLElement>;
   private readonly pointer: HTMLElement;
   private readonly held: HTMLElement;
+  private readonly screen: HTMLElement;
   private readonly progress: HTMLElement;
   private readonly playButton: HTMLButtonElement;
   private readonly speedButtons: HTMLButtonElement[];
@@ -60,6 +60,7 @@ export class InventoryDemoController {
       [...demo.querySelectorAll<HTMLElement>("[data-slot]")].map((slot) => [slot.dataset.slot!, slot]),
     );
     this.keys = new Map([...demo.querySelectorAll<HTMLElement>("kbd[data-key]")].map((key) => [key.dataset.key!, key]));
+    this.screen = demo.querySelector<HTMLElement>(".inventory-screen")!;
     this.pointer = demo.querySelector<HTMLElement>(".inventory-pointer")!;
     this.held = demo.querySelector<HTMLElement>(".inventory-held")!;
     this.progress = demo.querySelector<HTMLElement>("[data-progress]")!;
@@ -68,10 +69,15 @@ export class InventoryDemoController {
     const pressed = this.speedButtons.find((button) => button.getAttribute("aria-pressed") === "true")!;
     this.speed = Number(pressed.dataset.speed);
     this.countGlyphs = new CountGlyphs(this.data.countFont);
-    this.offsets = this.data.inputs.map(() => [
-      (Math.random() * 2 - 1) * pointerVariance,
-      (Math.random() * 2 - 1) * pointerVariance,
-    ]);
+    this.offsets = this.data.frames.map(() => [0, 0]);
+
+    for (const [index, frame] of this.data.frames.entries()) {
+      const previous = this.data.frames[index - 1];
+      const moved = previous !== undefined && frame.pointer.some((value, axis) => value !== previous.pointer[axis]);
+      this.offsets[index] = moved
+        ? [(Math.random() * 2 - 1) * pointerVariance, (Math.random() * 2 - 1) * pointerVariance]
+        : (this.offsets[index - 1] ?? [0, 0]);
+    }
   }
 
   private get lastStep(): number {
@@ -93,13 +99,13 @@ export class InventoryDemoController {
 
     this.show(0);
     this.setStep(0);
+    this.movePointer(0);
     this.demo.closest("[popover]")?.addEventListener("toggle", (event) => {
       if ((event as ToggleEvent).newState === "closed") {
         this.pause();
         this.reset();
       }
     });
-    new ResizeObserver(() => this.movePointer(0)).observe(this.demo.querySelector(".inventory-panel")!);
   }
 
   private play() {
@@ -154,7 +160,7 @@ export class InventoryDemoController {
     const input = this.data.inputs[this.frame]!;
     const glide = duration * glideShare;
 
-    this.movePointer(glide, this.pointerTarget(this.frame + 1));
+    this.movePointer(glide, this.frame + 1);
     this.timer = window.setTimeout(() => {
       this.show(this.frame + 1);
       this.ripple(input.ripple, input.doubleClick);
@@ -201,9 +207,9 @@ export class InventoryDemoController {
 
   private show(frame: number) {
     this.frame = frame;
-    const { slots, cursor, held } = this.data.frames[frame]!;
+    const { slots, cursor, held, hovered } = this.data.frames[frame]!;
     const interacted = frame > 0 && this.data.inputs[frame - 1]!.ripple !== null;
-    const activeSlot = interacted ? this.slots.get(this.pointerTarget(frame).slot) : undefined;
+    const activeSlot = interacted && hovered !== null ? this.slots.get(hovered) : undefined;
 
     for (const [key, element] of this.slots) {
       this.fill(element, slots[key] ?? null);
@@ -224,18 +230,11 @@ export class InventoryDemoController {
     this.fill(this.held, cursor);
   }
 
-  private pointerTarget(frame: number): { slot: string; offset: [number, number] } {
-    const index = this.data.inputs.slice(0, frame).findLastIndex((input) => input.pointer !== null);
-
-    return index < 0
-      ? { slot: restingSlot, offset: [0, 0] }
-      : { slot: this.data.inputs[index]!.pointer!, offset: this.offsets[index]! };
-  }
-
-  private movePointer(duration: number, target = this.pointerTarget(this.frame)) {
-    const slot = this.slots.get(target.slot)!;
-    const x = slot.offsetLeft + slot.offsetWidth / 2 + target.offset[0];
-    const y = slot.offsetTop + slot.offsetHeight / 2 + target.offset[1];
+  private movePointer(duration: number, frame = this.frame) {
+    const [pointerX, pointerY] = this.data.frames[frame]!.pointer;
+    const [offsetX, offsetY] = this.offsets[frame]!;
+    const x = pointerX + offsetX;
+    const y = pointerY + offsetY;
 
     this.pointer.style.transitionDuration = `${duration}ms`;
     this.pointer.style.translate = `${x}px ${y}px`;
@@ -258,13 +257,13 @@ export class InventoryDemoController {
 
   private highlightUnderPointer() {
     const [x = 0, y = 0] = getComputedStyle(this.pointer).translate.split(" ").map((value) => parseFloat(value));
+    const screen = this.screen.getBoundingClientRect();
 
     for (const element of this.slots.values()) {
-      const inside =
-        x >= element.offsetLeft &&
-        x < element.offsetLeft + element.offsetWidth &&
-        y >= element.offsetTop &&
-        y < element.offsetTop + element.offsetHeight;
+      const slot = element.getBoundingClientRect();
+      const left = slot.left - screen.left;
+      const top = slot.top - screen.top;
+      const inside = x >= left && x < left + slot.width && y >= top && y < top + slot.height;
       element.toggleAttribute("data-hovered", inside);
     }
   }

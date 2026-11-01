@@ -3,7 +3,6 @@ import type { Input } from "./Input";
 import type { InventoryScreen } from "./InventoryScreen";
 
 export class Release implements Input {
-  readonly pointer = null;
   readonly ripple = null;
 
   constructor(private readonly control: Control) {}

@@ -3,7 +3,6 @@ import type { InventoryScreen } from "./InventoryScreen";
 import type { Ripple } from "./Ripple";
 
 export class KeyPress implements Input {
-  readonly pointer = null;
   readonly ripple: Ripple;
 
   constructor(private readonly key: string) {

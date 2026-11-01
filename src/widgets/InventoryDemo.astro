@@ -1,32 +1,78 @@
 ---
+import { ContainerType } from "../inventory/ContainerType";
 import { type InputEntry, InputSequence } from "../inventory/InputSequence";
 import { InventoryScreen } from "../inventory/InventoryScreen";
 import { InventoryState } from "../inventory/InventoryState";
 import type { ItemStack } from "../inventory/ItemStack";
 import { Modifier } from "../inventory/Modifier";
+import type { Point } from "../inventory/Point";
+import { RecipeBookState } from "../inventory/RecipeBookState";
+import type { ScreenRectangle } from "../inventory/ScreenRectangle";
 import { Slot } from "../inventory/Slot";
 import { SlotSection } from "../inventory/SlotSection";
 import { CountGlyphs } from "../textures/CountGlyphs";
 import { IconRenderer } from "../textures/IconRenderer";
 import { ItemCountFont } from "../textures/ItemCountFont";
 
-type Container = "chest";
-
 interface Props {
-  container: Container;
+  container: `${ContainerType}`;
   slots: Readonly<Record<string, string>>;
   inputs: readonly InputEntry[];
+  book?: `${RecipeBookState}`;
   pace?: number;
   endPause?: number;
   title?: string;
 }
 
-const { slots, inputs: inputTexts, pace = 2, endPause = 1.5, title } = Astro.props;
+const {
+  container,
+  slots,
+  inputs: inputTexts,
+  book = RecipeBookState.Closed,
+  pace = 2,
+  endPause = 1.5,
+  title,
+} = Astro.props;
+
+const guiScale = 2;
+const slotBox = 18;
+const slotGap = 4;
+const keySize = 10;
+const offhand = Slot.of(SlotSection.Offhand, 1);
+const decorations: Record<ContainerType, { kind: string; area: ScreenRectangle }[]> = {
+  [ContainerType.Chest]: [],
+  [ContainerType.Inventory]: [
+    { kind: "player", area: { x: 26, y: 8, width: 49, height: 70 } },
+    { kind: "arrow", area: { x: 135, y: 29, width: 16, height: 13 } },
+  ],
+  [ContainerType.CraftingTable]: [{ kind: "arrow", area: { x: 89, y: 35, width: 22, height: 15 } }],
+};
+
+const containerType = Object.values(ContainerType).find((candidate) => candidate === container);
+const bookState = Object.values(RecipeBookState).find((candidate) => candidate === book);
+
+if (containerType === undefined) {
+  throw new Error(`InventoryDemo container "${container}": expected ${Object.values(ContainerType).join(", ")}`);
+}
+
+if (bookState === undefined) {
+  throw new Error(`InventoryDemo book "${book}": expected ${Object.values(RecipeBookState).join(", ")}`);
+}
 
 const inputs = InputSequence.parse(inputTexts);
 const initial = InventoryState.parse(slots);
-const screen = new InventoryScreen(initial);
-const snapshots = [{ state: initial, held: screen.heldControls }];
+const screen = new InventoryScreen(containerType, initial, bookState);
+const { menu } = screen;
+
+for (const slotName of Object.keys(slots)) {
+  const slot = Slot.parse(slotName);
+
+  if (slot.key !== offhand.key) {
+    menu.require(slot);
+  }
+}
+
+const snapshots = [{ state: menu.state, held: screen.heldControls, pointer: screen.pointer, hovered: screen.hoveredSlot }];
 const doubleClicks: boolean[] = [];
 
 for (const [index, { text, input, delay }] of inputs.entries()) {
@@ -39,17 +85,50 @@ for (const [index, { text, input, delay }] of inputs.entries()) {
     throw new Error(`InventoryDemo input ${index + 1} "${text}": ${(error as Error).message}`);
   }
 
-  snapshots.push({ state: screen.state, held: screen.heldControls });
+  snapshots.push({ state: menu.state, held: screen.heldControls, pointer: screen.pointer, hovered: screen.hoveredSlot });
   doubleClicks.push(screen.doubleClickPresses.slice(pressesBefore).includes(true));
 }
 
-const rows = [SlotSection.Chest, SlotSection.Inventory, SlotSection.Offhand, SlotSection.Hotbar].map((section) => ({
-  section,
-  slots: Slot.all(section),
-}));
-const slotKeys = ["F", ...Slot.all(SlotSection.Hotbar).map((slot) => String(slot.index))];
+const hotbar = menu.require(Slot.of(SlotSection.Hotbar, 1));
+const offhandSlot = menu.slot(offhand);
+const besideHotbar = hotbar.x - slotBox - slotGap;
+const offhandSpot = offhandSlot ?? { slot: offhand, key: offhand.key, x: besideHotbar, y: hotbar.y };
+const displaySlots = offhandSlot === undefined ? [...menu.slots, offhandSpot] : menu.slots;
+const keyRowY = hotbar.y + slotBox + slotGap / 2;
+const slotKeys = [
+  { key: "F", x: besideHotbar },
+  ...Array.from({ length: 9 }, (_, index) => ({ key: String(index + 1), x: hotbar.x + index * slotBox })),
+];
 const keys = ["Q", Modifier.Shift, Modifier.Ctrl];
 const modifiers: readonly string[] = Object.values(Modifier);
+
+const bookButton =
+  screen.bookButton === null
+    ? null
+    : { ...screen.bookButton, x: screen.bookButton.x - screen.leftPos, y: screen.bookButton.y - screen.topPos };
+const guiAreas: ScreenRectangle[] = [
+  ...displaySlots.map((slot) => ({ x: slot.x - 1, y: slot.y - 1, width: slotBox, height: slotBox })),
+  ...slotKeys.map((slotKey) => ({ x: slotKey.x, y: keyRowY, width: slotBox, height: keySize })),
+  ...decorations[containerType].map((decoration) => decoration.area),
+  ...(bookButton === null ? [] : [bookButton]),
+];
+const screenAreas = [
+  ...guiAreas.map((area) => ({ ...area, x: area.x + screen.leftPos, y: area.y + screen.topPos })),
+  ...(screen.bookPanel === null ? [] : [screen.bookPanel]),
+];
+const origin = {
+  x: Math.min(...screenAreas.map((area) => area.x)),
+  y: Math.min(...screenAreas.map((area) => area.y)),
+};
+const extent = {
+  width: Math.max(...screenAreas.map((area) => area.x + area.width)) - origin.x,
+  height: Math.max(...screenAreas.map((area) => area.y + area.height)) - origin.y,
+};
+const place = (area: Point, base: Point = { x: 0, y: 0 }) =>
+  `left: ${(area.x - base.x) * guiScale}px; top: ${(area.y - base.y) * guiScale}px;`;
+const size = (area: { width: number; height: number }) =>
+  `width: ${area.width * guiScale}px; height: ${area.height * guiScale}px;`;
+const toScreen = (point: Point) => [(point.x - origin.x) * guiScale, (point.y - origin.y) * guiScale];
 
 const icons = IconRenderer.fromEnvironment();
 const iconPaths: string[] = [];
@@ -63,25 +142,24 @@ const iconIndex = (stack: ItemStack) => {
   return iconPaths.indexOf(path);
 };
 const encode = (stack: ItemStack | null) => (stack === null ? null : [iconIndex(stack), stack.count]);
-const frames = snapshots.map(({ state, held }) => ({
+const frames = snapshots.map(({ state, held, pointer, hovered }) => ({
   slots: Object.fromEntries(
-    rows.flatMap((row) => row.slots).flatMap((slot) => {
-      const stack = state.get(slot);
+    displaySlots.flatMap((slot) => {
+      const stack = state.get(slot.slot);
 
       return stack === null ? [] : [[slot.key, encode(stack)]];
     }),
   ),
   cursor: encode(state.cursor),
   held,
+  pointer: toScreen(pointer),
+  hovered: hovered?.key ?? null,
 }));
-const inputViews = inputs.map(({ input }, index) => ({
-  pointer: input.pointer?.key ?? null,
-  ripple: input.ripple,
-  doubleClick: doubleClicks[index]!,
-}));
+const inputViews = inputs.map(({ input }, index) => ({ ripple: input.ripple, doubleClick: doubleClicks[index]! }));
 const stepEnds = inputs.flatMap(({ step }, index) => (inputs[index + 1]?.step === step ? [] : [index + 1]));
 const countFont = ItemCountFont.fromEnvironment().metrics;
 const countGlyphs = new CountGlyphs(countFont);
+const bookIcon = icons.resolve("item/knowledge_book").path;
 const demo = { pace, endPause, icons: iconPaths, frames, inputs: inputViews, stepEnds, countFont };
 const countSprite = `--count-sprite-width: ${countFont.cellWidth * countFont.characters.length}; --count-cell-height: ${countFont.cellHeight};`;
 const speeds = [0.1, 0.5, 1, 2];
@@ -91,42 +169,6 @@ const defaultSpeed = 1;
 <figure class="inventory-demo" data-inventory-demo={JSON.stringify(demo)} style={countSprite}>
   {title !== undefined && <figcaption>{title}</figcaption>}
   <div class="inventory-panel">
-    {
-      rows.map((row) => (
-        <div class="inventory-grid" data-section={row.section}>
-          {row.slots.map((slot) => {
-            const stack = initial.get(slot);
-
-            return (
-              <span class="inventory-slot" data-slot={slot.key}>
-                {stack !== null && <img src={iconPaths[iconIndex(stack)]} alt="" width="32" height="32" />}
-                {stack !== null && stack.count > 1 && (
-                  <span class="inventory-count" aria-label={String(stack.count)}>
-                    {countGlyphs.layout(stack.count).map((glyph) => (
-                      <span
-                        class="inventory-count-glyph"
-                        style={`--offset: ${glyph.offset}; --advance: ${glyph.advance};`}
-                      />
-                    ))}
-                  </span>
-                )}
-              </span>
-            );
-          })}
-        </div>
-      ))
-    }
-    <div class="inventory-slot-keys">
-      {
-        slotKeys.map((key) => (
-          <span class="inventory-slot-key">
-            <kbd data-key={key} data-letter>
-              {key}
-            </kbd>
-          </span>
-        ))
-      }
-    </div>
     <div class="inventory-keys">
       {
         keys.map((key) => (
@@ -136,12 +178,63 @@ const defaultSpeed = 1;
         ))
       }
     </div>
-    <span class="inventory-pointer" aria-hidden="true">
-      <span class="inventory-held"></span>
-      <svg viewBox="0 0 16 24" width="16" height="24">
-        <path d="M1 1 L1 19 L5.5 14.5 L8.5 21.5 L11 20.5 L8 13.5 L14 13.5 Z" />
-      </svg>
-    </span>
+    <div class="inventory-screen" data-container={containerType} style={size(extent)}>
+      {screen.bookPanel !== null && <span class="inventory-book" style={place(screen.bookPanel, origin) + size(screen.bookPanel)} />}
+      <div class="inventory-gui" style={place({ x: screen.leftPos, y: screen.topPos }, origin)}>
+        {
+          decorations[containerType].map((decoration) => (
+            <span class="inventory-decoration" data-kind={decoration.kind} style={place(decoration.area) + size(decoration.area)} />
+          ))
+        }
+        {
+          bookButton !== null && (
+            <span class="inventory-book-button" style={place(bookButton) + size(bookButton)}>
+              <img src={bookIcon} alt="" width="16" height="16" />
+            </span>
+          )
+        }
+        {
+          displaySlots.map((slot) => {
+            const shown = snapshots[0]!.state.get(slot.slot);
+
+            return (
+              <span
+                class="inventory-slot"
+                data-slot={slot.key}
+                style={place({ x: slot.x - 1, y: slot.y - 1 })}
+              >
+                {shown !== null && <img src={iconPaths[iconIndex(shown)]} alt="" width="32" height="32" />}
+                {shown !== null && shown.count > 1 && (
+                  <span class="inventory-count" aria-label={String(shown.count)}>
+                    {countGlyphs.layout(shown.count).map((glyph) => (
+                      <span
+                        class="inventory-count-glyph"
+                        style={`--offset: ${glyph.offset}; --advance: ${glyph.advance};`}
+                      />
+                    ))}
+                  </span>
+                )}
+              </span>
+            );
+          })
+        }
+        {
+          slotKeys.map((slotKey) => (
+            <span class="inventory-slot-key" style={place({ x: slotKey.x - 1, y: keyRowY })}>
+              <kbd data-key={slotKey.key} data-letter>
+                {slotKey.key}
+              </kbd>
+            </span>
+          ))
+        }
+      </div>
+      <span class="inventory-pointer" aria-hidden="true">
+        <span class="inventory-held"></span>
+        <svg viewBox="0 0 16 24" width="16" height="24">
+          <path d="M1 1 L1 19 L5.5 14.5 L8.5 21.5 L11 20.5 L8 13.5 L14 13.5 Z" />
+        </svg>
+      </span>
+    </div>
   </div>
   <div class="inventory-controls">
     <div class="tabs-list" role="group" aria-label="Playback">

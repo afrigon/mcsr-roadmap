@@ -25,6 +25,10 @@ export class ItemStack {
     return new ItemStack(icon, count);
   }
 
+  static of(icon: IconReference, count: number): ItemStack {
+    return new ItemStack(icon, count);
+  }
+
   get maxCount(): number {
     return StackSize.of(this.icon);
   }

@@ -5,9 +5,9 @@ import type { Slot } from "./Slot";
 export class Hover implements Input {
   readonly ripple = null;
 
-  constructor(readonly pointer: Slot) {}
+  constructor(private readonly slot: Slot) {}
 
   perform(screen: InventoryScreen) {
-    screen.hover(this.pointer);
+    screen.hover(this.slot);
   }
 }

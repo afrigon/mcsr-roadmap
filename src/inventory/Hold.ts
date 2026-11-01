@@ -5,7 +5,6 @@ import { MouseButton } from "./MouseButton";
 import type { Ripple } from "./Ripple";
 
 export class Hold implements Input {
-  readonly pointer = null;
   readonly ripple: Ripple | null;
 
   constructor(private readonly control: Control) {

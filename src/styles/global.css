@@ -1041,43 +1041,76 @@
   }
 
   .inventory-panel {
-    position: relative;
-    display: inline-grid;
-    grid-template-columns: auto repeat(9, 36px);
-    gap: 10px 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
     padding: 10px;
     border: 1px solid var(--color-line);
     border-radius: 10px;
     background: var(--color-surface);
   }
 
-  .inventory-grid {
-    display: grid;
-    grid-template-columns: subgrid;
-    grid-column: 2 / -1;
-    row-gap: 2px;
+  .inventory-screen {
+    position: relative;
+    flex: none;
+  }
 
-    &[data-section="offhand"] {
-      display: block;
-      grid-column: 1;
-      grid-row: 3;
-      justify-self: end;
-      margin-right: 6px;
+  .inventory-gui {
+    position: absolute;
+  }
+
+  .inventory-book {
+    position: absolute;
+    border: 1px solid var(--color-line);
+    border-radius: 8px;
+    background: var(--color-background);
+  }
+
+  .inventory-book-button {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--color-line);
+    border-radius: 4px;
+    background: var(--color-background);
+
+    & img {
+      width: 24px;
+      height: 24px;
+      image-rendering: pixelated;
+    }
+  }
+
+  .inventory-decoration {
+    position: absolute;
+
+    &[data-kind="player"] {
+      border: 1px dashed var(--color-line);
+      border-radius: 6px;
     }
 
-    &[data-section="hotbar"] {
-      grid-row: 3;
+    &[data-kind="arrow"] {
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      line-height: 1;
+      color: var(--color-muted);
+
+      &::before {
+        content: "→";
+      }
     }
   }
 
   .inventory-slot {
-    --item-inset: 1px;
+    --item-inset: 0px;
 
-    position: relative;
+    position: absolute;
     display: grid;
     place-items: center;
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
+    margin: 1px;
     border: 1px solid var(--color-line);
     border-radius: 4px;
     background: var(--color-background);
@@ -1156,23 +1189,11 @@
     }
   }
 
-  .inventory-slot-keys {
-    display: grid;
-    grid-template-columns: subgrid;
-    grid-column: 1 / -1;
-    grid-row: 4;
-    margin-top: -6px;
-  }
-
   .inventory-slot-key {
+    position: absolute;
     display: grid;
     justify-items: center;
     width: 36px;
-
-    &:first-child {
-      justify-self: end;
-      margin-right: 6px;
-    }
   }
 
   .inventory-demo kbd[data-letter] {
@@ -1187,12 +1208,8 @@
   .inventory-keys {
     display: flex;
     flex-direction: column;
-    grid-column: 1;
-    grid-row: 2;
     gap: 4px;
-    margin-right: 6px;
     align-items: stretch;
-    justify-content: flex-end;
 
     & kbd {
       text-align: center;

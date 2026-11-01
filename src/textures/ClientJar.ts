@@ -4,7 +4,13 @@ import { RoadmapError } from "../roadmap/RoadmapError";
 
 const jarVariable = "MINECRAFT_CLIENT_JAR";
 const assetsRoot = "assets/minecraft";
-const loadedDirectories = ["textures", "models"];
+const dataRoot = "data/minecraft";
+const loadedPrefixes = [
+  `${assetsRoot}/textures/`,
+  `${assetsRoot}/models/`,
+  `${dataRoot}/recipes/`,
+  `${dataRoot}/tags/items/`,
+];
 
 export class ClientJar {
   private static shared: ClientJar | null = null;
@@ -35,8 +41,18 @@ export class ClientJar {
   }
 
   list(directory: string, extension: string): string[] {
-    const prefix = `${assetsRoot}/${directory}/`;
+    return this.listUnder(`${assetsRoot}/${directory}/`, extension);
+  }
 
+  readData(path: string): Uint8Array | undefined {
+    return this.load()[`${dataRoot}/${path}`];
+  }
+
+  listData(directory: string, extension: string): string[] {
+    return this.listUnder(`${dataRoot}/${directory}/`, extension);
+  }
+
+  private listUnder(prefix: string, extension: string): string[] {
     return Object.keys(this.load())
       .filter((name) => name.startsWith(prefix) && name.endsWith(extension) && !name.slice(prefix.length).includes("/"))
       .map((name) => name.slice(prefix.length, -extension.length));
@@ -44,7 +60,7 @@ export class ClientJar {
 
   private load(): Record<string, Uint8Array> {
     this.entries ??= unzipSync(readFileSync(this.path), {
-      filter: (file) => loadedDirectories.some((directory) => file.name.startsWith(`${assetsRoot}/${directory}/`)),
+      filter: (file) => loadedPrefixes.some((prefix) => file.name.startsWith(prefix)),
     });
 
     return this.entries;

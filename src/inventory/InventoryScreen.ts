@@ -1,11 +1,21 @@
+import { AbstractContainerMenu } from "./AbstractContainerMenu";
+import { ChestMenu } from "./ChestMenu";
 import { ClickType } from "./ClickType";
-import { ContainerMenu } from "./ContainerMenu";
+import { ContainerType } from "./ContainerType";
 import type { Control } from "./Control";
+import { CraftingMenu } from "./CraftingMenu";
+import { InventoryMenu } from "./InventoryMenu";
 import type { InventoryState } from "./InventoryState";
 import type { ItemStack } from "./ItemStack";
+import type { MenuSlot } from "./MenuSlot";
 import { Modifier } from "./Modifier";
 import { MouseButton } from "./MouseButton";
-import type { Slot } from "./Slot";
+import type { Point } from "./Point";
+import { RecipeBookMenu } from "./RecipeBookMenu";
+import { RecipeBookState } from "./RecipeBookState";
+import { RecipeLibrary } from "./recipes/RecipeLibrary";
+import type { ScreenRectangle } from "./ScreenRectangle";
+import { Slot } from "./Slot";
 import { SlotSection } from "./SlotSection";
 
 const doubleClickWindow = 250;
@@ -17,6 +27,15 @@ const buttonNumbers: Record<MouseButton, number> = {
   [MouseButton.Left]: 0,
   [MouseButton.Right]: 1,
 };
+const slotSize = 16;
+const restingSlot = Slot.of(SlotSection.Inventory, 1);
+// The narrowest screen that shows the recipe book beside the menu rather than over it.
+const screenWidth = 379;
+const bookWidth = 147;
+const bookHeight = 166;
+const bookOffset = 86;
+const bookButtonWidth = 20;
+const bookButtonHeight = 18;
 
 enum QuickCraftType {
   Split = 0,
@@ -25,12 +44,13 @@ enum QuickCraftType {
 
 export class InventoryScreen {
   readonly keys: readonly string[] = [...hotbarKeys, offhandKey, dropKey];
+  readonly menu: AbstractContainerMenu;
+  readonly topPos = 0;
 
-  private readonly menu: ContainerMenu;
   private readonly held = new Set<Control>();
   private time = 0;
-  private hovered: Slot | null = null;
-  private lastClickSlot: Slot | null = null;
+  private pointerPosition: Point;
+  private lastClickSlot: MenuSlot | null = null;
   private lastClickTime = 0;
   private lastClickButton = -1;
   private doubleClick = false;
@@ -38,13 +58,23 @@ export class InventoryScreen {
   private isQuickCrafting = false;
   private quickCraftingButton = 0;
   private quickCraftingType = QuickCraftType.Split;
-  private readonly quickCraftSlots: Slot[] = [];
+  private readonly quickCraftSlots: MenuSlot[] = [];
   private movedSincePress = false;
   private lastQuickMoved: ItemStack | null = null;
   private readonly presses: boolean[] = [];
 
-  constructor(state: InventoryState) {
-    this.menu = new ContainerMenu(state);
+  constructor(
+    type: ContainerType,
+    state: InventoryState,
+    readonly book: RecipeBookState,
+  ) {
+    this.menu = InventoryScreen.createMenu(type, state);
+
+    if (book === RecipeBookState.Open && !(this.menu instanceof RecipeBookMenu)) {
+      throw new Error(`The ${type} screen has no recipe book to open`);
+    }
+
+    this.pointerPosition = this.centre(this.menu.require(restingSlot));
   }
 
   get state(): InventoryState {
@@ -59,26 +89,71 @@ export class InventoryScreen {
     return this.presses;
   }
 
+  get pointer(): Point {
+    return this.pointerPosition;
+  }
+
+  get leftPos(): number {
+    if (this.book === RecipeBookState.Open) {
+      return 177 + Math.floor((screenWidth - this.menu.imageWidth - 200) / 2);
+    }
+
+    return Math.floor((screenWidth - this.menu.imageWidth) / 2);
+  }
+
+  get bookPanel(): ScreenRectangle | null {
+    if (this.book === RecipeBookState.Closed) {
+      return null;
+    }
+
+    return {
+      x: Math.floor((screenWidth - bookWidth) / 2) - bookOffset,
+      y: this.topPos + Math.floor((this.menu.imageHeight - bookHeight) / 2),
+      width: bookWidth,
+      height: bookHeight,
+    };
+  }
+
+  get bookButton(): ScreenRectangle | null {
+    if (!(this.menu instanceof RecipeBookMenu)) {
+      return null;
+    }
+
+    return {
+      x: this.leftPos + this.menu.bookButton.x,
+      y: this.topPos + this.menu.bookButton.y,
+      width: bookButtonWidth,
+      height: bookButtonHeight,
+    };
+  }
+
+  get hoveredSlot(): MenuSlot | null {
+    return this.menu.slots.find((slot) => this.isHovering(slot)) ?? null;
+  }
+
   advance(milliseconds: number) {
     this.time += milliseconds;
   }
 
   hover(slot: Slot) {
-    if (slot.section === SlotSection.Offhand) {
-      throw new Error("The offhand slot is not part of the chest screen, so it cannot be hovered");
+    const target = this.menu.slot(slot);
+
+    if (target === undefined) {
+      throw new Error(`The "${slot.key}" slot is not part of this screen, so it cannot be hovered`);
     }
 
     const pressed = [MouseButton.Left, MouseButton.Right].some((button) => this.held.has(button));
+    const previous = this.hoveredSlot;
 
-    if (pressed && !this.movedSincePress && this.hovered !== null) {
-      this.dragOver(this.hovered);
+    if (pressed && !this.movedSincePress && previous !== null) {
+      this.dragOver(previous);
     }
 
-    this.hovered = slot;
+    this.pointerPosition = this.centre(target);
 
     if (pressed) {
       this.movedSincePress = true;
-      this.dragOver(slot);
+      this.dragOver(target);
     }
   }
 
@@ -110,7 +185,7 @@ export class InventoryScreen {
       throw new Error(`Unknown key "${key}": expected ${this.keys.join(", ")}`);
     }
 
-    const hovered = this.hovered;
+    const hovered = this.hoveredSlot;
 
     if (hovered === null) {
       return;
@@ -135,15 +210,37 @@ export class InventoryScreen {
     }
   }
 
+  private static createMenu(type: ContainerType, state: InventoryState): AbstractContainerMenu {
+    switch (type) {
+      case ContainerType.Chest:
+        return new ChestMenu(state);
+      case ContainerType.Inventory:
+        return new InventoryMenu(state, RecipeLibrary.fromEnvironment());
+      case ContainerType.CraftingTable:
+        return new CraftingMenu(state, RecipeLibrary.fromEnvironment());
+    }
+  }
+
   private get shiftDown(): boolean {
     return this.held.has(Modifier.Shift);
   }
 
+  private centre(slot: MenuSlot): Point {
+    return { x: this.leftPos + slot.x + slotSize / 2, y: this.topPos + slot.y + slotSize / 2 };
+  }
+
+  private isHovering(slot: MenuSlot): boolean {
+    const x = this.pointerPosition.x - this.leftPos;
+    const y = this.pointerPosition.y - this.topPos;
+
+    return x >= slot.x - 1 && x < slot.x + slotSize + 1 && y >= slot.y - 1 && y < slot.y + slotSize + 1;
+  }
+
   private mouseClicked(button: number) {
-    const slot = this.hovered;
+    const slot = this.hoveredSlot;
     this.doubleClick =
       slot !== null &&
-      this.lastClickSlot?.key === slot.key &&
+      this.lastClickSlot === slot &&
       this.time - this.lastClickTime < doubleClickWindow &&
       this.lastClickButton === button;
     this.presses.push(this.doubleClick);
@@ -173,24 +270,26 @@ export class InventoryScreen {
     this.lastClickButton = button;
   }
 
-  private dragOver(slot: Slot) {
+  private dragOver(slot: MenuSlot) {
     const carried = this.menu.carried;
 
     if (
       this.isQuickCrafting &&
       carried !== null &&
       carried.count > this.quickCraftSlots.length &&
-      !this.quickCraftSlots.some((existing) => existing.key === slot.key) &&
-      ContainerMenu.canItemQuickReplace(this.menu.item(slot), carried, true)
+      !this.quickCraftSlots.includes(slot) &&
+      AbstractContainerMenu.canItemQuickReplace(this.menu.item(slot), carried, true) &&
+      slot.mayPlace(carried) &&
+      this.menu.canDragTo(slot)
     ) {
       this.quickCraftSlots.push(slot);
     }
   }
 
   private mouseReleased(button: number) {
-    const slot = this.hovered;
+    const slot = this.hoveredSlot;
 
-    if (this.doubleClick && slot !== null && button === 0) {
+    if (this.doubleClick && slot !== null && button === 0 && this.menu.canTakeItemForPickAll(slot)) {
       if (this.shiftDown) {
         this.quickMoveMatching(slot, button);
       } else {
@@ -219,13 +318,14 @@ export class InventoryScreen {
     }
 
     if (this.isQuickCrafting && this.quickCraftSlots.length > 0) {
-      this.menu.click(null, ContainerMenu.quickCraftButton(0, this.quickCraftingType), ClickType.QuickCraft);
+      const type = this.quickCraftingType;
+      this.menu.click(null, AbstractContainerMenu.quickCraftButton(0, type), ClickType.QuickCraft);
 
       for (const dragged of this.quickCraftSlots) {
-        this.menu.click(dragged, ContainerMenu.quickCraftButton(1, this.quickCraftingType), ClickType.QuickCraft);
+        this.menu.click(dragged, AbstractContainerMenu.quickCraftButton(1, type), ClickType.QuickCraft);
       }
 
-      this.menu.click(null, ContainerMenu.quickCraftButton(2, this.quickCraftingType), ClickType.QuickCraft);
+      this.menu.click(null, AbstractContainerMenu.quickCraftButton(2, type), ClickType.QuickCraft);
     } else if (this.menu.carried !== null) {
       const quickMove = slot !== null && this.shiftDown;
 
@@ -239,18 +339,18 @@ export class InventoryScreen {
     this.finishRelease();
   }
 
-  private quickMoveMatching(slot: Slot, button: number) {
+  private quickMoveMatching(slot: MenuSlot, button: number) {
     const moved = this.lastQuickMoved;
 
     if (moved === null) {
       return;
     }
 
-    for (const candidate of ContainerMenu.slots) {
+    for (const candidate of this.menu.slots) {
       if (
         this.menu.item(candidate) !== null &&
-        ContainerMenu.sameContainer(candidate, slot) &&
-        ContainerMenu.canItemQuickReplace(this.menu.item(candidate), moved, true)
+        candidate.container === slot.container &&
+        AbstractContainerMenu.canItemQuickReplace(this.menu.item(candidate), moved, true)
       ) {
         this.menu.click(candidate, button, ClickType.QuickMove);
       }

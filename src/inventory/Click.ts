@@ -9,14 +9,14 @@ export class Click implements Input {
 
   constructor(
     private readonly button: MouseButton,
-    readonly pointer: Slot | null,
+    private readonly slot: Slot | null,
   ) {
     this.ripple = { target: "pointer", button };
   }
 
   perform(screen: InventoryScreen) {
-    if (this.pointer !== null) {
-      screen.hover(this.pointer);
+    if (this.slot !== null) {
+      screen.hover(this.slot);
     }
 
     screen.hold(this.button);
