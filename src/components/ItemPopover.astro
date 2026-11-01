@@ -6,6 +6,7 @@ import EditPageButton from "./EditPageButton.astro";
 import StatusPicker from "./StatusPicker.astro";
 import YouTube from "./YouTube.astro";
 import BarChart from "../widgets/BarChart.astro";
+import InventoryDemo from "../widgets/InventoryDemo.astro";
 import Tab from "../widgets/Tab.astro";
 import Tabs from "../widgets/Tabs.astro";
 
@@ -47,7 +48,7 @@ const hasContent = (page.body ?? "").trim() !== "";
     </p>
     <p class="item-description">{item.description}</p>
     <article class="item-page">
-      {hasContent ? <Content components={{ YouTube, BarChart, Tabs, Tab }} /> : <p class="muted">No page yet.</p>}
+      {hasContent ? <Content components={{ YouTube, BarChart, InventoryDemo, Tabs, Tab }} /> : <p class="muted">No page yet.</p>}
     </article>
   </div>
 </div>

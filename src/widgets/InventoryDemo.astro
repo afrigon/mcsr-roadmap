@@ -1,0 +1,118 @@
+---
+import { ActionParser } from "../inventory/ActionParser";
+import { InventoryState } from "../inventory/InventoryState";
+import type { ItemStack } from "../inventory/ItemStack";
+import { Slot } from "../inventory/Slot";
+import { SlotSection } from "../inventory/SlotSection";
+import { IconRenderer } from "../textures/IconRenderer";
+
+type Container = "chest";
+
+interface Props {
+  container: Container;
+  slots: Readonly<Record<string, string>>;
+  actions: readonly string[];
+  pace?: number;
+  title?: string;
+}
+
+const { slots, actions: actionTexts, pace = 8, title } = Astro.props;
+
+const actions = actionTexts.map((text) => ActionParser.parse(text));
+const states = [InventoryState.parse(slots)];
+
+for (const [index, action] of actions.entries()) {
+  try {
+    states.push(action.apply(states.at(-1)!));
+  } catch (error) {
+    throw new Error(`InventoryDemo step ${index + 1} "${actionTexts[index]}": ${(error as Error).message}`);
+  }
+}
+
+const rows = [SlotSection.Chest, SlotSection.Inventory, SlotSection.Offhand, SlotSection.Hotbar].map((section) => ({
+  section,
+  slots: Slot.all(section),
+}));
+
+const icons = IconRenderer.fromEnvironment();
+const iconKeys: string[] = [];
+const iconSources: string[] = [];
+const iconIndex = (stack: ItemStack) => {
+  if (!iconKeys.includes(stack.icon.key)) {
+    iconKeys.push(stack.icon.key);
+    iconSources.push(`data:image/png;base64,${icons.render(stack.icon).encode().toString("base64")}`);
+  }
+
+  return iconKeys.indexOf(stack.icon.key);
+};
+const encode = (stack: ItemStack | null) => (stack === null ? null : [iconIndex(stack), stack.count]);
+const frames = states.map((state) => ({
+  slots: Object.fromEntries(
+    rows.flatMap((row) => row.slots).flatMap((slot) => {
+      const stack = state.get(slot);
+
+      return stack === null ? [] : [[slot.key, encode(stack)]];
+    }),
+  ),
+  cursor: encode(state.cursor),
+}));
+const demo = { pace, icons: iconSources, frames, steps: actions.map((action) => action.slot.key) };
+const initial = states[0]!;
+const speeds = [0.25, 0.5, 1];
+---
+
+<figure class="inventory-demo" data-inventory-demo={JSON.stringify(demo)}>
+  {title !== undefined && <figcaption>{title}</figcaption>}
+  <div class="inventory-panel">
+    {
+      rows.map((row) => (
+        <div class="inventory-grid" data-section={row.section}>
+          {row.slots.map((slot) => {
+            const stack = initial.get(slot);
+
+            return (
+              <span class="inventory-slot" data-slot={slot.key} title={slot.key}>
+                {stack !== null && <img src={iconSources[iconIndex(stack)]} alt="" width="32" height="32" />}
+                {stack !== null && stack.count > 1 && <span class="inventory-count">{stack.count}</span>}
+              </span>
+            );
+          })}
+        </div>
+      ))
+    }
+  </div>
+  <ol class="inventory-steps">
+    {
+      actions.map((action, index) => (
+        <li data-step={index} title={actionTexts[index]}>
+          {action.inputs.map((input) => (
+            <kbd>{input}</kbd>
+          ))}
+        </li>
+      ))
+    }
+  </ol>
+  <div class="inventory-controls">
+    <button type="button" data-control="previous" aria-label="Previous input">‹</button>
+    <button type="button" data-control="play">Play</button>
+    <button type="button" data-control="next" aria-label="Next input">›</button>
+    <div class="tabs-list" role="group" aria-label="Playback speed">
+      {
+        speeds.map((speed) => (
+          <button type="button" data-speed={speed} aria-pressed={speed === speeds[0] ? "true" : "false"}>
+            {speed}×
+          </button>
+        ))
+      }
+    </div>
+    <span class="inventory-input-count">{actions.length} inputs</span>
+  </div>
+</figure>
+
+<script>
+  import { InventoryDemoController } from "./InventoryDemoController";
+
+  for (const demo of document.querySelectorAll<HTMLElement>("[data-inventory-demo]")) {
+    new InventoryDemoController(demo).start();
+  }
+</script>

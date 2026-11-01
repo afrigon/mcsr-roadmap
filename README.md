@@ -90,6 +90,13 @@ Pages can also use the widgets in `src/widgets/`:
   units. `color` is `blue`, `orange`, `aqua`, `yellow`, `red` or `gray`, picked to match what the
   series measures; series without one take the first four in that order.
 - `<Tabs>` holding `<Tab label="…">` panels, one shown at a time.
+- `<InventoryDemo title="…" container="chest" slots={{ "chest 4": "item/obsidian 7" }} actions={["shift-click chest 4"]} pace={8} />`,
+  an inventory screen that plays a sequence of inputs. Slots are `chest 1–27` and `inventory 1–27`
+  (row by row from the top left), `hotbar 1–9` and `offhand`; items are an icon and an optional
+  count. Actions are `shift-click <slot>`, `hotkey <1–9> <slot>`, `offhand <slot>`, `drop <slot>`,
+  `drop-stack <slot>`, `pick-up <slot>` and `place <slot>`, and each state is computed from the
+  game's rules, so a slot that ends up wrong in the demo is wrong in the sequence. `pace` is the
+  real input rate per second; viewers replay at 0.25×, 0.5× or 1× of it.
 
 Pages can start a blockquote with an alert marker to render it as a callout:
 
