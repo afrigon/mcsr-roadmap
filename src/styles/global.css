@@ -1048,10 +1048,7 @@
   }
 
   .inventory-panel {
-    padding: 10px;
-    border: 1px solid var(--color-line);
-    border-radius: 10px;
-    background: var(--color-surface);
+    display: flex;
   }
 
   .inventory-screen {
@@ -1059,15 +1056,12 @@
     flex: none;
   }
 
-  .inventory-gui {
-    position: absolute;
-  }
-
+  .inventory-gui,
   .inventory-book {
     position: absolute;
-    border: 1px solid var(--color-line);
-    border-radius: 8px;
-    background: var(--color-background);
+    border-radius: 10px;
+    background: var(--color-surface);
+    box-shadow: inset 0 0 0 1px var(--color-line);
   }
 
   .inventory-book-button {

@@ -108,7 +108,7 @@ for (const [index, { text, input, delay }] of inputs.entries()) {
 
 const hotbar = menu.require(Slot.of(SlotSection.Hotbar, 1));
 const offhandSlot = menu.slot(offhand);
-const offhandSpot = offhandSlot ?? { slot: offhand, key: offhand.key, x: hotbar.x - slotBox - slotGap, y: hotbar.y };
+const offhandSpot = offhandSlot ?? { slot: offhand, key: offhand.key, x: 1 - slotBox - slotGap, y: hotbar.y };
 const displaySlots = offhandSlot === undefined ? [...menu.slots, offhandSpot] : menu.slots;
 const slotKeys = ["F", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 const stackedKeyGroups = [
@@ -122,7 +122,9 @@ const { leftPos, topPos, bookButton: screenBookButton } = screen.layoutFor(snaps
 const bookPanel = [...layouts.values()].find((layout) => layout.bookPanel !== null)?.bookPanel ?? null;
 const bookButton =
   screenBookButton === null ? null : { ...screenBookButton, x: screenBookButton.x - leftPos, y: screenBookButton.y - topPos };
+const guiWindow = { x: 0, y: 0, width: menu.imageWidth, height: menu.imageHeight };
 const guiAreas: ScreenRectangle[] = [
+  guiWindow,
   ...displaySlots.map((slot) => ({ x: slot.x - 1, y: slot.y - 1, width: slotBox, height: slotBox })),
   ...decorations[containerType].map((decoration) => decoration.area),
   ...(bookButton === null ? [] : [bookButton]),
@@ -205,7 +207,7 @@ const defaultSpeed = 1;
           />
         )
       }
-      <div class="inventory-gui" style={place({ x: leftPos, y: topPos }, origin)}>
+      <div class="inventory-gui" style={place({ x: leftPos, y: topPos }, origin) + size(guiWindow)}>
         {
           decorations[containerType].map((decoration) => (
             <span class="inventory-decoration" data-kind={decoration.kind} style={place(decoration.area) + size(decoration.area)} />
