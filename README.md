@@ -103,7 +103,8 @@ Pages can also use the widgets in `src/widgets/`:
   matched against the shaped and shapeless recipes in the client jar's data pack (the special
   recipes, such as fireworks and armour dyeing, are not modelled). `book="open"` starts the
   inventory or crafting table with the recipe book open, which moves the screen right as in game.
-  Inputs are:
+  `align` is `leading` (the default) or `center`. Under the screen, the same set of keys and both
+  mouse buttons light up as they are pressed. Inputs are:
   - `hover <slot>`: moves the pointer; with a mouse button held, this drags across slots.
   - `click [<slot>]` and `right-click [<slot>]`: press and release, after hovering the slot if one is given.
   - `hold <shift|ctrl|left|right>` and `release <…>`: hold or let go of a modifier or mouse button.

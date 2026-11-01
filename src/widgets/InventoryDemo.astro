@@ -5,6 +5,7 @@ import { ContainerScreen } from "../inventory/ContainerScreen";
 import { InventoryState } from "../inventory/InventoryState";
 import type { ItemStack } from "../inventory/ItemStack";
 import { Modifier } from "../inventory/Modifier";
+import { MouseButton } from "../inventory/MouseButton";
 import type { Point } from "../inventory/Point";
 import { RecipeBookState } from "../inventory/RecipeBookState";
 import type { ScreenRectangle } from "../inventory/ScreenRectangle";
@@ -13,12 +14,14 @@ import { SlotSection } from "../inventory/SlotSection";
 import { CountGlyphs } from "../textures/CountGlyphs";
 import { IconRenderer } from "../textures/IconRenderer";
 import { ItemCountFont } from "../textures/ItemCountFont";
+import { DemoAlignment } from "./DemoAlignment";
 
 interface Props {
   container: `${ContainerType}`;
   slots: Readonly<Record<string, string>>;
   inputs: readonly InputEntry[];
   book?: `${RecipeBookState}`;
+  align?: `${DemoAlignment}`;
   pace?: number;
   endPause?: number;
   title?: string;
@@ -29,6 +32,7 @@ const {
   slots,
   inputs: inputTexts,
   book = RecipeBookState.Closed,
+  align = DemoAlignment.Leading,
   pace = 2,
   endPause = 1.5,
   title,
@@ -37,7 +41,6 @@ const {
 const guiScale = 2;
 const slotBox = 18;
 const slotGap = 4;
-const keySize = 10;
 const offhand = Slot.of(SlotSection.Offhand, 1);
 const decorations: Record<ContainerType, { kind: string; area: ScreenRectangle }[]> = {
   [ContainerType.Chest]: [],
@@ -50,6 +53,7 @@ const decorations: Record<ContainerType, { kind: string; area: ScreenRectangle }
 
 const containerType = Object.values(ContainerType).find((candidate) => candidate === container);
 const bookState = Object.values(RecipeBookState).find((candidate) => candidate === book);
+const alignment = Object.values(DemoAlignment).find((candidate) => candidate === align);
 
 if (containerType === undefined) {
   throw new Error(`InventoryDemo container "${container}": expected ${Object.values(ContainerType).join(", ")}`);
@@ -57,6 +61,10 @@ if (containerType === undefined) {
 
 if (bookState === undefined) {
   throw new Error(`InventoryDemo book "${book}": expected ${Object.values(RecipeBookState).join(", ")}`);
+}
+
+if (alignment === undefined) {
+  throw new Error(`InventoryDemo align "${align}": expected ${Object.values(DemoAlignment).join(", ")}`);
 }
 
 const inputs = InputSequence.parse(inputTexts);
@@ -72,7 +80,7 @@ for (const slotName of Object.keys(slots)) {
   }
 }
 
-const snapshots = [{ state: menu.state, held: screen.heldControls, pointer: screen.pointer, hovered: screen.hoveredSlot }];
+const snapshots = [{ state: screen.displayedState, held: screen.heldControls, pointer: screen.pointer, hovered: screen.hoveredSlot }];
 const doubleClicks: boolean[] = [];
 
 for (const [index, { text, input, delay }] of inputs.entries()) {
@@ -85,22 +93,20 @@ for (const [index, { text, input, delay }] of inputs.entries()) {
     throw new Error(`InventoryDemo input ${index + 1} "${text}": ${(error as Error).message}`);
   }
 
-  snapshots.push({ state: menu.state, held: screen.heldControls, pointer: screen.pointer, hovered: screen.hoveredSlot });
+  snapshots.push({ state: screen.displayedState, held: screen.heldControls, pointer: screen.pointer, hovered: screen.hoveredSlot });
   doubleClicks.push(screen.doubleClickPresses.slice(pressesBefore).includes(true));
 }
 
 const hotbar = menu.require(Slot.of(SlotSection.Hotbar, 1));
 const offhandSlot = menu.slot(offhand);
-const besideHotbar = hotbar.x - slotBox - slotGap;
-const offhandSpot = offhandSlot ?? { slot: offhand, key: offhand.key, x: besideHotbar, y: hotbar.y };
+const offhandSpot = offhandSlot ?? { slot: offhand, key: offhand.key, x: hotbar.x - slotBox - slotGap, y: hotbar.y };
 const displaySlots = offhandSlot === undefined ? [...menu.slots, offhandSpot] : menu.slots;
-const keyRowY = hotbar.y + slotBox + slotGap / 2;
-const slotKeys = [
-  { key: "F", x: besideHotbar },
-  ...Array.from({ length: 9 }, (_, index) => ({ key: String(index + 1), x: hotbar.x + index * slotBox })),
+const keyGroups = [
+  ["Q", "F", "T"],
+  ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  ["Tab", Modifier.Shift, Modifier.Ctrl, "Space"],
 ];
-const keys = ["Q", Modifier.Shift, Modifier.Ctrl];
-const modifiers: readonly string[] = Object.values(Modifier);
+const letterKeys = new Set([...keyGroups[0]!, ...keyGroups[1]!]);
 
 const bookButton =
   screen.bookButton === null
@@ -108,7 +114,6 @@ const bookButton =
     : { ...screen.bookButton, x: screen.bookButton.x - screen.leftPos, y: screen.bookButton.y - screen.topPos };
 const guiAreas: ScreenRectangle[] = [
   ...displaySlots.map((slot) => ({ x: slot.x - 1, y: slot.y - 1, width: slotBox, height: slotBox })),
-  ...slotKeys.map((slotKey) => ({ x: slotKey.x, y: keyRowY, width: slotBox, height: keySize })),
   ...decorations[containerType].map((decoration) => decoration.area),
   ...(bookButton === null ? [] : [bookButton]),
 ];
@@ -166,18 +171,9 @@ const speeds = [0.1, 0.5, 1, 2];
 const defaultSpeed = 1;
 ---
 
-<figure class="inventory-demo" data-inventory-demo={JSON.stringify(demo)} style={countSprite}>
+<figure class="inventory-demo" data-inventory-demo={JSON.stringify(demo)} data-align={alignment} style={countSprite}>
   {title !== undefined && <figcaption>{title}</figcaption>}
   <div class="inventory-panel">
-    <div class="inventory-keys">
-      {
-        keys.map((key) => (
-          <kbd data-key={key} data-letter={modifiers.includes(key) ? undefined : true}>
-            {key}
-          </kbd>
-        ))
-      }
-    </div>
     <div class="inventory-screen" data-container={containerType} style={size(extent)}>
       {screen.bookPanel !== null && <span class="inventory-book" style={place(screen.bookPanel, origin) + size(screen.bookPanel)} />}
       <div class="inventory-gui" style={place({ x: screen.leftPos, y: screen.topPos }, origin)}>
@@ -218,15 +214,6 @@ const defaultSpeed = 1;
             );
           })
         }
-        {
-          slotKeys.map((slotKey) => (
-            <span class="inventory-slot-key" style={place({ x: slotKey.x - 1, y: keyRowY })}>
-              <kbd data-key={slotKey.key} data-letter>
-                {slotKey.key}
-              </kbd>
-            </span>
-          ))
-        }
       </div>
       <span class="inventory-pointer" aria-hidden="true">
         <span class="inventory-held"></span>
@@ -234,6 +221,22 @@ const defaultSpeed = 1;
           <path d="M1 1 L1 19 L5.5 14.5 L8.5 21.5 L11 20.5 L8 13.5 L14 13.5 Z" />
         </svg>
       </span>
+    </div>
+    <div class="inventory-inputs">
+      {
+        keyGroups.map((group) => (
+          <div class="inventory-key-group">
+            {group.map((key) => (
+              <kbd data-key={key} data-letter={letterKeys.has(key) ? true : undefined}>
+                {key}
+              </kbd>
+            ))}
+          </div>
+        ))
+      }
+      <div class="inventory-mouse" aria-label="Mouse buttons">
+        {[MouseButton.Left, MouseButton.Right].map((button) => <span data-key={button} data-button={button} />)}
+      </div>
     </div>
   </div>
   <div class="inventory-controls">

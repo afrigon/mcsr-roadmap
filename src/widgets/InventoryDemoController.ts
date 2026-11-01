@@ -59,7 +59,7 @@ export class InventoryDemoController {
     this.slots = new Map(
       [...demo.querySelectorAll<HTMLElement>("[data-slot]")].map((slot) => [slot.dataset.slot!, slot]),
     );
-    this.keys = new Map([...demo.querySelectorAll<HTMLElement>("kbd[data-key]")].map((key) => [key.dataset.key!, key]));
+    this.keys = new Map([...demo.querySelectorAll<HTMLElement>(".inventory-inputs [data-key]")].map((key) => [key.dataset.key!, key]));
     this.screen = demo.querySelector<HTMLElement>(".inventory-screen")!;
     this.pointer = demo.querySelector<HTMLElement>(".inventory-pointer")!;
     this.held = demo.querySelector<HTMLElement>(".inventory-held")!;
@@ -292,6 +292,15 @@ export class InventoryDemoController {
 
     if (ripple.target === "pointer") {
       this.pointer.toggleAttribute("data-double-click", doubleClick);
+      this.flash(this.keys.get(ripple.button));
+    }
+
+    this.flash(target);
+  }
+
+  private flash(target: HTMLElement | undefined) {
+    if (target === undefined) {
+      return;
     }
 
     target.toggleAttribute("data-pressed", true);

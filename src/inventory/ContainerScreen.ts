@@ -81,6 +81,31 @@ export class ContainerScreen {
     return this.menu.state;
   }
 
+  get displayedState(): InventoryState {
+    const carried = this.menu.carried;
+    const state = this.menu.state;
+
+    if (!this.isQuickCrafting || carried === null || this.quickCraftSlots.length === 0) {
+      return state;
+    }
+
+    if (this.quickCraftSlots.length === 1) {
+      return state.with(this.quickCraftSlots[0]!.slot, null);
+    }
+
+    let displayed = state;
+    let remaining = carried.count;
+
+    for (const slot of this.quickCraftSlots) {
+      const existing = this.menu.item(slot)?.count ?? 0;
+      const count = this.quickCraftCount(carried, slot, existing);
+      displayed = displayed.with(slot.slot, carried.withCount(count));
+      remaining -= count - existing;
+    }
+
+    return displayed.withCursor(carried.withCount(remaining));
+  }
+
   get heldControls(): Control[] {
     return [...this.held];
   }
@@ -234,6 +259,13 @@ export class ContainerScreen {
     const y = this.pointerPosition.y - this.topPos;
 
     return x >= slot.x - 1 && x < slot.x + slotSize + 1 && y >= slot.y - 1 && y < slot.y + slotSize + 1;
+  }
+
+  private quickCraftCount(carried: ItemStack, slot: MenuSlot, existing: number): number {
+    const share =
+      this.quickCraftingType === QuickCraftType.Split ? Math.floor(carried.count / this.quickCraftSlots.length) : 1;
+
+    return Math.min(share + existing, carried.maxCount, slot.maxStackSizeFor(carried));
   }
 
   private mouseClicked(button: number) {

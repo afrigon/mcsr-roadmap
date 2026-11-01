@@ -612,7 +612,7 @@
   }
 
   .item-popover {
-    width: min(760px, calc(100vw - 32px));
+    width: min(860px, calc(100vw - 32px));
     max-height: 80vh;
     margin: auto;
     padding: 18px 0;
@@ -1030,7 +1030,14 @@
   [data-color="gray"] { background: var(--color-chart-gray); }
 
   .inventory-demo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     margin: 12px 0 16px;
+
+    &[data-align="center"] {
+      align-items: center;
+    }
 
     & figcaption {
       margin-bottom: 8px;
@@ -1041,9 +1048,10 @@
   }
 
   .inventory-panel {
-    display: inline-flex;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     padding: 10px;
     border: 1px solid var(--color-line);
     border-radius: 10px;
@@ -1189,12 +1197,6 @@
     }
   }
 
-  .inventory-slot-key {
-    position: absolute;
-    display: grid;
-    justify-items: center;
-    width: 36px;
-  }
 
   .inventory-demo kbd[data-letter] {
     display: grid;
@@ -1205,18 +1207,55 @@
     line-height: 1;
   }
 
-  .inventory-keys {
+  .inventory-inputs {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: stretch;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px 16px;
+  }
 
-    & kbd {
-      text-align: center;
+  .inventory-key-group {
+    display: flex;
+    gap: 4px;
+  }
+
+  .inventory-mouse {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    width: 40px;
+    height: 54px;
+    padding: 3px;
+    border: 1px solid var(--color-line);
+    border-radius: 19px 19px 16px 16px;
+    background: var(--color-surface);
+
+    & span {
+      height: 22px;
+      border: 1px solid var(--color-line);
+      background: var(--color-background);
+      transition:
+        background 120ms,
+        border-color 120ms;
     }
 
-    & kbd[data-letter] {
-      align-self: center;
+    & [data-button="left"] {
+      border-radius: 15px 2px 2px 2px;
+    }
+
+    & [data-button="right"] {
+      border-radius: 2px 15px 2px 2px;
+    }
+
+    & [data-button="left"]:is([data-held], [data-pressed]) {
+      border-color: var(--color-link);
+      background: var(--color-link);
+    }
+
+    & [data-button="right"]:is([data-held], [data-pressed]) {
+      border-color: var(--color-mouse-right);
+      background: var(--color-mouse-right);
     }
   }
 
