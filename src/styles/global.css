@@ -1091,12 +1091,6 @@
   .inventory-decoration {
     position: absolute;
 
-    &[data-kind="panel"] {
-      border-radius: 10px;
-      background: var(--color-surface);
-      box-shadow: inset 0 0 0 1px var(--color-line);
-    }
-
     &[data-kind="player"] {
       border: 1px dashed var(--color-line);
       border-radius: 6px;

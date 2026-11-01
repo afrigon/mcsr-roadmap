@@ -11,12 +11,13 @@ import { Slot } from "./Slot";
 import { SlotContainer } from "./SlotContainer";
 import { SlotSection } from "./SlotSection";
 
-const hotbarWidth = 182;
-const hotbarHeight = 22;
+const padding = 2;
+const hotbarWidth = 182 + padding * 2;
+const hotbarHeight = 22 + padding * 2;
 const slotPitch = 20;
-const firstSlotX = 3;
-const offhandX = -26;
-const slotY = 3;
+const firstSlotX = 3 + padding;
+const offhandX = -26 + padding;
+const slotY = 3 + padding;
 const hotbarKeys = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 const swapKey = "F";
 const dropKey = "Q";
