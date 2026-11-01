@@ -12,11 +12,14 @@ interface Frame {
   held: Control[];
   pointer: [x: number, y: number];
   hovered: string | null;
+  book: string;
+  bookButtonFocused: boolean;
 }
 
 interface InputView {
   ripple: Ripple | null;
   doubleClick: boolean;
+  actsOnSlot: boolean;
 }
 
 interface DemoData {
@@ -27,6 +30,7 @@ interface DemoData {
   inputs: InputView[];
   stepEnds: number[];
   countFont: CountFontMetrics;
+  guiPositions: Record<string, [x: number, y: number]>;
 }
 
 const glideShare = 0.5;
@@ -42,6 +46,9 @@ export class InventoryDemoController {
   private readonly pointer: HTMLElement;
   private readonly held: HTMLElement;
   private readonly screen: HTMLElement;
+  private readonly gui: HTMLElement;
+  private readonly book: HTMLElement | null;
+  private readonly bookButton: HTMLElement | null;
   private readonly progress: HTMLElement;
   private readonly playButton: HTMLButtonElement;
   private readonly speedButtons: HTMLButtonElement[];
@@ -61,6 +68,9 @@ export class InventoryDemoController {
     );
     this.keys = new Map([...demo.querySelectorAll<HTMLElement>(".inventory-inputs [data-key]")].map((key) => [key.dataset.key!, key]));
     this.screen = demo.querySelector<HTMLElement>(".inventory-screen")!;
+    this.gui = demo.querySelector<HTMLElement>(".inventory-gui")!;
+    this.book = demo.querySelector<HTMLElement>(".inventory-book");
+    this.bookButton = demo.querySelector<HTMLElement>(".inventory-book-button");
     this.pointer = demo.querySelector<HTMLElement>(".inventory-pointer")!;
     this.held = demo.querySelector<HTMLElement>(".inventory-held")!;
     this.progress = demo.querySelector<HTMLElement>("[data-progress]")!;
@@ -207,9 +217,16 @@ export class InventoryDemoController {
 
   private show(frame: number) {
     this.frame = frame;
-    const { slots, cursor, held, hovered } = this.data.frames[frame]!;
-    const ripple = frame > 0 ? this.data.inputs[frame - 1]!.ripple : null;
-    const activeSlot = ripple !== null && hovered !== null ? this.slots.get(hovered) : undefined;
+    const { slots, cursor, held, hovered, book, bookButtonFocused } = this.data.frames[frame]!;
+    const [guiX, guiY] = this.data.guiPositions[book]!;
+    this.gui.style.left = `${guiX}px`;
+    this.gui.style.top = `${guiY}px`;
+    this.book?.toggleAttribute("hidden", book !== "open");
+    this.bookButton?.toggleAttribute("data-focused", bookButtonFocused);
+    this.highlightUnderPointer();
+    const input = frame > 0 ? this.data.inputs[frame - 1]! : null;
+    const ripple = input?.ripple ?? null;
+    const activeSlot = input?.actsOnSlot && hovered !== null ? this.slots.get(hovered) : undefined;
     const heldButton = [MouseButton.Left, MouseButton.Right].find((button) => held.includes(button));
     const activeButton = ripple?.target === "pointer" ? ripple.button : heldButton;
 
@@ -265,11 +282,11 @@ export class InventoryDemoController {
     const [x = 0, y = 0] = getComputedStyle(this.pointer).translate.split(" ").map((value) => parseFloat(value));
     const screen = this.screen.getBoundingClientRect();
 
-    for (const element of this.slots.values()) {
-      const slot = element.getBoundingClientRect();
-      const left = slot.left - screen.left;
-      const top = slot.top - screen.top;
-      const inside = x >= left && x < left + slot.width && y >= top && y < top + slot.height;
+    for (const element of [...this.slots.values(), ...(this.bookButton === null ? [] : [this.bookButton])]) {
+      const bounds = element.getBoundingClientRect();
+      const left = bounds.left - screen.left;
+      const top = bounds.top - screen.top;
+      const inside = x >= left && x < left + bounds.width && y >= top && y < top + bounds.height;
       element.toggleAttribute("data-hovered", inside);
     }
   }

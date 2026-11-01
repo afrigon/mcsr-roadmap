@@ -6,7 +6,10 @@ import type { Input } from "./Input";
 import { KeyPress } from "./KeyPress";
 import { Modifier } from "./Modifier";
 import { MouseButton } from "./MouseButton";
+import type { PointerTarget } from "./PointerTarget";
 import { Release } from "./Release";
+import { ScreenKeys } from "./ScreenKeys";
+import { ScreenWidget } from "./ScreenWidget";
 import { Slot } from "./Slot";
 
 export type InputEntry = string | readonly string[];
@@ -49,20 +52,24 @@ export class InputSequence {
 
     switch (verb) {
       case "hover":
-        return new Hover(Slot.parse(argument));
+        return new Hover(InputSequence.target(argument));
       case "click":
-        return new Click(MouseButton.Left, argument === "" ? null : Slot.parse(argument));
+        return new Click(MouseButton.Left, argument === "" ? null : InputSequence.target(argument));
       case "right-click":
-        return new Click(MouseButton.Right, argument === "" ? null : Slot.parse(argument));
+        return new Click(MouseButton.Right, argument === "" ? null : InputSequence.target(argument));
       case "hold":
         return new Hold(InputSequence.control(argument, line));
       case "release":
         return new Release(InputSequence.control(argument, line));
       case "key":
-        return new KeyPress(argument.toUpperCase());
+        return new KeyPress(ScreenKeys.parse(argument));
       default:
         throw new Error(`Unknown input "${line}": expected ${verbs.join(", ")}`);
     }
+  }
+
+  private static target(name: string): PointerTarget {
+    return name === ScreenWidget.BookButton ? ScreenWidget.BookButton : Slot.parse(name);
   }
 
   private static control(name: string, line: string): Control {

@@ -11,10 +11,13 @@ import type { MenuSlot } from "./MenuSlot";
 import { Modifier } from "./Modifier";
 import { MouseButton } from "./MouseButton";
 import type { Point } from "./Point";
+import type { PointerTarget } from "./PointerTarget";
 import { RecipeBookMenu } from "./RecipeBookMenu";
 import { RecipeBookState } from "./RecipeBookState";
 import { RecipeLibrary } from "./recipes/RecipeLibrary";
-import type { ScreenRectangle } from "./ScreenRectangle";
+import { ScreenKeys } from "./ScreenKeys";
+import type { ScreenLayout } from "./ScreenLayout";
+import { ScreenWidget } from "./ScreenWidget";
 import { Slot } from "./Slot";
 import { SlotSection } from "./SlotSection";
 
@@ -22,6 +25,8 @@ const doubleClickWindow = 250;
 const offhandSwapButton = 40;
 const offhandKey = "F";
 const dropKey = "Q";
+const focusKey = "Tab";
+const pressKey = "Space";
 const hotbarKeys = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 const buttonNumbers: Record<MouseButton, number> = {
   [MouseButton.Left]: 0,
@@ -43,10 +48,13 @@ enum QuickCraftType {
 }
 
 export class ContainerScreen {
-  readonly keys: readonly string[] = [...hotbarKeys, offhandKey, dropKey];
   readonly menu: AbstractContainerMenu;
   readonly topPos = 0;
 
+  private bookState: RecipeBookState;
+  private focused: ScreenWidget | null;
+  private bookButtonFocused = false;
+  private bookButtonClicked = false;
   private readonly held = new Set<Control>();
   private time = 0;
   private pointerPosition: Point;
@@ -64,17 +72,27 @@ export class ContainerScreen {
   private readonly presses: boolean[] = [];
 
   constructor(
-    type: ContainerType,
+    readonly type: ContainerType,
     state: InventoryState,
-    readonly book: RecipeBookState,
+    book: RecipeBookState,
   ) {
     this.menu = ContainerScreen.createMenu(type, state);
+    this.bookState = book;
+    this.focused = this.menu instanceof RecipeBookMenu ? ScreenWidget.RecipeBook : null;
 
     if (book === RecipeBookState.Open && !(this.menu instanceof RecipeBookMenu)) {
       throw new Error(`The ${type} screen has no recipe book to open`);
     }
 
     this.pointerPosition = this.centre(this.menu.require(restingSlot));
+  }
+
+  get book(): RecipeBookState {
+    return this.bookState;
+  }
+
+  get bookButtonHighlighted(): boolean {
+    return this.bookButtonFocused;
   }
 
   get state(): InventoryState {
@@ -118,38 +136,35 @@ export class ContainerScreen {
     return this.pointerPosition;
   }
 
-  get leftPos(): number {
-    if (this.book === RecipeBookState.Open) {
-      return 177 + Math.floor((screenWidth - this.menu.imageWidth - 200) / 2);
-    }
-
-    return Math.floor((screenWidth - this.menu.imageWidth) / 2);
+  get layout(): ScreenLayout {
+    return this.layoutFor(this.bookState);
   }
 
-  get bookPanel(): ScreenRectangle | null {
-    if (this.book === RecipeBookState.Closed) {
-      return null;
-    }
+  layoutFor(book: RecipeBookState): ScreenLayout {
+    const leftPos =
+      book === RecipeBookState.Open
+        ? 177 + Math.floor((screenWidth - this.menu.imageWidth - 200) / 2)
+        : Math.floor((screenWidth - this.menu.imageWidth) / 2);
+    const bookPanel =
+      book === RecipeBookState.Open
+        ? {
+            x: Math.floor((screenWidth - bookWidth) / 2) - bookOffset,
+            y: this.topPos + Math.floor((this.menu.imageHeight - bookHeight) / 2),
+            width: bookWidth,
+            height: bookHeight,
+          }
+        : null;
+    const bookButton =
+      this.menu instanceof RecipeBookMenu
+        ? {
+            x: leftPos + this.menu.bookButton.x,
+            y: this.topPos + this.menu.bookButton.y,
+            width: bookButtonWidth,
+            height: bookButtonHeight,
+          }
+        : null;
 
-    return {
-      x: Math.floor((screenWidth - bookWidth) / 2) - bookOffset,
-      y: this.topPos + Math.floor((this.menu.imageHeight - bookHeight) / 2),
-      width: bookWidth,
-      height: bookHeight,
-    };
-  }
-
-  get bookButton(): ScreenRectangle | null {
-    if (!(this.menu instanceof RecipeBookMenu)) {
-      return null;
-    }
-
-    return {
-      x: this.leftPos + this.menu.bookButton.x,
-      y: this.topPos + this.menu.bookButton.y,
-      width: bookButtonWidth,
-      height: bookButtonHeight,
-    };
+    return { leftPos, topPos: this.topPos, bookPanel, bookButton };
   }
 
   get hoveredSlot(): MenuSlot | null {
@@ -160,13 +175,7 @@ export class ContainerScreen {
     this.time += milliseconds;
   }
 
-  hover(slot: Slot) {
-    const target = this.menu.slot(slot);
-
-    if (target === undefined) {
-      throw new Error(`The "${slot.key}" slot is not part of this screen, so it cannot be hovered`);
-    }
-
+  hover(target: PointerTarget) {
     const pressed = [MouseButton.Left, MouseButton.Right].some((button) => this.held.has(button));
     const previous = this.hoveredSlot;
 
@@ -174,11 +183,15 @@ export class ContainerScreen {
       this.dragOver(previous);
     }
 
-    this.pointerPosition = this.centre(target);
+    this.pointerPosition = this.targetCentre(target);
+    const hovered = this.hoveredSlot;
 
     if (pressed) {
       this.movedSincePress = true;
-      this.dragOver(target);
+
+      if (hovered !== null) {
+        this.dragOver(hovered);
+      }
     }
   }
 
@@ -206,8 +219,24 @@ export class ContainerScreen {
   }
 
   press(key: string) {
-    if (!this.keys.includes(key)) {
-      throw new Error(`Unknown key "${key}": expected ${this.keys.join(", ")}`);
+    if (!ScreenKeys.all.includes(key)) {
+      throw new Error(`Unknown key "${key}": expected ${ScreenKeys.all.join(", ")}`);
+    }
+
+    if (key === focusKey) {
+      const forward = !this.shiftDown;
+
+      if (!this.changeFocus(forward)) {
+        this.changeFocus(forward);
+      }
+
+      return;
+    }
+
+    if (key === pressKey && this.focused === ScreenWidget.BookButton) {
+      this.toggleBook();
+
+      return;
     }
 
     const hovered = this.hoveredSlot;
@@ -250,15 +279,87 @@ export class ContainerScreen {
     return this.held.has(Modifier.Shift);
   }
 
+  private get children(): ScreenWidget[] {
+    return this.menu instanceof RecipeBookMenu ? [ScreenWidget.RecipeBook, ScreenWidget.BookButton] : [];
+  }
+
+  private changeFocus(forward: boolean): boolean {
+    const focused = this.focused;
+
+    if (focused !== null && this.changeWidgetFocus(focused)) {
+      return true;
+    }
+
+    const index = focused === null ? -1 : this.children.indexOf(focused);
+    const candidates = forward
+      ? this.children.slice(index + 1)
+      : this.children.slice(0, index < 0 ? this.children.length : index).reverse();
+
+    for (const child of candidates) {
+      if (this.changeWidgetFocus(child)) {
+        this.focused = child;
+
+        return true;
+      }
+    }
+
+    this.focused = null;
+
+    return false;
+  }
+
+  private changeWidgetFocus(widget: ScreenWidget): boolean {
+    if (widget === ScreenWidget.RecipeBook) {
+      return false;
+    }
+
+    this.bookButtonFocused = !this.bookButtonFocused;
+
+    return this.bookButtonFocused;
+  }
+
+  private toggleBook() {
+    this.bookState = this.bookState === RecipeBookState.Open ? RecipeBookState.Closed : RecipeBookState.Open;
+  }
+
+  private targetCentre(target: PointerTarget): Point {
+    if (target === ScreenWidget.BookButton) {
+      const button = this.layout.bookButton;
+
+      if (button === null) {
+        throw new Error(`The ${this.type} screen has no recipe book button to hover`);
+      }
+
+      return { x: button.x + button.width / 2, y: button.y + button.height / 2 };
+    }
+
+    const slot = this.menu.slot(target);
+
+    if (slot === undefined) {
+      throw new Error(`The "${target.key}" slot is not part of this screen, so it cannot be hovered`);
+    }
+
+    return this.centre(slot);
+  }
+
   private centre(slot: MenuSlot): Point {
-    return { x: this.leftPos + slot.x + slotSize / 2, y: this.topPos + slot.y + slotSize / 2 };
+    const { leftPos, topPos } = this.layout;
+
+    return { x: leftPos + slot.x + slotSize / 2, y: topPos + slot.y + slotSize / 2 };
   }
 
   private isHovering(slot: MenuSlot): boolean {
-    const x = this.pointerPosition.x - this.leftPos;
-    const y = this.pointerPosition.y - this.topPos;
+    const x = this.pointerPosition.x - this.layout.leftPos;
+    const y = this.pointerPosition.y - this.layout.topPos;
 
     return x >= slot.x - 1 && x < slot.x + slotSize + 1 && y >= slot.y - 1 && y < slot.y + slotSize + 1;
+  }
+
+  private bookButtonUnderPointer(): boolean {
+    const button = this.layout.bookButton;
+    const { x, y } = this.pointerPosition;
+
+    return button !== null && x >= button.x && y >= button.y && x < button.x + button.width && y < button.y + button.height;
   }
 
   private quickCraftCount(carried: ItemStack, slot: MenuSlot, existing: number): number {
@@ -269,6 +370,15 @@ export class ContainerScreen {
   }
 
   private mouseClicked(button: number) {
+    if (button === 0 && this.bookButtonUnderPointer()) {
+      this.presses.push(false);
+      this.toggleBook();
+      this.focused = ScreenWidget.BookButton;
+      this.bookButtonClicked = this.type === ContainerType.Inventory;
+
+      return;
+    }
+
     const slot = this.hoveredSlot;
     this.doubleClick =
       slot !== null &&
@@ -319,6 +429,12 @@ export class ContainerScreen {
   }
 
   private mouseReleased(button: number) {
+    if (this.bookButtonClicked) {
+      this.bookButtonClicked = false;
+
+      return;
+    }
+
     const slot = this.hoveredSlot;
 
     if (this.doubleClick && slot !== null && button === 0 && this.menu.canTakeItemForPickAll(slot)) {

@@ -8,6 +8,7 @@ import { Modifier } from "../inventory/Modifier";
 import { MouseButton } from "../inventory/MouseButton";
 import type { Point } from "../inventory/Point";
 import { RecipeBookState } from "../inventory/RecipeBookState";
+import { ScreenKeys } from "../inventory/ScreenKeys";
 import type { ScreenRectangle } from "../inventory/ScreenRectangle";
 import { Slot } from "../inventory/Slot";
 import { SlotSection } from "../inventory/SlotSection";
@@ -80,7 +81,15 @@ for (const slotName of Object.keys(slots)) {
   }
 }
 
-const snapshots = [{ state: screen.displayedState, held: screen.heldControls, pointer: screen.pointer, hovered: screen.hoveredSlot }];
+const snapshot = () => ({
+  state: screen.displayedState,
+  held: screen.heldControls,
+  pointer: screen.pointer,
+  hovered: screen.hoveredSlot,
+  book: screen.book,
+  bookButtonFocused: screen.bookButtonHighlighted,
+});
+const snapshots = [snapshot()];
 const doubleClicks: boolean[] = [];
 
 for (const [index, { text, input, delay }] of inputs.entries()) {
@@ -93,7 +102,7 @@ for (const [index, { text, input, delay }] of inputs.entries()) {
     throw new Error(`InventoryDemo input ${index + 1} "${text}": ${(error as Error).message}`);
   }
 
-  snapshots.push({ state: screen.displayedState, held: screen.heldControls, pointer: screen.pointer, hovered: screen.hoveredSlot });
+  snapshots.push(snapshot());
   doubleClicks.push(screen.doubleClickPresses.slice(pressesBefore).includes(true));
 }
 
@@ -107,18 +116,22 @@ const stackedKeyGroups = [
   ["Tab", "Space", "T"],
 ];
 
+const bookStates = [...new Set(snapshots.map((frame) => frame.book))];
+const layouts = new Map(bookStates.map((state) => [state, screen.layoutFor(state)]));
+const { leftPos, topPos, bookButton: screenBookButton } = screen.layoutFor(snapshots[0]!.book);
+const bookPanel = [...layouts.values()].find((layout) => layout.bookPanel !== null)?.bookPanel ?? null;
 const bookButton =
-  screen.bookButton === null
-    ? null
-    : { ...screen.bookButton, x: screen.bookButton.x - screen.leftPos, y: screen.bookButton.y - screen.topPos };
+  screenBookButton === null ? null : { ...screenBookButton, x: screenBookButton.x - leftPos, y: screenBookButton.y - topPos };
 const guiAreas: ScreenRectangle[] = [
   ...displaySlots.map((slot) => ({ x: slot.x - 1, y: slot.y - 1, width: slotBox, height: slotBox })),
   ...decorations[containerType].map((decoration) => decoration.area),
   ...(bookButton === null ? [] : [bookButton]),
 ];
 const screenAreas = [
-  ...guiAreas.map((area) => ({ ...area, x: area.x + screen.leftPos, y: area.y + screen.topPos })),
-  ...(screen.bookPanel === null ? [] : [screen.bookPanel]),
+  ...[...layouts.values()].flatMap((layout) =>
+    guiAreas.map((area) => ({ ...area, x: area.x + layout.leftPos, y: area.y + layout.topPos })),
+  ),
+  ...(bookPanel === null ? [] : [bookPanel]),
 ];
 const origin = {
   x: Math.min(...screenAreas.map((area) => area.x)),
@@ -133,6 +146,9 @@ const place = (area: Point, base: Point = { x: 0, y: 0 }) =>
 const size = (area: { width: number; height: number }) =>
   `width: ${area.width * guiScale}px; height: ${area.height * guiScale}px;`;
 const toScreen = (point: Point) => [(point.x - origin.x) * guiScale, (point.y - origin.y) * guiScale];
+const guiPositions = Object.fromEntries(
+  [...layouts].map(([state, layout]) => [state, toScreen({ x: layout.leftPos, y: layout.topPos })]),
+);
 
 const icons = IconRenderer.fromEnvironment();
 const iconPaths: string[] = [];
@@ -146,7 +162,7 @@ const iconIndex = (stack: ItemStack) => {
   return iconPaths.indexOf(path);
 };
 const encode = (stack: ItemStack | null) => (stack === null ? null : [iconIndex(stack), stack.count]);
-const frames = snapshots.map(({ state, held, pointer, hovered }) => ({
+const frames = snapshots.map(({ state, held, pointer, hovered, book, bookButtonFocused }) => ({
   slots: Object.fromEntries(
     displaySlots.flatMap((slot) => {
       const stack = state.get(slot.slot);
@@ -158,13 +174,19 @@ const frames = snapshots.map(({ state, held, pointer, hovered }) => ({
   held,
   pointer: toScreen(pointer),
   hovered: hovered?.key ?? null,
+  book,
+  bookButtonFocused,
 }));
-const inputViews = inputs.map(({ input }, index) => ({ ripple: input.ripple, doubleClick: doubleClicks[index]! }));
+const inputViews = inputs.map(({ input: { ripple } }, index) => ({
+  ripple,
+  doubleClick: doubleClicks[index]!,
+  actsOnSlot: ripple !== null && (ripple.target === "pointer" || ScreenKeys.actsOnSlot(ripple.key)),
+}));
 const stepEnds = inputs.flatMap(({ step }, index) => (inputs[index + 1]?.step === step ? [] : [index + 1]));
 const countFont = ItemCountFont.fromEnvironment().metrics;
 const countGlyphs = new CountGlyphs(countFont);
 const bookIcon = icons.resolve("item/knowledge_book").path;
-const demo = { pace, endPause, icons: iconPaths, frames, inputs: inputViews, stepEnds, countFont };
+const demo = { pace, endPause, icons: iconPaths, frames, inputs: inputViews, stepEnds, countFont, guiPositions };
 const countSprite = `--count-sprite-width: ${countFont.cellWidth * countFont.characters.length}; --count-cell-height: ${countFont.cellHeight};`;
 const speeds = [0.1, 0.5, 1, 2];
 const defaultSpeed = 1;
@@ -174,8 +196,16 @@ const defaultSpeed = 1;
   {title !== undefined && <figcaption>{title}</figcaption>}
   <div class="inventory-panel">
     <div class="inventory-screen" data-container={containerType} style={size(extent)}>
-      {screen.bookPanel !== null && <span class="inventory-book" style={place(screen.bookPanel, origin) + size(screen.bookPanel)} />}
-      <div class="inventory-gui" style={place({ x: screen.leftPos, y: screen.topPos }, origin)}>
+      {
+        bookPanel !== null && (
+          <span
+            class="inventory-book"
+            style={place(bookPanel, origin) + size(bookPanel)}
+            hidden={snapshots[0]!.book === RecipeBookState.Closed}
+          />
+        )
+      }
+      <div class="inventory-gui" style={place({ x: leftPos, y: topPos }, origin)}>
         {
           decorations[containerType].map((decoration) => (
             <span class="inventory-decoration" data-kind={decoration.kind} style={place(decoration.area) + size(decoration.area)} />
@@ -183,7 +213,11 @@ const defaultSpeed = 1;
         }
         {
           bookButton !== null && (
-            <span class="inventory-book-button" style={place(bookButton) + size(bookButton)}>
+            <span
+              class="inventory-book-button"
+              style={place(bookButton) + size(bookButton)}
+              data-focused={snapshots[0]!.bookButtonFocused ? true : undefined}
+            >
               <img src={bookIcon} alt="" width="16" height="16" />
             </span>
           )

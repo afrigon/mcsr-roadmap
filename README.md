@@ -105,10 +105,14 @@ Pages can also use the widgets in `src/widgets/`:
   inventory or crafting table with the recipe book open, which moves the screen right as in game.
   `align` is `leading` (the default) or `center`. Under the screen, the same set of keys and both
   mouse buttons light up as they are pressed. Inputs are:
-  - `hover <slot>`: moves the pointer; with a mouse button held, this drags across slots.
-  - `click [<slot>]` and `right-click [<slot>]`: press and release, after hovering the slot if one is given.
+  - `hover <slot|book>`: moves the pointer to a slot or to the recipe book button; with a mouse
+    button held, this drags across slots.
+  - `click [<slot|book>]` and `right-click [<slot|book>]`: press and release, after hovering the
+    target if one is given. A left click on `book` opens or closes the recipe book.
   - `hold <shift|ctrl|left|right>` and `release <…>`: hold or let go of a modifier or mouse button.
-  - `key <1–9|f|q>`: press a key over the hovered slot.
+  - `key <1–9|f|q|tab|space>`: press a key. 1–9, F and Q act on the hovered slot; Tab moves
+    keyboard focus to the recipe book button and Space presses it, as in game. Opening or closing
+    the book moves the screen under a pointer that stays where it is.
 
   A nested list is a burst, such as `["click", "key 9", "click"]`: its inputs are 100 ms apart and
   play as a single step, while every other input is its own step, 300 ms after the one before. The
