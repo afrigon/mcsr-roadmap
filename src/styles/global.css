@@ -893,7 +893,7 @@
   .bar-chart-legend {
     display: flex;
     gap: 14px;
-    margin-bottom: 8px;
+    margin-top: 10px;
     font-size: 12px;
     color: var(--color-text-soft);
 
@@ -945,16 +945,16 @@
     gap: 2px;
     height: 16px;
     width: calc(var(--ratio) * (100% - 3.5em));
-    border-radius: 0 4px 4px 0;
-    overflow: hidden;
   }
 
   .bar-chart-segment {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative;
     flex-basis: 0;
     min-width: 0;
+
+    &:last-child {
+      border-radius: 0 4px 4px 0;
+    }
 
     &:hover {
       filter: brightness(1.2);
@@ -962,14 +962,24 @@
   }
 
   .bar-chart-segment-value {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    z-index: 1;
+    translate: -50% 0;
+    padding: 1px 6px;
+    border: 1px solid var(--color-line);
+    border-radius: 4px;
+    background: var(--color-surface-raised);
     font-size: 11px;
-    font-weight: 600;
     font-variant-numeric: tabular-nums;
-    color: var(--color-surface);
-    opacity: 0;
+    color: var(--color-text);
+    white-space: nowrap;
+    pointer-events: none;
+    visibility: hidden;
 
-    .bar-chart-bar:hover & {
-      opacity: 1;
+    .bar-chart-segment:hover > & {
+      visibility: visible;
     }
   }
 

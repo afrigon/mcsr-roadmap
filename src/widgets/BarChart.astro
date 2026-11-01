@@ -92,18 +92,6 @@ const rows = categories.map((category, categoryIndex) => ({
 
 <figure class="bar-chart">
   {title !== undefined && <figcaption>{title}</figcaption>}
-  {
-    series.length > 1 && (
-      <ul class="bar-chart-legend">
-        {series.map(({ name }, index) => (
-          <li>
-            <span class="bar-chart-swatch" data-color={colors[index]} />
-            {name}
-          </li>
-        ))}
-      </ul>
-    )
-  }
   <div class="bar-chart-rows" style={`--panels: ${panels.length};`}>
     {
       rows.map(({ category, cells }) => (
@@ -122,7 +110,7 @@ const rows = categories.map((category, categoryIndex) => ({
                         class="bar-chart-segment"
                         data-color={segment.color}
                         style={`flex-grow: ${segment.share};`}
-                        title={segment.description}
+                        title={line.segments.length > 1 ? undefined : segment.description}
                       >
                         {line.segments.length > 1 && <span class="bar-chart-segment-value">{segment.value}</span>}
                       </span>
@@ -137,4 +125,16 @@ const rows = categories.map((category, categoryIndex) => ({
       ))
     }
   </div>
+  {
+    series.length > 1 && (
+      <ul class="bar-chart-legend">
+        {series.map(({ name }, index) => (
+          <li>
+            <span class="bar-chart-swatch" data-color={colors[index]} />
+            {name}
+          </li>
+        ))}
+      </ul>
+    )
+  }
 </figure>
