@@ -3,6 +3,10 @@
 A learning roadmap for MCSR Ranked (Minecraft 1.16.1 ranked speedrun), built with Astro, plain
 TypeScript and Tailwind v4. See README.md for the data format.
 
+## Minecraft Version
+
+Minecraft Java Edition 1.16.1 is the only version this project covers. Always make sure the information found is accurate for this version specifically.
+
 ## Workflow
 
 - Work directly on `main` in this checkout. The usual worktree and session rules do not apply to

@@ -5,11 +5,15 @@ goal: sub45
 parent: food-basics
 icon: item/chicken
 index: 135
-description: Hunt pigs first, then cows, then sheep, then chickens.
+description: Pigs > Cows > Sheeps > Chickens
 ---
 
-Expected food from one kill on fire, so the drops come out cooked. Looting adds the same half item
-per kill to every animal on average, so it never changes the order.
+Pigs and cows drop the same food per kill, roughly double a sheep and triple a chicken. What separates them is the chase. A hit cow panics and runs faster than you can sprint, while a fleeing pig is slower than you walk, so you can finish it before it gets away.
+
+In a run you take what the seed gives you, so this order only matters when you have several animals to choose from. Otherwise, kill whatever is closest: going out of your way for a better animal costs more time than the food difference is worth.
+
+> [!NOTE]
+> While looting improves the effective food per kill, it does not affect the priority order.
 
 <BarChart
   title="Effective Food per Kill"
@@ -26,7 +30,7 @@ per kill to every animal on average, so it never changes the order.
 />
 
 <BarChart
-  title="How hard each animal is to finish"
+  title="Kill Difficulty"
   layout="panels"
   categories={[
   { label: "Pig", icon: "item/cooked_porkchop" },
@@ -40,6 +44,3 @@ per kill to every animal on average, so it never changes the order.
   { name: "Hitbox volume (m³)", values: [0.73, 1.13, 1.05, 0.11], color: "gray" },
   ]}
 />
-
-Pigs and cows drop the same food, but a panicking cow runs fastest of the four, so pigs come first.
-Looting only counts when your Looting weapon lands the killing blow, not the fire.
