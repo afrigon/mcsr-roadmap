@@ -107,7 +107,10 @@ const defaultSpeed = 1;
   <div class="inventory-controls">
     <div class="tabs-list" role="group" aria-label="Playback">
       <button type="button" data-control="previous" aria-label="Previous input">‹</button>
-      <button type="button" data-control="play">Play</button>
+      <button type="button" class="inventory-play" data-control="play">
+        <span data-label="play">Play</span>
+        <span data-label="pause">Pause</span>
+      </button>
       <button type="button" data-control="next" aria-label="Next input">›</button>
     </div>
     <span class="inventory-progress" data-progress>0 / {actions.length}</span>

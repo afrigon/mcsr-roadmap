@@ -82,14 +82,14 @@ export class InventoryDemoController {
     }
 
     this.playing = true;
-    this.playButton.textContent = "Pause";
+    this.playButton.toggleAttribute("data-playing", true);
     this.advance(true);
   }
 
   private pause() {
     window.clearTimeout(this.timer);
     this.playing = false;
-    this.playButton.textContent = "Play";
+    this.playButton.toggleAttribute("data-playing", false);
   }
 
   private next() {
