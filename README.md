@@ -99,6 +99,7 @@ Pages can also use the widgets in `src/widgets/`:
   and an optional count. Inputs are:
   - `hover <slot>`: moves the pointer; with a mouse button held, this drags across slots.
   - `click [<slot>]` and `right-click [<slot>]`: press and release, after hovering the slot if one is given.
+  - `double-click [<slot>]`: two left clicks 80 ms apart, played and timed as one input.
   - `hold <shift|ctrl|left|right>` and `release <…>`: hold or let go of a modifier or mouse button.
   - `key <1–9|f|q>`: press a key over the hovered slot.
   - `wait <ms>`: pause before the next input.

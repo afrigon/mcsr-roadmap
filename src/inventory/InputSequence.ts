@@ -1,4 +1,5 @@
 import { Click } from "./Click";
+import { DoubleClick } from "./DoubleClick";
 import type { Control } from "./Control";
 import { Hold } from "./Hold";
 import { Hover } from "./Hover";
@@ -22,7 +23,7 @@ const controls: Record<string, Control> = {
   left: MouseButton.Left,
   right: MouseButton.Right,
 };
-const verbs = ["hover", "click", "right-click", "hold", "release", "key", "wait"];
+const verbs = ["hover", "click", "double-click", "right-click", "hold", "release", "key", "wait"];
 
 export class InputSequence {
   static parse(lines: readonly string[]): TimedInput[] {
@@ -57,6 +58,8 @@ export class InputSequence {
         return new Hover(Slot.parse(argument));
       case "click":
         return new Click(MouseButton.Left, argument === "" ? null : Slot.parse(argument));
+      case "double-click":
+        return new DoubleClick(argument === "" ? null : Slot.parse(argument));
       case "right-click":
         return new Click(MouseButton.Right, argument === "" ? null : Slot.parse(argument));
       case "hold":

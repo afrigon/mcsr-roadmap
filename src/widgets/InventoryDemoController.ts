@@ -27,6 +27,8 @@ const glideShare = 0.5;
 
 const pressFlashDuration = 150;
 
+const rippleSpacing = 120;
+
 const restingSlot = "inventory 1";
 
 export class InventoryDemoController {
@@ -42,6 +44,7 @@ export class InventoryDemoController {
   private speed: number;
   private timer: number | undefined;
   private playing = false;
+  private hoverTracking: number | undefined;
 
   constructor(private readonly demo: HTMLElement) {
     this.data = JSON.parse(demo.dataset.inventoryDemo!) as DemoData;
@@ -154,12 +157,10 @@ export class InventoryDemoController {
     this.frame = frame;
     const { slots, cursor, held } = this.data.frames[frame]!;
     const interacted = this.data.steps[frame - 1]?.ripple !== null && frame > 0;
-    const hoveredSlot = this.slots.get(this.pointerSlot(frame));
-    const activeSlot = interacted ? hoveredSlot : undefined;
+    const activeSlot = interacted ? this.slots.get(this.pointerSlot(frame)) : undefined;
 
     for (const [key, element] of this.slots) {
       this.fill(element, slots[key] ?? null);
-      element.toggleAttribute("data-hovered", element === hoveredSlot);
       element.toggleAttribute("data-active", element === activeSlot);
     }
 
@@ -191,6 +192,34 @@ export class InventoryDemoController {
 
     this.pointer.style.transitionDuration = `${duration}ms`;
     this.pointer.style.translate = `${x}px ${y}px`;
+    this.trackHover();
+  }
+
+  private trackHover() {
+    window.cancelAnimationFrame(this.hoverTracking ?? 0);
+
+    const update = () => {
+      this.highlightUnderPointer();
+
+      if (this.pointer.getAnimations().length > 0) {
+        this.hoverTracking = window.requestAnimationFrame(update);
+      }
+    };
+
+    update();
+  }
+
+  private highlightUnderPointer() {
+    const [x = 0, y = 0] = getComputedStyle(this.pointer).translate.split(" ").map((value) => parseFloat(value));
+
+    for (const element of this.slots.values()) {
+      const inside =
+        x >= element.offsetLeft &&
+        x < element.offsetLeft + element.offsetWidth &&
+        y >= element.offsetTop &&
+        y < element.offsetTop + element.offsetHeight;
+      element.toggleAttribute("data-hovered", inside);
+    }
   }
 
   private ripple(ripple: Ripple | null) {
@@ -204,10 +233,16 @@ export class InventoryDemoController {
       return;
     }
 
-    const ring = document.createElement("span");
-    ring.className = "inventory-ripple";
-    ring.addEventListener("animationend", () => ring.remove());
-    target.append(ring);
+    const clicks = ripple.target === "pointer" ? ripple.clicks : 1;
+
+    for (let click = 0; click < clicks; click++) {
+      window.setTimeout(() => {
+        const ring = document.createElement("span");
+        ring.className = "inventory-ripple";
+        ring.addEventListener("animationend", () => ring.remove());
+        target.append(ring);
+      }, (click * rippleSpacing) / this.speed);
+    }
 
     if (ripple.target === "key") {
       target.toggleAttribute("data-pressed", true);

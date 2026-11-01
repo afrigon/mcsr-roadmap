@@ -9,7 +9,7 @@ export class Hold implements Input {
   readonly ripple: Ripple | null;
 
   constructor(private readonly control: Control) {
-    this.ripple = Object.values(MouseButton).includes(control as MouseButton) ? { target: "pointer" } : null;
+    this.ripple = Object.values(MouseButton).includes(control as MouseButton) ? { target: "pointer", clicks: 1 } : null;
   }
 
   perform(screen: InventoryScreen) {
