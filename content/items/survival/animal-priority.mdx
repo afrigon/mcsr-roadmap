@@ -14,6 +14,16 @@ per kill to every animal on average, so it never changes the order.
 <Tabs>
   <Tab label="Looting 0">
     <BarChart
+      title="Items per kill"
+      categories={[
+      { label: "Pig", icon: "item/cooked_porkchop" },
+      { label: "Cow", icon: "item/cooked_beef" },
+      { label: "Sheep", icon: "item/cooked_mutton" },
+      { label: "Chicken", icon: "item/cooked_chicken" },
+      ]}
+      series={[{ name: "Items per kill", values: [2, 2, 1.5, 1] }]}
+    />
+    <BarChart
       title="Hunger per kill"
       categories={[
       { label: "Pig", icon: "item/cooked_porkchop" },
@@ -35,6 +45,16 @@ per kill to every animal on average, so it never changes the order.
     />
   </Tab>
   <Tab label="Looting 1">
+    <BarChart
+      title="Items per kill"
+      categories={[
+      { label: "Pig", icon: "item/cooked_porkchop" },
+      { label: "Cow", icon: "item/cooked_beef" },
+      { label: "Sheep", icon: "item/cooked_mutton" },
+      { label: "Chicken", icon: "item/cooked_chicken" },
+      ]}
+      series={[{ name: "Items per kill", values: [2.5, 2.5, 2, 1.5] }]}
+    />
     <BarChart
       title="Hunger per kill"
       categories={[
@@ -58,6 +78,16 @@ per kill to every animal on average, so it never changes the order.
   </Tab>
   <Tab label="Looting 2">
     <BarChart
+      title="Items per kill"
+      categories={[
+      { label: "Pig", icon: "item/cooked_porkchop" },
+      { label: "Cow", icon: "item/cooked_beef" },
+      { label: "Sheep", icon: "item/cooked_mutton" },
+      { label: "Chicken", icon: "item/cooked_chicken" },
+      ]}
+      series={[{ name: "Items per kill", values: [3, 3, 2.5, 2] }]}
+    />
+    <BarChart
       title="Hunger per kill"
       categories={[
       { label: "Pig", icon: "item/cooked_porkchop" },
@@ -80,6 +110,16 @@ per kill to every animal on average, so it never changes the order.
   </Tab>
   <Tab label="Looting 3">
     <BarChart
+      title="Items per kill"
+      categories={[
+      { label: "Pig", icon: "item/cooked_porkchop" },
+      { label: "Cow", icon: "item/cooked_beef" },
+      { label: "Sheep", icon: "item/cooked_mutton" },
+      { label: "Chicken", icon: "item/cooked_chicken" },
+      ]}
+      series={[{ name: "Items per kill", values: [3.5, 3.5, 3, 2.5] }]}
+    />
+    <BarChart
       title="Hunger per kill"
       categories={[
       { label: "Pig", icon: "item/cooked_porkchop" },
@@ -101,6 +141,17 @@ per kill to every animal on average, so it never changes the order.
     />
   </Tab>
 </Tabs>
+
+Each item is worth more for some animals than others, and every food item takes the same 1.6 s to
+eat. Fewer, bigger items mean less time eating: one porkchop restores 8 hunger in 1.6 s, while two
+cooked chickens restore 12 in 3.2 s.
+
+| Cooked item | Hunger | Saturation |
+| --- | --- | --- |
+| Porkchop | 8 | 12.8 |
+| Steak | 8 | 12.8 |
+| Mutton | 6 | 9.6 |
+| Chicken | 6 | 7.2 |
 
 How hard each animal is to finish:
 
