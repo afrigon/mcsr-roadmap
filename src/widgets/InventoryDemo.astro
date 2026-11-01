@@ -86,7 +86,13 @@ const defaultSpeed = 1;
       ))
     }
     <div class="inventory-slot-keys">
-      {slotKeys.map((key) => <kbd data-key={key}>{key}</kbd>)}
+      {
+        slotKeys.map((key) => (
+          <span class="inventory-slot-key">
+            <kbd data-key={key}>{key}</kbd>
+          </span>
+        ))
+      }
     </div>
     <div class="inventory-keys">
       {keys.map((key) => <kbd data-key={key}>{key}</kbd>)}
@@ -99,9 +105,11 @@ const defaultSpeed = 1;
     </span>
   </div>
   <div class="inventory-controls">
-    <button type="button" data-control="previous" aria-label="Previous input">‹</button>
-    <button type="button" data-control="play">Play</button>
-    <button type="button" data-control="next" aria-label="Next input">›</button>
+    <div class="tabs-list" role="group" aria-label="Playback">
+      <button type="button" data-control="previous" aria-label="Previous input">‹</button>
+      <button type="button" data-control="play">Play</button>
+      <button type="button" data-control="next" aria-label="Next input">›</button>
+    </div>
     <span class="inventory-progress" data-progress>0 / {actions.length}</span>
     <div class="tabs-list" role="group" aria-label="Playback speed">
       {
