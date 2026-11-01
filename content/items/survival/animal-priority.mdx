@@ -11,68 +11,19 @@ description: Hunt pigs first, then cows, then sheep, then chickens.
 Expected food from one kill on fire, so the drops come out cooked. Looting adds the same half item
 per kill to every animal on average, so it never changes the order.
 
-<Tabs>
-  <Tab label="Base">
-    <BarChart
-      title="Food per kill"
-      categories={[
-      { label: "Pig (1–3)", icon: "item/cooked_porkchop" },
-      { label: "Cow (1–3)", icon: "item/cooked_beef" },
-      { label: "Sheep (1–2)", icon: "item/cooked_mutton" },
-      { label: "Chicken (1)", icon: "item/cooked_chicken" },
-      ]}
-      series={[
-      { name: "Hunger", values: [16, 16, 9, 6], color: "orange", stack: "food" },
-      { name: "Saturation", values: [25.6, 25.6, 14.4, 7.2], color: "yellow", stack: "food" },
-      ]}
-    />
-  </Tab>
-  <Tab label="Looting 1">
-    <BarChart
-      title="Food per kill"
-      categories={[
-      { label: "Pig (1–4)", icon: "item/cooked_porkchop" },
-      { label: "Cow (1–4)", icon: "item/cooked_beef" },
-      { label: "Sheep (1–3)", icon: "item/cooked_mutton" },
-      { label: "Chicken (1–2)", icon: "item/cooked_chicken" },
-      ]}
-      series={[
-      { name: "Hunger", values: [20, 20, 12, 9], color: "orange", stack: "food" },
-      { name: "Saturation", values: [32, 32, 19.2, 10.8], color: "yellow", stack: "food" },
-      ]}
-    />
-  </Tab>
-  <Tab label="Looting 2">
-    <BarChart
-      title="Food per kill"
-      categories={[
-      { label: "Pig (1–5)", icon: "item/cooked_porkchop" },
-      { label: "Cow (1–5)", icon: "item/cooked_beef" },
-      { label: "Sheep (1–4)", icon: "item/cooked_mutton" },
-      { label: "Chicken (1–3)", icon: "item/cooked_chicken" },
-      ]}
-      series={[
-      { name: "Hunger", values: [24, 24, 15, 12], color: "orange", stack: "food" },
-      { name: "Saturation", values: [38.4, 38.4, 24, 14.4], color: "yellow", stack: "food" },
-      ]}
-    />
-  </Tab>
-  <Tab label="Looting 3">
-    <BarChart
-      title="Food per kill"
-      categories={[
-      { label: "Pig (1–6)", icon: "item/cooked_porkchop" },
-      { label: "Cow (1–6)", icon: "item/cooked_beef" },
-      { label: "Sheep (1–5)", icon: "item/cooked_mutton" },
-      { label: "Chicken (1–4)", icon: "item/cooked_chicken" },
-      ]}
-      series={[
-      { name: "Hunger", values: [28, 28, 18, 15], color: "orange", stack: "food" },
-      { name: "Saturation", values: [44.8, 44.8, 28.8, 18], color: "yellow", stack: "food" },
-      ]}
-    />
-  </Tab>
-</Tabs>
+<BarChart
+  title="Food per kill"
+  categories={[
+  { label: "Pig (1–3)", icon: "item/cooked_porkchop" },
+  { label: "Cow (1–3)", icon: "item/cooked_beef" },
+  { label: "Sheep (1–2)", icon: "item/cooked_mutton" },
+  { label: "Chicken (1)", icon: "item/cooked_chicken" },
+  ]}
+  series={[
+  { name: "Hunger", values: [16, 16, 9, 6], color: "orange", stack: "food" },
+  { name: "Saturation", values: [25.6, 25.6, 14.4, 7.2], color: "yellow", stack: "food" },
+  ]}
+/>
 
 How hard each animal is to finish:
 

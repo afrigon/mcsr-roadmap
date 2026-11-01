@@ -80,6 +80,7 @@ const rows = categories.map((category, categoryIndex) => ({
           return {
             color: colors[index]!,
             share: value / total,
+            value: format(value),
             description: `${category.label} · ${name}: ${format(value)}${unitSuffix}`,
           };
         }),
@@ -122,7 +123,9 @@ const rows = categories.map((category, categoryIndex) => ({
                         data-color={segment.color}
                         style={`flex-grow: ${segment.share};`}
                         title={segment.description}
-                      />
+                      >
+                        {line.segments.length > 1 && <span class="bar-chart-segment-value">{segment.value}</span>}
+                      </span>
                     ))}
                   </span>
                   <span class="bar-chart-value">{line.total}</span>
