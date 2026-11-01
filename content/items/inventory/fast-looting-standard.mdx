@@ -1,13 +1,55 @@
 ---
 title: Fast Looting
-label: Hotkey
+label: Fast
 category: inventory
-goal: sub25
+goal: sub15
 parent: fast-looting-easy
 icon: composite/chest
 index: 30
 description: Shift plus hotkey or offhand clicks.
 ---
 
-<YouTube id="jsyYCQ8W7IE" start={485} title="Calisthenicuber: offhand fast looting" />
-<YouTube id="ebd3q3HNnQA" start={29} title="Sendoff: the shift and offhand method" />
+<InventoryDemo
+  container="chest"
+  slots={{
+    "chest 1": "item/cooked_cod",
+    "chest 2": "item/cooked_salmon",
+    "chest 3": "item/iron_ingot",
+    "chest 4": "item/iron_ingot",
+    "chest 5": "item/cooked_salmon",
+    "chest 6": "item/iron_ingot",
+    "chest 7": "item/cooked_cod",
+    "chest 8": "item/emerald",
+    "chest 9": "item/cooked_salmon",
+    "chest 10": "item/gold_ingot",
+    "chest 11": "item/emerald",
+    "chest 12": "item/gold_ingot 3",
+    "chest 14": "item/gold_ingot",
+    "chest 15": "item/gold_ingot 2",
+    "chest 16": "item/iron_ingot",
+    "chest 17": "item/cooked_salmon",
+    "chest 18": "item/gold_ingot",
+    "chest 19": "item/cooked_cod",
+    "chest 20": "item/iron_ingot",
+    "chest 21": "item/emerald 3",
+    "chest 22": "item/leather_chestplate",
+    "chest 23": "item/iron_ingot",
+    "chest 24": "item/iron_ingot 3",
+    "chest 25": "item/emerald",
+    "chest 26": "item/emerald",
+    "chest 27": "item/heart_of_the_sea"
+  }}
+  inputs={[
+    "hover chest 19",
+    "hold shift",
+    ["key 2", "click", "key 2", "click"],
+    "hover chest 20",
+    ["key 2", "click", "key 2", "click"],
+    "hover chest 10",
+    ["key 2", "click", "key 2", "click"],
+    "hover chest 2",
+    ["key 2", "click", "key 2", "click"],
+    "release shift",
+    "hover inventory 1"
+  ]}
+/>

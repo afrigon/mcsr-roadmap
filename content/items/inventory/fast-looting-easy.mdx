@@ -1,12 +1,38 @@
 ---
 title: Fast Looting
-label: Spam
+label: Simple
 category: inventory
-goal: sub45
+goal: sub30
 parent: chest-looting
 icon: composite/chest
 index: 20
 description: Shift-click spam.
 ---
 
-<YouTube id="ebd3q3HNnQA" start={55} title="Sendoff: shift-click looting" />
+<InventoryDemo
+  container="chest"
+  slots={{
+    "chest 3": "item/iron_ingot 1",
+    "chest 4": "item/iron_ingot 1",
+    "chest 13": "item/iron_ingot 1",
+    "chest 14": "item/iron_ingot 1",
+    "chest 19": "item/iron_ingot 1",
+    "chest 17": "item/obsidian 1",
+    "chest 18": "item/obsidian 1",
+    "chest 25": "item/obsidian 1",
+    "chest 21": "item/diamond 1",
+    "chest 24": "item/iron_boots 1",
+    "chest 26": "item/saddle 1"
+  }}
+  inputs={[
+    "click chest 26",
+    "hold shift",
+    ["click chest 25", "click"],
+    "click chest 24",
+    ["click chest 14", "click"],
+    "click chest 21",
+    "release shift",
+    "click",
+    "hover inventory 1"
+  ]}
+/>

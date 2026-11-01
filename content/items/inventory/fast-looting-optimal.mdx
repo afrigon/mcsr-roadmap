@@ -2,12 +2,58 @@
 title: Fast Looting
 label: 3-input
 category: inventory
-goal: sub11
+goal: sub7
 parent: fast-looting-standard
 icon: composite/chest
 index: 40
 description: Three-input, hotkeyless looting.
 ---
+
+<InventoryDemo
+  container="chest"
+  slots={{
+    "chest 1": "item/iron_ingot",
+    "chest 2": "item/heart_of_the_sea",
+    "chest 3": "item/gold_ingot",
+    "chest 4": "item/tnt",
+    "chest 5": "item/cooked_cod",
+    "chest 6": "item/emerald",
+    "chest 7": "item/tnt",
+    "chest 8": "item/gold_ingot 2",
+    "chest 9": "item/emerald",
+    "chest 10": "item/cooked_cod 2",
+    "chest 11": "item/emerald 2",
+    "chest 12": "item/iron_ingot",
+    "chest 13": "item/iron_ingot",
+    "chest 14": "item/gold_ingot",
+    "chest 15": "item/iron_ingot",
+    "chest 16": "item/iron_ingot",
+    "chest 17": "item/iron_ingot 3",
+    "chest 18": "item/iron_ingot",
+    "chest 19": "item/cooked_cod",
+    "chest 20": "item/gold_ingot",
+    "chest 21": "item/iron_ingot",
+    "chest 22": "item/gold_ingot",
+    "chest 23": "item/cooked_cod 3",
+    "chest 24": "item/gold_ingot",
+    "chest 25": "item/iron_ingot",
+    "chest 26": "item/iron_ingot 2",
+    "chest 27": "item/iron_ingot"
+  }}
+  inputs={[
+    "hover chest 19",
+    "hold shift",
+    ["click", "key 9", "click"],
+    "hover chest 20",
+    ["click", "key 8", "click"],
+    "hover chest 21",
+    ["click", "key 7", "click"],
+    "hover chest 4",
+    ["click", "key 6", "click"],
+    "release shift",
+    "hover inventory 1"
+  ]}
+/>
 
 - [7rowl: OWPractice map](https://github.com/7rowl/OWPractice/releases/latest)
 
