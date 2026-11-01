@@ -1,6 +1,8 @@
 import type { Control } from "../inventory/Control";
 import { MouseButton } from "../inventory/MouseButton";
 import type { Ripple } from "../inventory/Ripple";
+import type { CountFontMetrics } from "../textures/CountFontMetrics";
+import { CountGlyphs } from "../textures/CountGlyphs";
 
 type EncodedStack = [icon: number, count: number];
 
@@ -23,6 +25,7 @@ interface DemoData {
   frames: Frame[];
   inputs: InputView[];
   stepEnds: number[];
+  countFont: CountFontMetrics;
 }
 
 const glideShare = 0.5;
@@ -49,6 +52,7 @@ export class InventoryDemoController {
   private playing = false;
   private hoverTracking: number | undefined;
   private readonly offsets: [number, number][];
+  private readonly countGlyphs: CountGlyphs;
 
   constructor(private readonly demo: HTMLElement) {
     this.data = JSON.parse(demo.dataset.inventoryDemo!) as DemoData;
@@ -63,6 +67,7 @@ export class InventoryDemoController {
     this.speedButtons = [...demo.querySelectorAll<HTMLButtonElement>("[data-speed]")];
     const pressed = this.speedButtons.find((button) => button.getAttribute("aria-pressed") === "true")!;
     this.speed = Number(pressed.dataset.speed);
+    this.countGlyphs = new CountGlyphs(this.data.countFont);
     this.offsets = this.data.inputs.map(() => [
       (Math.random() * 2 - 1) * pointerVariance,
       (Math.random() * 2 - 1) * pointerVariance,
@@ -312,7 +317,16 @@ export class InventoryDemoController {
     if (count > 1) {
       const label = document.createElement("span");
       label.className = "inventory-count";
-      label.textContent = String(count);
+      label.ariaLabel = String(count);
+
+      for (const glyph of this.countGlyphs.layout(count)) {
+        const glyphElement = document.createElement("span");
+        glyphElement.className = "inventory-count-glyph";
+        glyphElement.style.setProperty("--offset", String(glyph.offset));
+        glyphElement.style.setProperty("--advance", String(glyph.advance));
+        label.append(glyphElement);
+      }
+
       element.append(label);
     }
   }

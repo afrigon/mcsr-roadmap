@@ -72,6 +72,18 @@ export class Texture {
     return result;
   }
 
+  opaqueWidth(): number {
+    for (let x = this.width - 1; x >= 0; x--) {
+      for (let y = 0; y < this.height; y++) {
+        if (this.png.data[(y * this.width + x) * channels + alphaChannel] !== 0) {
+          return x + 1;
+        }
+      }
+    }
+
+    return 0;
+  }
+
   pixel(x: number, y: number): number[] {
     const offset = (y * this.width + x) * channels;
 

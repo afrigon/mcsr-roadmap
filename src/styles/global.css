@@ -1071,6 +1071,8 @@
   }
 
   .inventory-slot {
+    --item-inset: 1px;
+
     position: relative;
     display: grid;
     place-items: center;
@@ -1102,14 +1104,22 @@
   }
 
   .inventory-count {
+    --game-pixel: 2px;
+
     position: absolute;
-    right: 2px;
-    bottom: 0;
-    font-size: 11px;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    color: var(--color-text);
-    text-shadow: 1px 1px 0 rgb(0 0 0 / 0.8);
+    top: calc(var(--item-inset) + 9 * var(--game-pixel));
+    right: calc(var(--item-inset) - var(--game-pixel));
+    display: flex;
+    pointer-events: none;
+  }
+
+  .inventory-count-glyph {
+    width: calc(var(--advance) * var(--game-pixel));
+    height: calc(var(--count-cell-height) * var(--game-pixel));
+    background: url("/fonts/item-count.png") no-repeat;
+    background-position: calc(var(--offset) * -1 * var(--game-pixel)) 0;
+    background-size: calc(var(--count-sprite-width) * var(--game-pixel)) auto;
+    image-rendering: pixelated;
   }
 
   .inventory-demo kbd {
@@ -1233,6 +1243,8 @@
   }
 
   .inventory-held {
+    --item-inset: 0px;
+
     position: absolute;
     top: -16px;
     left: -16px;

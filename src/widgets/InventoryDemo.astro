@@ -6,7 +6,9 @@ import type { ItemStack } from "../inventory/ItemStack";
 import { Modifier } from "../inventory/Modifier";
 import { Slot } from "../inventory/Slot";
 import { SlotSection } from "../inventory/SlotSection";
+import { CountGlyphs } from "../textures/CountGlyphs";
 import { IconRenderer } from "../textures/IconRenderer";
+import { ItemCountFont } from "../textures/ItemCountFont";
 
 type Container = "chest";
 
@@ -78,12 +80,15 @@ const inputViews = inputs.map(({ input }, index) => ({
   doubleClick: doubleClicks[index]!,
 }));
 const stepEnds = inputs.flatMap(({ step }, index) => (inputs[index + 1]?.step === step ? [] : [index + 1]));
-const demo = { pace, endPause, icons: iconPaths, frames, inputs: inputViews, stepEnds };
+const countFont = ItemCountFont.fromEnvironment().metrics;
+const countGlyphs = new CountGlyphs(countFont);
+const demo = { pace, endPause, icons: iconPaths, frames, inputs: inputViews, stepEnds, countFont };
+const countSprite = `--count-sprite-width: ${countFont.cellWidth * countFont.characters.length}; --count-cell-height: ${countFont.cellHeight};`;
 const speeds = [0.1, 0.5, 1, 2];
 const defaultSpeed = 1;
 ---
 
-<figure class="inventory-demo" data-inventory-demo={JSON.stringify(demo)}>
+<figure class="inventory-demo" data-inventory-demo={JSON.stringify(demo)} style={countSprite}>
   {title !== undefined && <figcaption>{title}</figcaption>}
   <div class="inventory-panel">
     {
@@ -95,7 +100,16 @@ const defaultSpeed = 1;
             return (
               <span class="inventory-slot" data-slot={slot.key}>
                 {stack !== null && <img src={iconPaths[iconIndex(stack)]} alt="" width="32" height="32" />}
-                {stack !== null && stack.count > 1 && <span class="inventory-count">{stack.count}</span>}
+                {stack !== null && stack.count > 1 && (
+                  <span class="inventory-count" aria-label={String(stack.count)}>
+                    {countGlyphs.layout(stack.count).map((glyph) => (
+                      <span
+                        class="inventory-count-glyph"
+                        style={`--offset: ${glyph.offset}; --advance: ${glyph.advance};`}
+                      />
+                    ))}
+                  </span>
+                )}
               </span>
             );
           })}
