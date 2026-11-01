@@ -10,23 +10,20 @@ description: Drag a stack across the crafting grid to spread it over several slo
 ---
 
 <InventoryDemo
-  container="in"
+  container="inventory"
   slots={{
-    "chest 3": "item/iron_ingot 4",
-    "chest 8": "item/bread 3",
-    "chest 12": "item/obsidian 5",
-    "chest 14": "item/iron_ingot 2",
-    "chest 20": "item/iron_pickaxe",
-    "chest 25": "item/apple 2"
+    "hotbar 1": "item/oak_planks 8"
   }}
   inputs={[
+    "click hotbar 1",
+    "hover crafting 1",
+    ["hold right", "hover crafting 3", "release right"],
+    "hover crafting 2",
+    ["hold left", "hover crafting 4", "release left"],
+    "hover result",
     "hold shift",
-    "click chest 20",
-    "click chest 12",
-    "click chest 3",
-    "click chest 14",
-    "click chest 25",
-    "click chest 8",
-    "release shift",
+    "click",
+    "click",
+    ["release shift", "hover inventory 1"]
   ]}
 />
