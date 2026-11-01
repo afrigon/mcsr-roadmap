@@ -101,8 +101,8 @@ const hotbar = menu.require(Slot.of(SlotSection.Hotbar, 1));
 const offhandSlot = menu.slot(offhand);
 const offhandSpot = offhandSlot ?? { slot: offhand, key: offhand.key, x: hotbar.x - slotBox - slotGap, y: hotbar.y };
 const displaySlots = offhandSlot === undefined ? [...menu.slots, offhandSpot] : menu.slots;
-const keyGroups = [
-  ["F", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+const slotKeys = ["F", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+const stackedKeyGroups = [
   ["Q", Modifier.Shift, Modifier.Ctrl],
   ["Tab", "Space", "T"],
 ];
@@ -223,39 +223,52 @@ const defaultSpeed = 1;
     </div>
   </div>
   <div class="inventory-inputs">
-    {
-      keyGroups.map((group) => (
-        <div class="inventory-key-group">
-          {group.map((key) => (
-            <kbd data-key={key} data-letter={key.length === 1 ? true : undefined}>
+    <div class="inventory-input-keys">
+      <div class="inventory-key-group" data-group="slots">
+        {
+          slotKeys.map((key) => (
+            <kbd data-key={key} data-letter>
               {key}
             </kbd>
-          ))}
-        </div>
-      ))
-    }
-    <div class="inventory-mouse" aria-label="Mouse buttons">
-      {[MouseButton.Left, MouseButton.Right].map((button) => <span data-key={button} data-button={button} />)}
+          ))
+        }
+      </div>
+      <div class="inventory-key-stack">
+        {
+          stackedKeyGroups.map((group) => (
+            <div class="inventory-key-group">
+              {group.map((key) => (
+                <kbd data-key={key} data-letter={key.length === 1 ? true : undefined}>
+                  {key}
+                </kbd>
+              ))}
+            </div>
+          ))
+        }
+      </div>
+      <div class="inventory-mouse" aria-label="Mouse buttons">
+        {[MouseButton.Left, MouseButton.Right].map((button) => <span data-key={button} data-button={button} />)}
+      </div>
     </div>
-  </div>
-  <div class="inventory-controls">
-    <div class="tabs-list" role="group" aria-label="Playback">
-      <button type="button" data-control="previous" aria-label="Previous input">‹</button>
-      <button type="button" class="inventory-play" data-control="play">
-        <span data-label="play">Play</span>
-        <span data-label="pause">Pause</span>
-      </button>
-      <button type="button" data-control="next" aria-label="Next input">›</button>
-    </div>
-    <span class="inventory-progress" data-progress>0 / {stepEnds.length}</span>
-    <div class="tabs-list" role="group" aria-label="Playback speed">
-      {
-        speeds.map((speed) => (
-          <button type="button" data-speed={speed} aria-pressed={speed === defaultSpeed ? "true" : "false"}>
-            {speed}×
-          </button>
-        ))
-      }
+    <div class="inventory-controls">
+      <div class="tabs-list" role="group" aria-label="Playback">
+        <button type="button" data-control="previous" aria-label="Previous input">‹</button>
+        <button type="button" class="inventory-play" data-control="play">
+          <span data-label="play">Play</span>
+          <span data-label="pause">Pause</span>
+        </button>
+        <button type="button" data-control="next" aria-label="Next input">›</button>
+      </div>
+      <span class="inventory-progress" data-progress>0 / {stepEnds.length}</span>
+      <div class="tabs-list" role="group" aria-label="Playback speed">
+        {
+          speeds.map((speed) => (
+            <button type="button" data-speed={speed} aria-pressed={speed === defaultSpeed ? "true" : "false"}>
+              {speed}×
+            </button>
+          ))
+        }
+      </div>
     </div>
   </div>
 </figure>
