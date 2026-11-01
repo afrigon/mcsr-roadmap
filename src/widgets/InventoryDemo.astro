@@ -35,7 +35,7 @@ const rows = [SlotSection.Chest, SlotSection.Inventory, SlotSection.Offhand, Slo
   slots: Slot.all(section),
 }));
 const slotKeys = ["F", ...Slot.all(SlotSection.Hotbar).map((slot) => String(slot.index))];
-const keys = [Modifier.Shift, Modifier.Ctrl, "Q"];
+const keys = ["Q", Modifier.Shift, Modifier.Ctrl];
 
 const icons = IconRenderer.fromEnvironment();
 const iconKeys: string[] = [];
