@@ -79,7 +79,7 @@ const inputViews = inputs.map(({ input }, index) => ({
 }));
 const stepEnds = inputs.flatMap(({ step }, index) => (inputs[index + 1]?.step === step ? [] : [index + 1]));
 const demo = { pace, endPause, icons: iconPaths, frames, inputs: inputViews, stepEnds };
-const speeds = [0.5, 1, 2];
+const speeds = [0.1, 0.5, 1, 2];
 const defaultSpeed = 1;
 ---
 

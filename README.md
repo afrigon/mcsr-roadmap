@@ -108,7 +108,7 @@ Pages can also use the widgets in `src/widgets/`:
   within the game's 250 ms window: in practice, inside one burst. Shift-double-clicks, drags and
   hotkey swaps behave as they do in game, and the playback shows a double ring wherever the game
   registered a double-click. Playback is separate: `pace` is the replay rate in steps per second, 2 by default, and viewers replay at
-  0.5×, 1× or 2× of it. Playback loops, resting `endPause` seconds (1.5 by default) on the result.
+  0.1×, 0.5×, 1× or 2× of it. Playback loops, resting `endPause` seconds (1.5 by default) on the result.
 
 Pages can start a blockquote with an alert marker to render it as a callout:
 
