@@ -23,9 +23,10 @@ interface DemoData {
 
 const glideShare = 0.5;
 
+const restingSlot = "inventory 1";
+
 export class InventoryDemoController {
   private readonly data: DemoData;
-  private readonly panel: HTMLElement;
   private readonly slots: Map<string, HTMLElement>;
   private readonly keys: Map<string, HTMLElement>;
   private readonly pointer: HTMLElement;
@@ -40,7 +41,6 @@ export class InventoryDemoController {
 
   constructor(private readonly demo: HTMLElement) {
     this.data = JSON.parse(demo.dataset.inventoryDemo!) as DemoData;
-    this.panel = demo.querySelector<HTMLElement>(".inventory-panel")!;
     this.slots = new Map(
       [...demo.querySelectorAll<HTMLElement>("[data-slot]")].map((slot) => [slot.dataset.slot!, slot]),
     );
@@ -72,7 +72,7 @@ export class InventoryDemoController {
     }
 
     this.show(0);
-    this.movePointer(0);
+    new ResizeObserver(() => this.movePointer(0)).observe(this.demo.querySelector(".inventory-panel")!);
   }
 
   private play() {
@@ -153,7 +153,7 @@ export class InventoryDemoController {
 
     this.fill(this.held, cursor);
     this.hold(this.restingModifier(frame));
-    this.progress.textContent = `Step ${frame} of ${this.lastFrame}`;
+    this.progress.textContent = `${frame} / ${this.lastFrame}`;
   }
 
   private restingModifier(frame: number): Modifier | null {
@@ -169,10 +169,10 @@ export class InventoryDemoController {
     }
   }
 
-  private movePointer(duration: number, slotKey = this.data.steps[this.frame - 1]?.slot) {
-    const slot = slotKey === undefined ? undefined : this.slots.get(slotKey);
-    const x = slot === undefined ? this.panel.clientWidth / 2 : slot.offsetLeft + slot.offsetWidth / 2;
-    const y = slot === undefined ? this.panel.clientHeight / 2 : slot.offsetTop + slot.offsetHeight / 2;
+  private movePointer(duration: number, slotKey = this.data.steps[this.frame - 1]?.slot ?? restingSlot) {
+    const slot = this.slots.get(slotKey)!;
+    const x = slot.offsetLeft + slot.offsetWidth / 2;
+    const y = slot.offsetTop + slot.offsetHeight / 2;
 
     this.pointer.style.transitionDuration = `${duration}ms`;
     this.pointer.style.translate = `${x}px ${y}px`;

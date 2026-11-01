@@ -2,6 +2,7 @@
 import { ActionParser } from "../inventory/ActionParser";
 import { InventoryState } from "../inventory/InventoryState";
 import type { ItemStack } from "../inventory/ItemStack";
+import { Modifier } from "../inventory/Modifier";
 import { Slot } from "../inventory/Slot";
 import { SlotSection } from "../inventory/SlotSection";
 import { IconRenderer } from "../textures/IconRenderer";
@@ -33,20 +34,8 @@ const rows = [SlotSection.Chest, SlotSection.Inventory, SlotSection.Offhand, Slo
   section,
   slots: Slot.all(section),
 }));
-const hotbarKeys = Slot.all(SlotSection.Hotbar).map((slot) => String(slot.index));
-
-const modifierHolds = actions.filter(
-  (action, index) => action.modifier !== null && action.modifier !== actions[index - 1]?.modifier,
-).length;
-const inputCount = actions.length + modifierHolds;
-const keys = [
-  ...new Set([
-    ...actions.flatMap((action) => (action.modifier === null ? [] : [action.modifier])),
-    ...actions.flatMap((action) =>
-      action.press.device === "keyboard" && !hotbarKeys.includes(action.press.key) ? [action.press.key] : [],
-    ),
-  ]),
-];
+const slotKeys = ["F", ...Slot.all(SlotSection.Hotbar).map((slot) => String(slot.index))];
+const keys = [Modifier.Shift, Modifier.Ctrl, "Q"];
 
 const icons = IconRenderer.fromEnvironment();
 const iconKeys: string[] = [];
@@ -87,7 +76,7 @@ const defaultSpeed = 1;
             const stack = initial.get(slot);
 
             return (
-              <span class="inventory-slot" data-slot={slot.key} title={slot.key}>
+              <span class="inventory-slot" data-slot={slot.key}>
                 {stack !== null && <img src={iconSources[iconIndex(stack)]} alt="" width="32" height="32" />}
                 {stack !== null && stack.count > 1 && <span class="inventory-count">{stack.count}</span>}
               </span>
@@ -96,8 +85,11 @@ const defaultSpeed = 1;
         </div>
       ))
     }
-    <div class="inventory-hotkeys">
-      {hotbarKeys.map((key) => <kbd data-key={key}>{key}</kbd>)}
+    <div class="inventory-slot-keys">
+      {slotKeys.map((key) => <kbd data-key={key}>{key}</kbd>)}
+    </div>
+    <div class="inventory-keys">
+      {keys.map((key) => <kbd data-key={key}>{key}</kbd>)}
     </div>
     <span class="inventory-pointer" aria-hidden="true">
       <svg viewBox="0 0 16 24" width="16" height="24">
@@ -106,20 +98,11 @@ const defaultSpeed = 1;
       <span class="inventory-held"></span>
     </span>
   </div>
-  {
-    keys.length > 0 && (
-      <div class="inventory-keys">
-        {keys.map((key) => (
-          <kbd data-key={key}>{key}</kbd>
-        ))}
-      </div>
-    )
-  }
   <div class="inventory-controls">
     <button type="button" data-control="previous" aria-label="Previous input">‹</button>
     <button type="button" data-control="play">Play</button>
     <button type="button" data-control="next" aria-label="Next input">›</button>
-    <span class="inventory-progress" data-progress>Step 0 of {actions.length}</span>
+    <span class="inventory-progress" data-progress>0 / {actions.length}</span>
     <div class="tabs-list" role="group" aria-label="Playback speed">
       {
         speeds.map((speed) => (
@@ -129,7 +112,6 @@ const defaultSpeed = 1;
         ))
       }
     </div>
-    <span class="inventory-input-count">{inputCount} inputs</span>
   </div>
 </figure>
 
