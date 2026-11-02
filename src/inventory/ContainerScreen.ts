@@ -5,6 +5,7 @@ import { ContainerType } from "./ContainerType";
 import type { Control } from "./Control";
 import { CraftingMenu } from "./CraftingMenu";
 import type { DemoScreen } from "./DemoScreen";
+import type { DragStage } from "./DragStage";
 import { InventoryMenu } from "./InventoryMenu";
 import type { InventoryState } from "./InventoryState";
 import type { ItemStack } from "./ItemStack";
@@ -12,6 +13,7 @@ import type { MenuSlot } from "./MenuSlot";
 import { Modifier } from "./Modifier";
 import { MouseButton } from "./MouseButton";
 import type { Point } from "./Point";
+import { PointerVariance } from "./PointerVariance";
 import type { PointerTarget } from "./PointerTarget";
 import { RecipeBookMenu } from "./RecipeBookMenu";
 import { RecipeBookState } from "./RecipeBookState";
@@ -61,6 +63,8 @@ export class ContainerScreen implements DemoScreen {
   private readonly held = new Set<Control>();
   private time = 0;
   private pointerPosition: Point;
+  private pointerTarget: Point;
+  private readonly variance = new PointerVariance();
   private lastClickSlot: MenuSlot | null = null;
   private lastClickTime = 0;
   private lastClickButton = -1;
@@ -70,9 +74,9 @@ export class ContainerScreen implements DemoScreen {
   private quickCraftingButton = 0;
   private quickCraftingType = QuickCraftType.Split;
   private readonly quickCraftSlots: MenuSlot[] = [];
-  private movedSincePress = false;
   private lastQuickMoved: ItemStack | null = null;
   private readonly presses: boolean[] = [];
+  private readonly stages: DragStage[] = [];
 
   constructor(
     readonly type: MenuType,
@@ -88,6 +92,7 @@ export class ContainerScreen implements DemoScreen {
     }
 
     this.pointerPosition = this.centre(this.menu.require(restingSlot));
+    this.pointerTarget = this.pointerPosition;
   }
 
   get slots(): readonly MenuSlot[] {
@@ -149,6 +154,16 @@ export class ContainerScreen implements DemoScreen {
     return displayed.withCursor(carried.withCount(remaining));
   }
 
+  get draggedSlots(): readonly MenuSlot[] {
+    return this.isQuickCrafting && this.menu.carried !== null && this.quickCraftSlots.length > 1
+      ? [...this.quickCraftSlots]
+      : [];
+  }
+
+  get dragStages(): readonly DragStage[] {
+    return this.stages;
+  }
+
   get heldControls(): Control[] {
     return [...this.held];
   }
@@ -201,23 +216,21 @@ export class ContainerScreen implements DemoScreen {
   }
 
   hover(target: PointerTarget) {
-    const pressed = [MouseButton.Left, MouseButton.Right].some((button) => this.held.has(button));
-    const previous = this.hoveredSlot;
+    const centre = this.targetCentre(target);
 
-    if (pressed && !this.movedSincePress && previous !== null) {
-      this.dragOver(previous);
+    if (centre.x === this.pointerTarget.x && centre.y === this.pointerTarget.y) {
+      return;
     }
 
-    this.pointerPosition = this.targetCentre(target);
-    const hovered = this.hoveredSlot;
+    const offset = this.variance.offset();
+    const destination = { x: centre.x + offset.x, y: centre.y + offset.y };
+    this.pointerTarget = centre;
 
-    if (pressed) {
-      this.movedSincePress = true;
-
-      if (hovered !== null) {
-        this.dragOver(hovered);
-      }
+    if ([MouseButton.Left, MouseButton.Right].some((button) => this.held.has(button))) {
+      this.dragAlong(destination);
     }
+
+    this.pointerPosition = destination;
   }
 
   hold(control: Control) {
@@ -228,7 +241,6 @@ export class ContainerScreen implements DemoScreen {
     this.held.add(control);
 
     if (control === MouseButton.Left || control === MouseButton.Right) {
-      this.movedSincePress = false;
       this.mouseClicked(buttonNumbers[control]);
     }
   }
@@ -435,6 +447,28 @@ export class ContainerScreen implements DemoScreen {
     this.lastClickSlot = slot;
     this.lastClickTime = this.time;
     this.lastClickButton = button;
+  }
+
+  private dragAlong(destination: Point) {
+    const start = this.pointerPosition;
+    const steps = Math.max(1, Math.ceil(Math.hypot(destination.x - start.x, destination.y - start.y)));
+    let entered: MenuSlot | null = null;
+
+    for (let step = 1; step <= steps; step++) {
+      this.pointerPosition = {
+        x: start.x + ((destination.x - start.x) * step) / steps,
+        y: start.y + ((destination.y - start.y) * step) / steps,
+      };
+      const slot = this.hoveredSlot;
+
+      if (slot === null || slot === entered) {
+        continue;
+      }
+
+      entered = slot;
+      this.dragOver(slot);
+      this.stages.push({ slot, state: this.displayedState, dragged: this.draggedSlots });
+    }
   }
 
   private dragOver(slot: MenuSlot) {

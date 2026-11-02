@@ -2,8 +2,10 @@
 import { ContainerType } from "../inventory/ContainerType";
 import { type InputEntry, InputSequence } from "../inventory/InputSequence";
 import { DemoScreenFactory } from "../inventory/DemoScreenFactory";
+import type { DragStage } from "../inventory/DragStage";
 import { InventoryState } from "../inventory/InventoryState";
 import type { ItemStack } from "../inventory/ItemStack";
+import type { MenuSlot } from "../inventory/MenuSlot";
 import { Modifier } from "../inventory/Modifier";
 import { MouseButton } from "../inventory/MouseButton";
 import type { Point } from "../inventory/Point";
@@ -84,12 +86,15 @@ const snapshot = () => ({
   selected: screen.selectedSlot,
   book: screen.book,
   bookButtonFocused: screen.bookButtonHighlighted,
+  dragged: screen.draggedSlots,
+  stages: [] as DragStage[],
 });
 const snapshots = [snapshot()];
 const doubleClicks: boolean[] = [];
 
 for (const [index, { text, input, delay }] of inputs.entries()) {
   const pressesBefore = screen.doubleClickPresses.length;
+  const stagesBefore = screen.dragStages.length;
 
   try {
     screen.advance(delay);
@@ -98,7 +103,7 @@ for (const [index, { text, input, delay }] of inputs.entries()) {
     throw new Error(`InventoryDemo input ${index + 1} "${text}": ${(error as Error).message}`);
   }
 
-  snapshots.push(snapshot());
+  snapshots.push({ ...snapshot(), stages: screen.dragStages.slice(stagesBefore) });
   doubleClicks.push(screen.doubleClickPresses.slice(pressesBefore).includes(true));
 }
 
@@ -156,7 +161,7 @@ const iconIndex = (stack: ItemStack) => {
   return iconPaths.indexOf(path);
 };
 const encode = (stack: ItemStack | null) => (stack === null ? null : [iconIndex(stack), stack.count]);
-const frames = snapshots.map(({ state, held, pointer, hovered, selected, book, bookButtonFocused }) => ({
+const display = (state: InventoryState, dragged: readonly MenuSlot[]) => ({
   slots: Object.fromEntries(
     screen.slots.flatMap((slot) => {
       const stack = state.get(slot.slot);
@@ -165,6 +170,11 @@ const frames = snapshots.map(({ state, held, pointer, hovered, selected, book, b
     }),
   ),
   cursor: encode(state.cursor),
+  dragged: dragged.map((slot) => slot.key),
+});
+const frames = snapshots.map(({ state, held, pointer, hovered, selected, book, bookButtonFocused, dragged, stages }) => ({
+  ...display(state, dragged),
+  stages: stages.map((stage) => ({ slot: stage.slot.key, ...display(stage.state, stage.dragged) })),
   held,
   pointer: pointer === null ? null : toScreen(pointer),
   hovered: hovered?.key ?? null,

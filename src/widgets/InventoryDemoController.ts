@@ -6,9 +6,18 @@ import { CountGlyphs } from "../textures/CountGlyphs";
 
 type EncodedStack = [icon: number, count: number];
 
-interface Frame {
+interface Display {
   slots: Record<string, EncodedStack>;
   cursor: EncodedStack | null;
+  dragged: string[];
+}
+
+interface DragStage extends Display {
+  slot: string;
+}
+
+interface Frame extends Display {
+  stages: DragStage[];
   held: Control[];
   pointer: [x: number, y: number] | null;
   hovered: string | null;
@@ -38,8 +47,6 @@ const glideShare = 0.5;
 
 const pressFlashDuration = 150;
 
-const pointerVariance = 8;
-
 export class InventoryDemoController {
   private readonly data: DemoData;
   private readonly slots: Map<string, HTMLElement>;
@@ -60,7 +67,8 @@ export class InventoryDemoController {
   private playing = false;
   private animating = false;
   private hoverTracking: number | undefined;
-  private readonly offsets: [number, number][];
+  private stages: DragStage[] = [];
+  private nextStage = 0;
   private readonly countGlyphs: CountGlyphs;
 
   constructor(private readonly demo: HTMLElement) {
@@ -81,16 +89,6 @@ export class InventoryDemoController {
     const pressed = this.speedButtons.find((button) => button.getAttribute("aria-pressed") === "true")!;
     this.speed = Number(pressed.dataset.speed);
     this.countGlyphs = new CountGlyphs(this.data.countFont);
-    this.offsets = this.data.frames.map(() => [0, 0]);
-
-    for (const [index, frame] of this.data.frames.entries()) {
-      const previous = this.data.frames[index - 1];
-      const moved =
-        previous !== undefined && frame.pointer?.some((value, axis) => value !== previous.pointer?.[axis]) === true;
-      this.offsets[index] = moved
-        ? [(Math.random() * 2 - 1) * pointerVariance, (Math.random() * 2 - 1) * pointerVariance]
-        : (this.offsets[index - 1] ?? [0, 0]);
-    }
   }
 
   private get lastStep(): number {
@@ -186,6 +184,8 @@ export class InventoryDemoController {
     const input = this.data.inputs[this.frame]!;
     const glide = duration * glideShare;
 
+    this.stages = this.data.frames[this.frame + 1]!.stages;
+    this.nextStage = 0;
     this.movePointer(glide, this.frame + 1);
     this.timer = window.setTimeout(() => {
       this.show(this.frame + 1);
@@ -234,7 +234,8 @@ export class InventoryDemoController {
 
   private show(frame: number) {
     this.frame = frame;
-    const { slots, cursor, held, hovered, selected, book, bookButtonFocused } = this.data.frames[frame]!;
+    this.stages = [];
+    const { held, hovered, selected, book, bookButtonFocused } = this.data.frames[frame]!;
     const [guiX, guiY] = this.data.guiPositions[book]!;
     this.gui.style.left = `${guiX}px`;
     this.gui.style.top = `${guiY}px`;
@@ -247,8 +248,9 @@ export class InventoryDemoController {
     const heldButton = [MouseButton.Left, MouseButton.Right].find((button) => held.includes(button));
     const activeButton = ripple?.target === "pointer" ? ripple.button : heldButton;
 
+    this.display(this.data.frames[frame]!);
+
     for (const [key, element] of this.slots) {
-      this.fill(element, slots[key] ?? null);
       element.toggleAttribute("data-active", element === activeSlot);
       element.toggleAttribute("data-selected", key === selected);
 
@@ -268,6 +270,14 @@ export class InventoryDemoController {
     } else {
       this.pointer.dataset.held = heldButton;
     }
+  }
+
+  private display({ slots, cursor, dragged }: Display) {
+    for (const [key, element] of this.slots) {
+      this.fill(element, slots[key] ?? null);
+      element.toggleAttribute("data-dragged", dragged.includes(key));
+    }
+
     this.fill(this.held, cursor);
   }
 
@@ -278,10 +288,7 @@ export class InventoryDemoController {
       return;
     }
 
-    const [pointerX, pointerY] = target;
-    const [offsetX, offsetY] = this.offsets[frame]!;
-    const x = pointerX + offsetX;
-    const y = pointerY + offsetY;
+    const [x, y] = target;
 
     this.pointer.style.transitionDuration = `${duration}ms`;
     this.pointer.style.translate = `${x}px ${y}px`;
@@ -307,16 +314,28 @@ export class InventoryDemoController {
       return;
     }
 
+    for (const element of [...this.slots.values(), ...(this.bookButton === null ? [] : [this.bookButton])]) {
+      element.toggleAttribute("data-hovered", this.isUnderPointer(element));
+    }
+
+    const entered = this.stages.findLastIndex(
+      (stage, index) => index >= this.nextStage && this.isUnderPointer(this.slots.get(stage.slot)!),
+    );
+
+    if (entered >= 0) {
+      this.display(this.stages[entered]!);
+      this.nextStage = entered + 1;
+    }
+  }
+
+  private isUnderPointer(element: HTMLElement): boolean {
     const [x = 0, y = 0] = getComputedStyle(this.pointer).translate.split(" ").map((value) => parseFloat(value));
     const screen = this.screen.getBoundingClientRect();
+    const bounds = element.getBoundingClientRect();
+    const left = bounds.left - screen.left;
+    const top = bounds.top - screen.top;
 
-    for (const element of [...this.slots.values(), ...(this.bookButton === null ? [] : [this.bookButton])]) {
-      const bounds = element.getBoundingClientRect();
-      const left = bounds.left - screen.left;
-      const top = bounds.top - screen.top;
-      const inside = x >= left && x < left + bounds.width && y >= top && y < top + bounds.height;
-      element.toggleAttribute("data-hovered", inside);
-    }
+    return x >= left && x < left + bounds.width && y >= top && y < top + bounds.height;
   }
 
   private ripple(ripple: Ripple | null, doubleClick: boolean) {

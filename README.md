@@ -109,7 +109,8 @@ Pages can also use the widgets in `src/widgets/`:
   `align` is `leading` (the default) or `center`. Under the screen, the same set of keys and both
   mouse buttons light up as they are pressed. Inputs are:
   - `hover <slot|book>`: moves the pointer to a slot or to the recipe book button; with a mouse
-    button held, this drags across slots.
+    button held, this drags across every slot on the straight line to it, previewing each one as
+    the pointer enters it.
   - `click [<slot|book>]` and `right-click [<slot|book>]`: press and release, after hovering the
     target if one is given. A left click on `book` opens or closes the recipe book.
   - `hold <shift|ctrl|left|right>` and `release <…>`: hold or let go of a modifier or mouse button.

@@ -1,5 +1,6 @@
 import type { Control } from "./Control";
 import type { DemoScreen } from "./DemoScreen";
+import type { DragStage } from "./DragStage";
 import type { InventoryState } from "./InventoryState";
 import { MenuSlot } from "./MenuSlot";
 import { Modifier } from "./Modifier";
@@ -33,6 +34,8 @@ export class HudScreen implements DemoScreen {
   readonly windowWidth = hotbarWidth;
   readonly windowHeight = hotbarHeight;
   readonly doubleClickPresses: readonly boolean[] = [];
+  readonly draggedSlots: readonly MenuSlot[] = [];
+  readonly dragStages: readonly DragStage[] = [];
   readonly pointer = null;
   readonly hoveredSlot = null;
   readonly book = RecipeBookState.Closed;

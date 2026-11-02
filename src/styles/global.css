@@ -1124,6 +1124,10 @@
     border-radius: 4px;
     background: var(--color-background);
 
+    &[data-dragged] {
+      background: color-mix(in srgb, white 20%, var(--color-background));
+    }
+
     &[data-hovered]::after {
       position: absolute;
       inset: 0;

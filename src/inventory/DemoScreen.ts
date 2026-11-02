@@ -1,4 +1,5 @@
 import type { Control } from "./Control";
+import type { DragStage } from "./DragStage";
 import type { InventoryState } from "./InventoryState";
 import type { MenuSlot } from "./MenuSlot";
 import type { Point } from "./Point";
@@ -14,6 +15,8 @@ export interface DemoScreen {
   readonly displayedState: InventoryState;
   readonly heldControls: Control[];
   readonly doubleClickPresses: readonly boolean[];
+  readonly draggedSlots: readonly MenuSlot[];
+  readonly dragStages: readonly DragStage[];
   readonly pointer: Point | null;
   readonly hoveredSlot: MenuSlot | null;
   readonly selectedSlot: MenuSlot | null;
