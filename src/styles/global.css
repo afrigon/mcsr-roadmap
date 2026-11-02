@@ -466,6 +466,8 @@
       width: 32px;
       height: 32px;
       filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.5));
+      /* 64 px icons drawn at 32 px: nearest-neighbour would drop every odd pixel row and column */
+      image-rendering: auto;
     }
 
     &[data-status="notLearned"] img {

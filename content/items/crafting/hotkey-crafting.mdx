@@ -8,4 +8,53 @@ index: 60
 description: Shift-clicking outputs and avoiding the button trap.
 ---
 
+<InventoryDemo
+  container="crafting-table"
+  align="center"
+  slots={{
+    "hotbar 1": "item/stick 8",
+    "hotbar 5": "item/cooked_cod 3",
+    "hotbar 6": "item/diamond 2",
+    "hotbar 7": "item/cooked_salmon 4",
+    "hotbar 8": "item/gold_ingot 9",
+    "hotbar 9": "item/iron_ingot 11"
+  }}
+  inputs={[
+    "hover crafting 8",
+    "key 1",
+    ["right-click", "click crafting 5"],
+    "hover crafting 1",
+    "key 9",
+    "click",
+    ["hold right", "hover crafting 2", "hover crafting 3", "release right"],
+    ["hold shift", "hover result"],
+    ["click", "release shift"],
+    "hover crafting 2",
+    "click",
+    "key 8",
+    "click",
+    "right-click",
+    ["hold right", "hover crafting 3", "hover crafting 6", "release right"],
+    ["hold shift", "hover result"],
+    ["click", "right-click"],
+    ["click crafting 5", "release shift"],
+    "click",
+    "key 6",
+    ["right-click", "click crafting 2"],
+    ["hold shift", "hover result"],
+    ["click", "release shift"],
+    "hover crafting 4",
+    "key 8",
+    "click",
+    "right-click crafting 4",
+    "hover crafting 8",
+    ["right-click", "right-click"],
+    "hover crafting 6",
+    "click",
+    ["hold shift", "hover result"],
+    ["key f", "click"],
+    ["release shift", "hover inventory 1"]
+  ]}
+/>
+
 <YouTube id="HJObsmCxEoU" title="HiTrippy and GASLEFORT: overworld crafting basics" />

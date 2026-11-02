@@ -58,6 +58,7 @@ export class InventoryDemoController {
   private speed: number;
   private timer: number | undefined;
   private playing = false;
+  private animating = false;
   private hoverTracking: number | undefined;
   private readonly offsets: [number, number][];
   private readonly countGlyphs: CountGlyphs;
@@ -133,25 +134,37 @@ export class InventoryDemoController {
   private pause() {
     window.clearTimeout(this.timer);
     this.playing = false;
+    this.animating = false;
     this.playButton.toggleAttribute("data-playing", false);
   }
 
   private next() {
+    const interrupted = this.animating;
+
     this.pause();
+
+    if (interrupted) {
+      this.finishStep();
+    }
 
     if (this.step < this.lastStep) {
       this.advance(false);
+    } else if (!interrupted) {
+      this.reset();
     }
+  }
+
+  private finishStep() {
+    this.show(this.data.stepEnds[this.step]!);
+    this.setStep(this.step + 1);
+    this.movePointer(0);
   }
 
   private previous() {
     this.pause();
-
-    if (this.step > 0) {
-      this.setStep(this.step - 1);
-      this.show(this.step === 0 ? 0 : this.data.stepEnds[this.step - 1]!);
-      this.movePointer(0);
-    }
+    this.setStep(this.step === 0 ? this.lastStep : this.step - 1);
+    this.show(this.step === 0 ? 0 : this.data.stepEnds[this.step - 1]!);
+    this.movePointer(0);
   }
 
   private setSpeed(speed: number) {
@@ -165,6 +178,7 @@ export class InventoryDemoController {
   private advance(continuing: boolean) {
     const end = this.data.stepEnds[this.step]!;
 
+    this.animating = true;
     this.playInput(end, this.stepDuration / (end - this.frame), continuing);
   }
 
@@ -183,6 +197,7 @@ export class InventoryDemoController {
         return;
       }
 
+      this.animating = false;
       this.setStep(this.step + 1);
 
       if (!continuing) {
