@@ -67,16 +67,6 @@ export class Roadmap {
     return this.itemsIn(item.category).filter((candidate) => candidate.parent === item.id);
   }
 
-  pathTo(item: Item): Item[] {
-    const path = [item];
-
-    for (let parent = this.parentOf(item); parent !== null; parent = this.parentOf(parent)) {
-      path.unshift(parent);
-    }
-
-    return path;
-  }
-
   private indexProblems(category: Category, items: readonly Item[]): string[] {
     return items
       .filter((item, position) => position > 0 && items[position - 1]!.index === item.index)

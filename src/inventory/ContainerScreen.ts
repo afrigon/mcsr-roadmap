@@ -36,7 +36,6 @@ const buttonNumbers: Record<MouseButton, number> = {
   [MouseButton.Right]: 1,
 };
 const slotSize = 16;
-const restingSlot = Slot.of(SlotSection.Inventory, 1);
 // The narrowest screen that shows the recipe book beside the menu rather than over it.
 const screenWidth = 379;
 const bookWidth = 147;
@@ -91,7 +90,8 @@ export class ContainerScreen implements DemoScreen {
       throw new Error(`The ${type} screen has no recipe book to open`);
     }
 
-    this.pointerPosition = this.centre(this.menu.require(restingSlot));
+    // Opening a screen puts the cursor at the window centre, and the menu is centred vertically.
+    this.pointerPosition = { x: screenWidth / 2, y: this.topPos + this.menu.imageHeight / 2 };
     this.pointerTarget = this.pointerPosition;
   }
 

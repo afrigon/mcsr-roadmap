@@ -40,12 +40,13 @@ goals {
     goal sub10 title="Sub 10" short="10" rank=diamond
 }
 
-category zero-cycle title="Zero Cycle" theme=end
+category zero-cycle title="Zero Cycle" theme=end icon="item/end_crystal"
 ```
 
 - A goal's `rank` colours its bracket.
 - `theme` is one of fundamentals, overworld, desert, ocean, nether, fortress, bastion, stronghold,
   end or fun.
+- `icon` takes the same values as an item's `icon`, shown beside the category's title.
 
 Every item is a file under `content/items/`, named after its id. Subfolders are only for
 organising the files; the site ignores them.
@@ -74,7 +75,9 @@ description: An arrow before the first bed lets two beds land on one rotation.
   that item texture), `block/<texture>` for a single flat block face, or one of the composite icons
   built from several textures: `composite/bed`, `chest`, `shield`, `hunger`, `hunger_effect`, `heart_empty`,
   `heart_half`, `heart_full`, `splash_potion_fire_resistance`, `water`, `water_breathing` and
-  `silverfish`, each written as `composite/<name>`.
+  `silverfish`, each written as `composite/<name>`. Items the game draws in code rather than from a
+  model are drawn by the composite of the same name, so `item/chest`, `item/shield` and every
+  coloured bed, such as `item/white_bed`, work anywhere an item does.
 - `index` orders the item within its category; leave gaps so new items fit between.
 - `label` is optional, shown under the icon when the icon alone is ambiguous.
 - `ranked` is optional: how the skill differs or applies in Ranked.
@@ -131,5 +134,6 @@ Pages can start a blockquote with an alert marker to render it as a callout:
 
 - `> [!NOTE]`, a side fact that qualifies the point without changing it.
 - `> [!UNVERIFIED]`, a claim about the game's behaviour that has not been tested in game.
+- `> [!WARNING]`, something that can go wrong and cost the run.
 
 Research notes behind the roadmap live in `research/`.

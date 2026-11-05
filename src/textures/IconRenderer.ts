@@ -49,7 +49,8 @@ export class IconRenderer {
   }
 
   resolve(value: string): IconReference {
-    const icon = IconReference.parse(value);
+    const parsed = IconReference.parse(value);
+    const icon = parsed === null ? null : this.standIn(parsed);
     const problems = icon === null ? [`invalid icon "${value}"`] : this.problemsWith(icon);
 
     if (problems.length > 0) {
@@ -172,6 +173,17 @@ export class IconRenderer {
     icon.paste(scaled, Math.floor((iconSize - scaled.width) / 2), Math.floor((iconSize - scaled.height) / 2));
 
     return icon;
+  }
+
+  // The game draws some items in code rather than from a model; the composite of the same name stands in for them.
+  private standIn(icon: IconReference): IconReference {
+    if (icon.source !== IconSource.Item || this.models.item(icon.name)?.kind !== "code") {
+      return icon;
+    }
+
+    const composite = new IconReference(IconSource.Composite, icon.name);
+
+    return this.composite(composite) === undefined ? icon : composite;
   }
 
   private composite(icon: IconReference): CompositeIcon | undefined {

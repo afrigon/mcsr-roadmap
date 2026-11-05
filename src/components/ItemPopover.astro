@@ -1,9 +1,9 @@
 ---
 import { render, type CollectionEntry } from "astro:content";
 import type { Item } from "../roadmap/Item";
-import type { Roadmap } from "../roadmap/Roadmap";
 import EditPageButton from "./EditPageButton.astro";
 import StatusPicker from "./StatusPicker.astro";
+import { goalIcon } from "../canvas/goalIcons";
 import YouTube from "./YouTube.astro";
 import BarChart from "../widgets/BarChart.astro";
 import InventoryDemo from "../widgets/InventoryDemo.astro";
@@ -11,13 +11,11 @@ import Tab from "../widgets/Tab.astro";
 import Tabs from "../widgets/Tabs.astro";
 
 interface Props {
-  roadmap: Roadmap;
   item: Item;
   page: CollectionEntry<"items">;
 }
 
-const { roadmap, item, page } = Astro.props;
-const path = roadmap.pathTo(item);
+const { item, page } = Astro.props;
 const { Content } = await render(page);
 const hasContent = (page.body ?? "").trim() !== "";
 ---
@@ -31,7 +29,11 @@ const hasContent = (page.body ?? "").trim() !== "";
           {item.title}
           {item.label !== null && <span class="popover-label">{item.label}</span>}
         </h2>
-        <p>{item.category.title} · {item.goal.title}</p>
+        <p class="popover-description">{item.description}</p>
+        <p class="popover-meta">
+          <img src={item.category.icon.path} alt="" width="16" height="16" />{item.category.title} ·
+          <img src={goalIcon(item.goal).path} alt="" width="16" height="16" />{item.goal.title}
+        </p>
       </div>
       {import.meta.env.DEV && <EditPageButton filePath={page.filePath!} />}
       <button type="button" class="popover-close" popovertarget={item.id} popovertargetaction="hide" aria-label="Close">
@@ -43,10 +45,6 @@ const hasContent = (page.body ?? "").trim() !== "";
 
     {item.rankedNote !== null && <p class="ranked-label"><b>Ranked</b> {item.rankedNote}</p>}
     <StatusPicker item={item} />
-    <p class="item-path">
-      {path.map((step, index) => (index === path.length - 1 ? <b>{step.title}</b> : <span>{step.title} → </span>))}
-    </p>
-    <p class="item-description">{item.description}</p>
     <article class="item-page">
       {hasContent ? <Content components={{ YouTube, BarChart, InventoryDemo, Tabs, Tab }} /> : <p class="muted">No page yet.</p>}
     </article>

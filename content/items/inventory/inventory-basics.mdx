@@ -1,0 +1,61 @@
+---
+title: Inventory Basics
+category: inventory
+goal: first-completion
+icon: composite/chest
+index: 10
+description: Split and deposit inventory operations.
+---
+
+# Split
+
+Right-click a stack to pick up half of it. Hold left-click and drag across slots to spread the stack
+evenly over every slot the cursor enters.
+
+<InventoryDemo
+  container="crafting-table"
+  slots={{
+    "hotbar 1": "item/wheat 36"
+  }}
+  inputs={[
+    "hover hotbar 1",
+    "right-click",
+    "hover crafting 1",
+    ["hold left", "hover crafting 3", "release left"],
+    "hover result",
+    "click",
+    "click",
+    "click",
+    "click",
+    "click",
+    "click",
+    "click hotbar 2"
+  ]}
+/>
+
+# Deposit
+
+Right-click with a stack to place one item. Hold right-click and drag across slots to place one item
+in each slot the cursor enters.
+
+<InventoryDemo
+  container="crafting-table"
+  slots={{
+    "hotbar 1": "item/iron_ingot 7",
+    "hotbar 2": "item/stick 4"
+  }}
+  inputs={[
+    "click hotbar 1",
+    "hover crafting 1",
+    ["hold right", "hover crafting 3", "release right"],
+    "click hotbar 1",
+    "click hotbar 2",
+    "hover crafting 5",
+    "right-click",
+    "hover crafting 8",
+    "right-click",
+    "click hotbar 2",
+    "click result",
+    "click hotbar 3"
+  ]}
+/>

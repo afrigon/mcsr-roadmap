@@ -5,6 +5,7 @@ export class AlertKind {
   static readonly all: readonly AlertKind[] = [
     new AlertKind("note", "Note", new IconReference(IconSource.Item, "writable_book")),
     new AlertKind("unverified", "Unverified", new IconReference(IconSource.Item, "suspicious_stew")),
+    new AlertKind("warning", "Warning", new IconReference(IconSource.Item, "tnt")),
   ];
 
   private constructor(

@@ -15,26 +15,25 @@ goals {
     goal sub6 title="Sub 6" short="6" rank=netherite
 }
 
-category setup title="Setup" theme=fundamentals
-category inventory title="Inventory" theme=fundamentals
-category crafting title="Crafting" theme=fundamentals
-category movement title="Movement" theme=fundamentals
-category survival title="Survival" theme=fundamentals
-category overworld title="Overworld" theme=overworld
-category village title="Village" theme=overworld
-category desert-temple title="Desert Temple" theme=desert
-category shipwreck title="Shipwreck" theme=ocean
-category ruined-portal title="Ruined Portal" theme=overworld
-category buried-treasure title="Buried Treasure" theme=ocean
-category nether title="Nether" theme=nether
-category bastion title="Bastion" theme=bastion
-category housing title="Housing" theme=bastion
-category bridge title="Bridge" theme=bastion
-category treasure title="Treasure" theme=bastion
-category stables title="Stables" theme=bastion
-category fortress title="Fortress" theme=fortress
-category finding-stronghold title="Finding the Stronghold" theme=stronghold
-category stronghold title="Stronghold" theme=stronghold
-category end-fight title="End Fight" theme=end
-category zero-cycle title="Zero Cycle" theme=end
-category for-fun title="For Fun" theme=fun
+category setup title="Setup" theme=fundamentals icon="item/comparator"
+category inventory title="Inventory and Crafting" theme=fundamentals icon="composite/chest"
+category movement title="Movement" theme=fundamentals icon="item/feather"
+category survival title="Survival" theme=fundamentals icon="composite/heart_full"
+category overworld title="Overworld" theme=overworld icon="item/grass_block"
+category village title="Village" theme=overworld icon="item/hay_block"
+category desert-temple title="Desert Temple" theme=desert icon="item/chiseled_sandstone"
+category shipwreck title="Shipwreck" theme=ocean icon="item/filled_map"
+category ruined-portal title="Ruined Portal" theme=overworld icon="item/crying_obsidian"
+category buried-treasure title="Buried Treasure" theme=ocean icon="item/heart_of_the_sea"
+category nether title="Nether" theme=nether icon="item/netherrack"
+category bastion title="Bastion" theme=bastion icon="item/gilded_blackstone"
+category housing title="Housing" theme=bastion icon="item/polished_blackstone_bricks"
+category bridge title="Bridge" theme=bastion icon="item/chain"
+category treasure title="Treasure" theme=bastion icon="item/gold_block"
+category stables title="Stables" theme=bastion icon="item/cooked_porkchop"
+category fortress title="Fortress" theme=fortress icon="item/blaze_rod"
+category finding-stronghold title="Finding the Stronghold" theme=stronghold icon="item/ender_eye"
+category stronghold title="Stronghold" theme=stronghold icon="item/end_portal_frame"
+category end-fight title="End Fight" theme=end icon="item/dragon_egg"
+category zero-cycle title="Zero Cycle" theme=end icon="item/end_crystal"
+category for-fun title="For Fun" theme=fun icon="item/cake"

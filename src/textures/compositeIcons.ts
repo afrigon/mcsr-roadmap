@@ -63,11 +63,27 @@ function hudIcon(sheet: Texture, outline: Point, fill: Point | null): Texture {
   return centered(sprite, hudScale);
 }
 
-export const compositeIcons = [
-  new CompositeIcon(missingIconName, [], () =>
-    Texture.checkerboard(missingSize, missingCellSize, missingMagenta, missingBlack),
-  ),
-  new CompositeIcon("bed", ["entity/bed/red"], ([bed]) => {
+const bedColours = [
+  "white",
+  "orange",
+  "magenta",
+  "light_blue",
+  "yellow",
+  "lime",
+  "pink",
+  "gray",
+  "light_gray",
+  "cyan",
+  "purple",
+  "blue",
+  "brown",
+  "green",
+  "red",
+  "black",
+];
+
+function bed(name: string, colour: string): CompositeIcon {
+  return new CompositeIcon(name, [`entity/bed/${colour}`], ([bed]) => {
     const top = Texture.blank(bedFaceSize, bedFaceSize * 2);
     top.paste(bed!.crop(bedHeadTop.x, bedHeadTop.y, bedFaceSize, bedFaceSize), 0, 0);
     top.paste(bed!.crop(bedFootTop.x, bedFootTop.y, bedFaceSize, bedFaceSize), 0, bedFaceSize);
@@ -75,7 +91,15 @@ export const compositeIcons = [
     icon.paste(top.rotatedCounterClockwise(), 0, (iconSize - bedFaceSize) / 2);
 
     return icon;
-  }),
+  });
+}
+
+export const compositeIcons = [
+  new CompositeIcon(missingIconName, [], () =>
+    Texture.checkerboard(missingSize, missingCellSize, missingMagenta, missingBlack),
+  ),
+  bed("bed", "red"),
+  ...bedColours.map((colour) => bed(`${colour}_bed`, colour)),
   new CompositeIcon("shield", ["entity/shield_base_nopattern"], ([shield]) => {
     const icon = Texture.blank(iconSize, iconSize);
     icon.paste(

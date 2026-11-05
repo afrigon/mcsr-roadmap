@@ -120,9 +120,10 @@ const bookPanel = [...layouts.values()].find((layout) => layout.bookPanel !== nu
 const bookButton =
   screenBookButton === null ? null : { ...screenBookButton, x: screenBookButton.x - leftPos, y: screenBookButton.y - topPos };
 const guiWindow = { x: 0, y: 0, width: screen.windowWidth, height: screen.windowHeight };
+const slotArea = (slot: MenuSlot): ScreenRectangle => ({ x: slot.x - 1, y: slot.y - 1, width: slotBox, height: slotBox });
 const guiAreas: ScreenRectangle[] = [
   guiWindow,
-  ...screen.slots.map((slot) => ({ x: slot.x - 1, y: slot.y - 1, width: slotBox, height: slotBox })),
+  ...screen.slots.map(slotArea),
   ...decorations[containerType].map((decoration) => decoration.area),
   ...(bookButton === null ? [] : [bookButton]),
 ];
@@ -145,6 +146,11 @@ const place = (area: Point, base: Point = { x: 0, y: 0 }) =>
 const size = (area: { width: number; height: number }) =>
   `width: ${area.width * guiScale}px; height: ${area.height * guiScale}px;`;
 const toScreen = (point: Point): [number, number] => [(point.x - origin.x) * guiScale, (point.y - origin.y) * guiScale];
+const scaled = (area: ScreenRectangle) => [area.x, area.y, area.width, area.height].map((value) => value * guiScale);
+const hoverAreas = {
+  slots: Object.fromEntries(screen.slots.map((slot) => [slot.key, scaled(slotArea(slot))])),
+  bookButton: bookButton === null ? null : scaled(bookButton),
+};
 const guiPositions = Object.fromEntries(
   [...layouts].map(([state, layout]) => [state, toScreen({ x: layout.leftPos, y: layout.topPos })]),
 );
@@ -191,7 +197,7 @@ const stepEnds = inputs.flatMap(({ step }, index) => (inputs[index + 1]?.step ==
 const countFont = ItemCountFont.fromEnvironment().metrics;
 const countGlyphs = new CountGlyphs(countFont);
 const bookIcon = icons.resolve("item/knowledge_book").path;
-const demo = { pace, endPause, icons: iconPaths, frames, inputs: inputViews, stepEnds, countFont, guiPositions };
+const demo = { pace, endPause, icons: iconPaths, frames, inputs: inputViews, stepEnds, countFont, guiPositions, hoverAreas };
 const countSprite = `--count-sprite-width: ${countFont.cellWidth * countFont.characters.length}; --count-cell-height: ${countFont.cellHeight};`;
 const speeds = [0.1, 0.5, 1, 2];
 const defaultSpeed = 1;
@@ -235,7 +241,7 @@ const defaultSpeed = 1;
               <span
                 class="inventory-slot"
                 data-slot={slot.key}
-                style={place({ x: slot.x - 1, y: slot.y - 1 })}
+                style={place(slotArea(slot))}
               >
                 {shown !== null && <img src={iconPaths[iconIndex(shown)]} alt="" width="32" height="32" />}
                 {shown !== null && shown.count > 1 && (

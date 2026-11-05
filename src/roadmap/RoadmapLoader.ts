@@ -21,6 +21,12 @@ export class RoadmapLoader {
   }
 
   private build(entries: readonly CollectionEntry<"items">[]): Roadmap {
+    for (const category of this.structure.categories) {
+      this.icons
+        .problemsWith(category.icon)
+        .forEach((problem) => console.warn(`roadmap.kdl: category "${category.id}": ${problem}`));
+    }
+
     const items = entries.flatMap((entry) => this.item(entry) ?? []);
 
     if (this.problems.length > 0) {

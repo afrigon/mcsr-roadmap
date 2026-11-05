@@ -1,6 +1,7 @@
 import { getLocation, parse, type Node } from "@bgotink/kdl";
 import { Category } from "./Category";
 import { Goal } from "./Goal";
+import { IconReference } from "./IconReference";
 import { Rank } from "./Rank";
 import { RoadmapError } from "./RoadmapError";
 import { RoadmapStructure } from "./RoadmapStructure";
@@ -66,17 +67,23 @@ export class RoadmapParser {
   }
 
   private parseCategory(node: Node): Category | null {
-    this.expectShape(node, 1, ["title", "theme"]);
+    this.expectShape(node, 1, ["title", "theme", "icon"]);
     const id = this.argument(node);
     const themeValue = this.requiredProperty(node, "theme");
     const theme = this.enumProperty(node, "theme", Object.values(Theme));
+    const iconValue = this.requiredProperty(node, "icon");
+    const icon = IconReference.parse(iconValue);
     this.children(node, []);
 
-    if (themeValue === "" || theme === null) {
+    if (iconValue !== "" && icon === null) {
+      this.report(node, `invalid icon "${iconValue}", expected item/<name>, block/<name> or composite/<name>`);
+    }
+
+    if (themeValue === "" || theme === null || icon === null) {
       return null;
     }
 
-    return new Category(id, this.requiredProperty(node, "title"), theme);
+    return new Category(id, this.requiredProperty(node, "title"), theme, icon);
   }
 
   private enumProperty<Value extends string>(node: Node, name: string, values: Value[]): Value | null {

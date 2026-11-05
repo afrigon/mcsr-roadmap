@@ -6,6 +6,13 @@ import { CountGlyphs } from "../textures/CountGlyphs";
 
 type EncodedStack = [icon: number, count: number];
 
+type Area = [x: number, y: number, width: number, height: number];
+
+interface HoverAreas {
+  slots: Record<string, Area>;
+  bookButton: Area | null;
+}
+
 interface Display {
   slots: Record<string, EncodedStack>;
   cursor: EncodedStack | null;
@@ -41,6 +48,7 @@ interface DemoData {
   stepEnds: number[];
   countFont: CountFontMetrics;
   guiPositions: Record<string, [x: number, y: number]>;
+  hoverAreas: HoverAreas;
 }
 
 const glideShare = 0.5;
@@ -53,7 +61,6 @@ export class InventoryDemoController {
   private readonly keys: Map<string, HTMLElement>;
   private readonly pointer: HTMLElement;
   private readonly held: HTMLElement;
-  private readonly screen: HTMLElement;
   private readonly gui: HTMLElement;
   private readonly book: HTMLElement | null;
   private readonly bookButton: HTMLElement | null;
@@ -61,6 +68,7 @@ export class InventoryDemoController {
   private readonly playButton: HTMLButtonElement;
   private readonly speedButtons: HTMLButtonElement[];
   private frame = 0;
+  private guiPosition: [x: number, y: number] = [0, 0];
   private step = 0;
   private speed: number;
   private timer: number | undefined;
@@ -77,7 +85,6 @@ export class InventoryDemoController {
       [...demo.querySelectorAll<HTMLElement>("[data-slot]")].map((slot) => [slot.dataset.slot!, slot]),
     );
     this.keys = new Map([...demo.querySelectorAll<HTMLElement>(".inventory-inputs [data-key]")].map((key) => [key.dataset.key!, key]));
-    this.screen = demo.querySelector<HTMLElement>(".inventory-screen")!;
     this.gui = demo.querySelector<HTMLElement>(".inventory-gui")!;
     this.book = demo.querySelector<HTMLElement>(".inventory-book");
     this.bookButton = demo.querySelector<HTMLElement>(".inventory-book-button");
@@ -236,7 +243,8 @@ export class InventoryDemoController {
     this.frame = frame;
     this.stages = [];
     const { held, hovered, selected, book, bookButtonFocused } = this.data.frames[frame]!;
-    const [guiX, guiY] = this.data.guiPositions[book]!;
+    this.guiPosition = this.data.guiPositions[book]!;
+    const [guiX, guiY] = this.guiPosition;
     this.gui.style.left = `${guiX}px`;
     this.gui.style.top = `${guiY}px`;
     this.book?.toggleAttribute("hidden", book !== "open");
@@ -314,12 +322,16 @@ export class InventoryDemoController {
       return;
     }
 
-    for (const element of [...this.slots.values(), ...(this.bookButton === null ? [] : [this.bookButton])]) {
-      element.toggleAttribute("data-hovered", this.isUnderPointer(element));
+    const { slots, bookButton } = this.data.hoverAreas;
+
+    for (const [key, element] of this.slots) {
+      element.toggleAttribute("data-hovered", this.isUnderPointer(slots[key]!));
     }
 
+    this.bookButton?.toggleAttribute("data-hovered", bookButton !== null && this.isUnderPointer(bookButton));
+
     const entered = this.stages.findLastIndex(
-      (stage, index) => index >= this.nextStage && this.isUnderPointer(this.slots.get(stage.slot)!),
+      (stage, index) => index >= this.nextStage && this.isUnderPointer(slots[stage.slot]!),
     );
 
     if (entered >= 0) {
@@ -328,14 +340,13 @@ export class InventoryDemoController {
     }
   }
 
-  private isUnderPointer(element: HTMLElement): boolean {
+  private isUnderPointer([areaX, areaY, width, height]: Area): boolean {
     const [x = 0, y = 0] = getComputedStyle(this.pointer).translate.split(" ").map((value) => parseFloat(value));
-    const screen = this.screen.getBoundingClientRect();
-    const bounds = element.getBoundingClientRect();
-    const left = bounds.left - screen.left;
-    const top = bounds.top - screen.top;
+    const [guiX, guiY] = this.guiPosition;
+    const left = guiX + areaX;
+    const top = guiY + areaY;
 
-    return x >= left && x < left + bounds.width && y >= top && y < top + bounds.height;
+    return x >= left && x < left + width && y >= top && y < top + height;
   }
 
   private ripple(ripple: Ripple | null, doubleClick: boolean) {

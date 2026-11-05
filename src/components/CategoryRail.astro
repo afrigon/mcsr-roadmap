@@ -13,7 +13,7 @@ const { bands } = Astro.props;
     {
       bands.map((band) => (
         <button type="button" data-theme={band.category.theme} data-rail-target={band.category.id} style={`flex-grow: ${band.height};`}>
-          <span>{band.category.title}</span>
+          <span><img src={band.category.icon.path} alt="" width="16" height="16" /><span class="category-name">{band.category.title}</span></span>
         </button>
       ))
     }
