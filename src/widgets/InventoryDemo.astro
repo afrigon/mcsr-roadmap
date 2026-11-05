@@ -272,7 +272,7 @@ const defaultSpeed = 1;
       <div class="inventory-key-group" data-group="slots">
         {
           slotKeys.map((key) => (
-            <kbd data-key={key} data-letter>
+            <kbd data-key={key} data-action={ScreenKeys.action(key)} data-letter>
               {key}
             </kbd>
           ))
@@ -283,7 +283,7 @@ const defaultSpeed = 1;
           stackedKeyGroups.map((group) => (
             <div class="inventory-key-group">
               {group.map((key) => (
-                <kbd data-key={key} data-letter={key.length === 1 ? true : undefined}>
+                <kbd data-key={key} data-action={ScreenKeys.action(key)} data-letter={key.length === 1 ? true : undefined}>
                   {key}
                 </kbd>
               ))}

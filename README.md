@@ -96,6 +96,10 @@ Pages can also use the widgets in `src/widgets/`:
   units. `color` is `blue`, `orange`, `aqua`, `yellow`, `red` or `gray`, picked to match what the
   series measures; series without one take the first four in that order.
 - `<Tabs>` holding `<Tab label="…">` panels, one shown at a time.
+- `<KeybindEditor />`, the game's controls for the actions the site shows, in the game's own
+  wording. Viewers rebind an action by clicking it and pressing a key or mouse button (Escape
+  unbinds it, as in game), or import every bind at once from their `options.txt`. Keybinds are
+  saved in the browser with the roadmap progress, and every widget that shows keys uses them.
 - `<InventoryDemo title="…" container="chest" slots={{ "chest 4": "item/obsidian 7" }} inputs={["hold shift", "click chest 4", "release shift"]} pace={2} />`,
   an inventory screen that plays the player's physical inputs. `container` is `hotbar`, `chest`,
   `inventory` or `crafting-table`, and each screen uses the game's slot positions. `hotbar` is the
@@ -110,7 +114,9 @@ Pages can also use the widgets in `src/widgets/`:
   recipes, such as fireworks and armour dyeing, are not modelled). `book="open"` starts the
   inventory or crafting table with the recipe book open, which moves the screen right as in game.
   `align` is `leading` (the default) or `center`. Under the screen, the same set of keys and both
-  mouse buttons light up as they are pressed. Inputs are:
+  mouse buttons light up as they are pressed. Inputs always name the default keys; the keys the game
+  lets players rebind (1–9, F and Q) are shown with the viewer's own keybinds, while Shift, Ctrl,
+  Tab and Space are fixed in inventory screens and never change. Inputs are:
   - `hover <slot|book>`: moves the pointer to a slot or to the recipe book button; with a mouse
     button held, this drags across every slot on the straight line to it, previewing each one as
     the pointer enters it.

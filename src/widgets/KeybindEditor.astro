@@ -1,0 +1,59 @@
+---
+import { KeyAction } from "../keybinds/KeyAction";
+import { KeyCategory } from "../keybinds/KeyCategory";
+import { GameLanguage } from "../language/GameLanguage";
+
+const language = GameLanguage.fromEnvironment();
+const categories = Object.values(KeyCategory).map((category) => ({
+  title: language.text(category),
+  actions: KeyAction.all.filter((action) => action.category === category),
+}));
+---
+
+<div class="keybind-editor" data-keybind-editor>
+  <div class="keybind-toolbar">
+    <div class="keybind-actions">
+      <label>
+        Import options.txt
+        <input type="file" accept=".txt,text/plain" data-keybind-import hidden />
+      </label>
+      <button type="button" data-keybind-reset-all>Reset Keys</button>
+    </div>
+    <span class="keybind-message" data-keybind-message role="status"></span>
+  </div>
+  <dialog class="keybind-dialog" data-keybind-confirm>
+    <p>Reset every keybind to the game's defaults?</p>
+    <form method="dialog" class="keybind-dialog-actions">
+      <button type="submit" value="cancel">Cancel</button>
+      <button type="submit" value="reset" data-danger>Reset Keys</button>
+    </form>
+  </dialog>
+  {
+    categories.map((category) => (
+      <section class="keybind-category">
+        <h4>{category.title}</h4>
+        <div class="keybind-list">
+          {category.actions.map((action) => (
+            <div class="keybind-row" data-keybind-action={action.id}>
+              <span>{language.text(action.id)}</span>
+              <button type="button" class="keybind-reset" data-keybind-reset aria-label="Reset to default" title="Reset to default">
+                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                  <path d="M3 8a5 5 0 1 0 1.5-3.6M3 2.5v2.5h2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+              <button type="button" class="keybind-key" data-keybind-key />
+            </div>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</div>
+
+<script>
+  import { KeybindEditorController } from "./KeybindEditorController";
+
+  for (const editor of document.querySelectorAll<HTMLElement>("[data-keybind-editor]")) {
+    void new KeybindEditorController(editor).start();
+  }
+</script>

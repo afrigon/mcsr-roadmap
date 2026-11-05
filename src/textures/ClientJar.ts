@@ -8,6 +8,7 @@ const dataRoot = "data/minecraft";
 const loadedPrefixes = [
   `${assetsRoot}/textures/`,
   `${assetsRoot}/models/`,
+  `${assetsRoot}/lang/`,
   `${dataRoot}/recipes/`,
   `${dataRoot}/tags/items/`,
 ];

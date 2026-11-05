@@ -7,6 +7,7 @@ import { goalIcon } from "../canvas/goalIcons";
 import YouTube from "./YouTube.astro";
 import BarChart from "../widgets/BarChart.astro";
 import InventoryDemo from "../widgets/InventoryDemo.astro";
+import KeybindEditor from "../widgets/KeybindEditor.astro";
 import Tab from "../widgets/Tab.astro";
 import Tabs from "../widgets/Tabs.astro";
 
@@ -46,7 +47,7 @@ const hasContent = (page.body ?? "").trim() !== "";
     {item.rankedNote !== null && <p class="ranked-label"><b>Ranked</b> {item.rankedNote}</p>}
     <StatusPicker item={item} />
     <article class="item-page">
-      {hasContent ? <Content components={{ YouTube, BarChart, InventoryDemo, Tabs, Tab }} /> : <p class="muted">No page yet.</p>}
+      {hasContent ? <Content components={{ YouTube, BarChart, InventoryDemo, KeybindEditor, Tabs, Tab }} /> : <p class="muted">No page yet.</p>}
     </article>
   </div>
 </div>

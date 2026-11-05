@@ -1,5 +1,6 @@
 ---
 import AdvancementToast from "../components/AdvancementToast.astro";
+import { GameLanguage } from "../language/GameLanguage";
 import "../styles/global.css";
 
 interface Props {
@@ -7,6 +8,7 @@ interface Props {
 }
 
 const { title } = Astro.props;
+const keyLabels = GameLanguage.fromEnvironment().textsStartingWith(["key.keyboard.", "key.mouse"]);
 ---
 
 <!doctype html>
@@ -19,6 +21,7 @@ const { title } = Astro.props;
   <body>
     <slot />
     <AdvancementToast />
+    <script type="application/json" id="key-labels" set:html={JSON.stringify(keyLabels)} />
     <script>
       import { BracketLabelController } from "../canvas/BracketLabelController";
       import { CanvasController } from "../canvas/CanvasController";
@@ -28,6 +31,7 @@ const { title } = Astro.props;
       import { ViewMemory } from "../canvas/ViewMemory";
       import { StatusController } from "../status/StatusController";
       import { StatusStore } from "../status/StatusStore";
+      import { ProfileStore } from "../profile/ProfileStore";
 
       const viewport = document.getElementById("viewport")!;
 
@@ -47,7 +51,7 @@ const { title } = Astro.props;
         [...document.querySelectorAll<HTMLElement>("[data-frame]")],
       ).start();
       new TooltipController(viewport, document.getElementById("tooltip")!).start();
-      new StatusController(document, StatusStore.fromWindow()).start();
+      new StatusController(document, new StatusStore(ProfileStore.fromWindow())).start();
       ViewMemory.fromWindow(viewport).start();
     </script>
   </body>
