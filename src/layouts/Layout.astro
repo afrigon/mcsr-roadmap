@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { title } = Astro.props;
-const keyLabels = GameLanguage.fromEnvironment().textsStartingWith(["key.keyboard.", "key.mouse"]);
+const keyLabels = GameLanguage.fromEnvironment().keyTexts();
 ---
 
 <!doctype html>
@@ -32,6 +32,7 @@ const keyLabels = GameLanguage.fromEnvironment().textsStartingWith(["key.keyboar
       import { StatusController } from "../status/StatusController";
       import { StatusStore } from "../status/StatusStore";
       import { ProfileStore } from "../profile/ProfileStore";
+      import { BoundKeyController } from "../keybinds/BoundKeyController";
 
       const viewport = document.getElementById("viewport")!;
 
@@ -53,6 +54,7 @@ const keyLabels = GameLanguage.fromEnvironment().textsStartingWith(["key.keyboar
       new TooltipController(viewport, document.getElementById("tooltip")!).start();
       new StatusController(document, new StatusStore(ProfileStore.fromWindow())).start();
       ViewMemory.fromWindow(viewport).start();
+      void new BoundKeyController(document).start();
     </script>
   </body>
 </html>

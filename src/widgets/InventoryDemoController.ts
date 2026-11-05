@@ -1,8 +1,4 @@
 import type { Control } from "../inventory/Control";
-import { KeyAction } from "../keybinds/KeyAction";
-import { KeybindStore } from "../keybinds/KeybindStore";
-import { KeyLabels } from "../keybinds/KeyLabels";
-import { ProfileStore } from "../profile/ProfileStore";
 import { MouseButton } from "../inventory/MouseButton";
 import type { Ripple } from "../inventory/Ripple";
 import type { CountFontMetrics } from "../textures/CountFontMetrics";
@@ -122,30 +118,12 @@ export class InventoryDemoController {
     this.show(0);
     this.setStep(0);
     this.movePointer(0);
-    void this.showKeybinds();
     this.demo.closest("[popover]")?.addEventListener("toggle", (event) => {
       if ((event as ToggleEvent).newState === "closed") {
         this.pause();
         this.reset();
       }
     });
-  }
-
-  private async showKeybinds() {
-    const labels = await KeyLabels.fromDocument(document, navigator);
-    const store = new KeybindStore(ProfileStore.fromWindow());
-    const update = () => {
-      for (const key of this.demo.querySelectorAll<HTMLElement>("kbd[data-action]")) {
-        const action = KeyAction.find(key.dataset.action!);
-
-        if (action !== undefined) {
-          key.textContent = labels.label(store.get(action));
-        }
-      }
-    };
-
-    update();
-    store.subscribe(update);
   }
 
   private play() {

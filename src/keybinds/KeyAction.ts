@@ -27,6 +27,10 @@ export class KeyAction {
     readonly defaultKey: string,
   ) {}
 
+  static withDefault(key: string): KeyAction | undefined {
+    return KeyAction.all.find((action) => action.defaultKey === key);
+  }
+
   static find(id: string): KeyAction | undefined {
     return KeyAction.all.find((action) => action.id === id);
   }

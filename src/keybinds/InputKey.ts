@@ -14,6 +14,16 @@ export class InputKey {
     return name.startsWith(keyboardPrefix) || name.startsWith(mousePrefix) ? new InputKey(name) : null;
   }
 
+  static named(value: string): InputKey | null {
+    const mouseName = value.startsWith("mouse.") ? value.slice("mouse.".length) : null;
+
+    if (mouseName !== null) {
+      return mouseButtons.includes(mouseName) ? new InputKey(`${mousePrefix}${mouseName}`) : null;
+    }
+
+    return Object.values(keyboardCodes).includes(value) ? new InputKey(`${keyboardPrefix}${value}`) : null;
+  }
+
   static fromKeyboard(code: string): InputKey | null {
     const name = keyboardCodes[code];
 

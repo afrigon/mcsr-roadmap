@@ -1,0 +1,28 @@
+---
+import { InputKey } from "../keybinds/InputKey";
+import { KeyAction } from "../keybinds/KeyAction";
+import { KeyLabels } from "../keybinds/KeyLabels";
+import { GameLanguage } from "../language/GameLanguage";
+
+interface Props {
+  value: string;
+  fixed?: boolean;
+}
+
+const { value, fixed = false } = Astro.props;
+const key = InputKey.named(value);
+
+if (key === null) {
+  throw new Error(`<Keybind value="${value}" />: unknown key, expected a game key name such as q, space, left.shift or mouse.left`);
+}
+
+const action = fixed ? undefined : KeyAction.withDefault(key.name);
+
+if (!fixed && action === undefined) {
+  throw new Error(`<Keybind value="${value}" />: no action defaults to this key; add fixed if the game hard-codes it`);
+}
+
+const label = KeyLabels.withoutLayout(GameLanguage.fromEnvironment().keyTexts()).label(key);
+---
+
+<kbd class="keybind" data-bound-action={action?.id}>{label}</kbd>

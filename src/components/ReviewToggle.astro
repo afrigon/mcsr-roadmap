@@ -1,0 +1,15 @@
+---
+interface Props {
+  itemId: string;
+}
+
+const { itemId } = Astro.props;
+---
+
+<button type="button" class="popover-edit popover-review" data-review-toggle={itemId} aria-pressed="false">Review</button>
+
+<script>
+  import { ReviewController } from "../review/ReviewController";
+
+  new ReviewController(document).start();
+</script>

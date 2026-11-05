@@ -28,4 +28,5 @@ const { item } = node;
   <img src={item.icon.path} alt="" width="32" height="32" />
   {item.label !== null && <span class="frame-label">{item.label}</span>}
   <span class="frame-warning" title="The previous step is still not learned">!</span>
+  {import.meta.env.DEV && <span class="frame-reviewed" title="Reviewed">✓</span>}
 </button>

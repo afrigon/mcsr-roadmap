@@ -2,11 +2,13 @@
 import { render, type CollectionEntry } from "astro:content";
 import type { Item } from "../roadmap/Item";
 import EditPageButton from "./EditPageButton.astro";
+import ReviewToggle from "./ReviewToggle.astro";
 import StatusPicker from "./StatusPicker.astro";
 import { goalIcon } from "../canvas/goalIcons";
 import YouTube from "./YouTube.astro";
 import BarChart from "../widgets/BarChart.astro";
 import InventoryDemo from "../widgets/InventoryDemo.astro";
+import Keybind from "../widgets/Keybind.astro";
 import KeybindEditor from "../widgets/KeybindEditor.astro";
 import Tab from "../widgets/Tab.astro";
 import Tabs from "../widgets/Tabs.astro";
@@ -36,6 +38,7 @@ const hasContent = (page.body ?? "").trim() !== "";
           <img src={goalIcon(item.goal).path} alt="" width="16" height="16" />{item.goal.title}
         </p>
       </div>
+      {import.meta.env.DEV && <ReviewToggle itemId={item.id} />}
       {import.meta.env.DEV && <EditPageButton filePath={page.filePath!} />}
       <button type="button" class="popover-close" popovertarget={item.id} popovertargetaction="hide" aria-label="Close">
         <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
@@ -47,7 +50,7 @@ const hasContent = (page.body ?? "").trim() !== "";
     {item.rankedNote !== null && <p class="ranked-label"><b>Ranked</b> {item.rankedNote}</p>}
     <StatusPicker item={item} />
     <article class="item-page">
-      {hasContent ? <Content components={{ YouTube, BarChart, InventoryDemo, KeybindEditor, Tabs, Tab }} /> : <p class="muted">No page yet.</p>}
+      {hasContent ? <Content components={{ YouTube, BarChart, InventoryDemo, Keybind, KeybindEditor, Tabs, Tab }} /> : <p class="muted">No page yet.</p>}
     </article>
   </div>
 </div>

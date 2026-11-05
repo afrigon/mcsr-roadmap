@@ -19,6 +19,10 @@ export class GameLanguage {
     return text;
   }
 
+  keyTexts(): Record<string, string> {
+    return this.textsStartingWith(["key.keyboard.", "key.mouse"]);
+  }
+
   textsStartingWith(prefixes: readonly string[]): Record<string, string> {
     return Object.fromEntries(Object.entries(this.texts).filter(([key]) => prefixes.some((prefix) => key.startsWith(prefix))));
   }

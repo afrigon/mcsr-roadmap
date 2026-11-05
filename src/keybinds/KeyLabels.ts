@@ -13,6 +13,10 @@ export class KeyLabels {
     private readonly layout: ReadonlyMap<string, string> | null,
   ) {}
 
+  static withoutLayout(texts: Readonly<Record<string, string>>): KeyLabels {
+    return new KeyLabels(texts, null);
+  }
+
   static async fromDocument(document: Document, navigator: Navigator): Promise<KeyLabels> {
     const texts = JSON.parse(document.getElementById("key-labels")?.textContent ?? "{}") as Record<string, string>;
 

@@ -96,6 +96,12 @@ Pages can also use the widgets in `src/widgets/`:
   units. `color` is `blue`, `orange`, `aqua`, `yellow`, `red` or `gray`, picked to match what the
   series measures; series without one take the first four in that order.
 - `<Tabs>` holding `<Tab label="…">` panels, one shown at a time.
+- `<Keybind value="q" />`, an inline key showing the viewer's bind for the action whose default
+  key is `value`: the game's key name without its `key.keyboard.` prefix (`q`, `1`, `space`,
+  `left.shift`, `f5`), or `mouse.left`, `mouse.middle`, `mouse.right`, `mouse.4` and `mouse.5`. A
+  key the game hard-codes, such as Shift for shift-clicking, takes `fixed` and never changes:
+  `<Keybind value="left.shift" fixed />`. The build fails on an unknown key, or on a key no action
+  defaults to without `fixed`.
 - `<KeybindEditor />`, the game's controls for the actions the site shows, in the game's own
   wording. Viewers rebind an action by clicking it and pressing a key or mouse button (Escape
   unbinds it, as in game), or import every bind at once from their `options.txt`. Keybinds are
