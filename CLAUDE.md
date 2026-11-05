@@ -7,6 +7,14 @@ TypeScript and Tailwind v4. See README.md for the data format.
 
 Minecraft Java Edition 1.16.1 is the only version this project covers. Always make sure the information found is accurate for this version specifically.
 
+## Terms
+
+- **Roadmap**: the canvas holding every item.
+- **Node**: one item on the roadmap.
+- **Category**: a roadmap category from `roadmap.kdl`, such as nether or bastion.
+- **Grouping**: items inside a category that relate to each other, such as clutches, portals or
+  lava. A grouping exists only through the items' parent links, not as a feature of its own.
+
 ## Workflow
 
 - Work directly on `main` in this checkout. The usual worktree and session rules do not apply to
